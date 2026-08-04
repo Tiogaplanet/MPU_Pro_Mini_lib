@@ -34,6 +34,7 @@ MiP::MiP()
     : battery(*this),
       chestLED(*this),
       clap(*this),
+      console(*this),
       eeprom(*this),
       gesture(*this),
       headLEDs(*this),
