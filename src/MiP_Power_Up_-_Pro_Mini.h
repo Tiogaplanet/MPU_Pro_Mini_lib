@@ -170,7 +170,7 @@ class MiP {
 
   // Core lifecycle functions.
   MiP();
-
+  MiP(int8_t serialSelectPin = MIP_UART_SELECT_PIN);
   ~MiP();
 
   /**
