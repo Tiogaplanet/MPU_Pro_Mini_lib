@@ -17,7 +17,6 @@
 #define MPU_PRO_MINI_H
 
 #include <Arduino.h>
-#include <ArduinoOTA.h>
 #include <stdint.h>
 #include <stdlib.h>
 
