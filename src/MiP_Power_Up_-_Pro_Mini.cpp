@@ -105,11 +105,14 @@ MiP::~MiP() {
 }
 
 bool MiP::begin() {
-  // Setup the debugging channel.
-  Serial1.begin(ESP8266_DEBUG_BAUD_RATE);
-
   // Initialize the class members.
   clear();
+
+  // Setup the debugging channel.
+  Serial1.begin(115200);
+
+  // Switch UART Multiplexer to MiP (Pin 2 = LOW)
+  switchSerialToMiP();
 
   // Assume that the connection to MiP will be successfully initialized. Will
   // clear the flag if a connection error is detected. If this wasn't done then
@@ -264,6 +267,13 @@ void MiP::clear() {
   m_flags = 0;
   m_lastError = MIP_ERROR_NONE;
   m_lastStatus.clear();
+  // ... initialize other subcomponents
+  m_serialGoingToMiP(false) {
+  
+  // Set Pin 2 as OUTPUT and default to PC (HIGH)
+  pinMode(UART_SELECT_PIN, OUTPUT);
+  digitalWrite(UART_SELECT_PIN, HIGH);
+      
   clap.clear();
   gesture.clear();
   infrared.clear();
