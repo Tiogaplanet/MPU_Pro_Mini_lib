@@ -23,6 +23,7 @@
 #include "MPU_Battery.h"
 #include "MPU_ChestLED.h"
 #include "MPU_Clap.h"
+#include "MPU_Console.h"
 #include "MPU_EEPROM.h"
 #include "MPU_Gesture.h"
 #include "MPU_HeadLEDs.h"
