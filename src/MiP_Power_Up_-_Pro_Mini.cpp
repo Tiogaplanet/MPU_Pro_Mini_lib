@@ -52,6 +52,54 @@ MiP::MiP()
   clear();
 }
 
+// MPU_Core.cpp
+
+#include "MPU_Pro_Mini.h"
+
+/**
+ * @brief Constructs the main MiP object and sets the multiplexer pin mode.
+ * @param serialSelectPin Digital pin connected to the UART multiplexer (Default = 6).
+ */
+MiP::MiP(int8_t serialSelectPin)
+    : console(*this),
+      battery(*this),
+      chestLED(*this),
+      // ... initialize other subcomponents
+      m_serialSelectPin(serialSelectPin),
+      m_serialGoingToMiP(false) {
+  
+  // Set the multiplexer control pin as an OUTPUT
+  if (m_serialSelectPin >= 0) {
+    pinMode(m_serialSelectPin, OUTPUT);
+    // Start with multiplexer routed to PC (HIGH) by default
+    digitalWrite(m_serialSelectPin, HIGH);
+  }
+}
+
+/**
+ * @brief Toggles the hardware multiplexer to route UART pins (TX/RX) to the MiP robot.
+ */
+void MiP::switchSerialToMiP() {
+  if (!m_serialGoingToMiP) {
+    if (m_serialSelectPin >= 0) {
+      digitalWrite(m_serialSelectPin, LOW); // LOW = Route Hardware UART to MiP Robot
+    }
+    m_serialGoingToMiP = true;
+  }
+}
+
+/**
+ * @brief Toggles the hardware multiplexer to route UART pins (TX/RX) to the PC / FTDI Monitor.
+ */
+void MiP::switchSerialToPC() {
+  if (m_serialGoingToMiP) {
+    if (m_serialSelectPin >= 0) {
+      digitalWrite(m_serialSelectPin, HIGH); // HIGH = Route Hardware UART to PC / FTDI
+    }
+    m_serialGoingToMiP = false;
+  }
+}
+
 MiP::~MiP() {
   end();
 }
