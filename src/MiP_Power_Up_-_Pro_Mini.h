@@ -217,6 +217,11 @@ class MiP {
    */
   bool isInitialized();
 
+  /**
+   * @brief Queries whether the hardware UART multiplexer is currently routed to the MiP.
+   */
+  bool isSerialGoingToMiP() const { return m_serialGoingToMiP; }
+
   // Error Handling.
   /**
    * @brief Retrieves the error code from the most recently executed MiP API
@@ -265,6 +270,9 @@ class MiP {
   // See MPU_Clap.h for interfacing with the clap detection system.
   MiP_Clap clap;
 
+  // See MPU_Console.h for interfacing with MiP's console.
+  MiP_Console console;
+
   // See MPU_EEPROM.h for reading from and writing to MiP's EEPROM.
   MiP_EEPROM eeprom;
 
@@ -312,6 +320,14 @@ class MiP {
 
   int8_t attemptMiPConnection(uint32_t baudRate);
 
+  // --- Hardware UART Multiplexer Methods ---
+  void switchSerialToMiP();
+  void switchSerialToPC();
+
+  // --- Pro Mini Hardware Member Variables ---
+  int8_t m_serialSelectPin;  ///< Digital pin controlling the 2:1 multiplexer (e.g. Pin 6)
+  bool   m_serialGoingToMiP; ///< Current state of the multiplexer switch
+
   /**
    * @brief Assert mechanism that logs the failure location and then halts.
    *
@@ -332,6 +348,7 @@ class MiP {
   friend class MiP_Battery;
   friend class MiP_ChestLED;
   friend class MiP_Clap;
+  friend class MiP_Console;
   friend class MiP_EEPROM;
   friend class MiP_Gesture;
   friend class MiP_HeadLEDs;
