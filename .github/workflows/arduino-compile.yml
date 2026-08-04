@@ -11,23 +11,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the bug-hunt branch from the repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Step 2: Set up the official Arduino CLI tool
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v2
 
-      # Step 3: Symlink this repository into the local Arduino library path
-      # This allows the CLI compiler to locate and include your "MPU_Pro_Mini_lib"
+      # Required: install the AVR core so the FQBN works
+      - name: Install Arduino AVR core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
+
       - name: Install Local Library
         run: |
           mkdir -p $HOME/Arduino/libraries
           ln -s $GITHUB_WORKSPACE $HOME/Arduino/libraries/MPU_Pro_Mini_lib
 
-      # Step 4: Compile all the example sketches to look for bugs.
-      # Replace "ExampleName" with the actual folder name inside your /examples directory
       - name: Compile all examples
         run: |
           for example in $HOME/Arduino/libraries/MPU_Pro_Mini_lib/examples/*; do
