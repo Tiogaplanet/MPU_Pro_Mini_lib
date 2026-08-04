@@ -154,6 +154,9 @@ class MiP {
   static constexpr uint8_t MIP_CMD_SLEEP = 0xFA;
   static constexpr uint8_t MIP_CMD_GET_STATUS = 0x79;
 
+  // --- Fixed Hardware Pin for Pro Mini UART Multiplexer ---
+  static constexpr uint8_t UART_SELECT_PIN = 2; // Hardcoded to Pin 2!
+
   /**
    * @brief Integer error codes that can be encountered by the MiP library.
    */
@@ -170,7 +173,7 @@ class MiP {
 
   // Core lifecycle functions.
   MiP();
-  MiP(int8_t serialSelectPin = MIP_UART_SELECT_PIN);
+
   ~MiP();
 
   /**
