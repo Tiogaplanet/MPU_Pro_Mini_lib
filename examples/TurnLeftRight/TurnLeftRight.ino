@@ -45,7 +45,7 @@ MiP mip;
  *
  * @details
  * - Initializes the MiP connection via mip.begin().
- * - If the connection fails, prints an error to Serial1 and returns early.
+ * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short description and then performs three cycles of:
  *     1) turnLeft(180, 12)
  *     2) delay(2000)
@@ -57,11 +57,11 @@ MiP mip;
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("TurnLeftRight.ino: Failed connecting to MiP!"));
+    Serial.println(F("TurnLeftRight.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("TurnLeftRight.ino: Use turnLeft & turnRight() functions. "
+  Serial.println(F("TurnLeftRight.ino: Use turnLeft & turnRight() functions. "
                     "Turn 180 degrees to left and then 180 degrees to right."));
 
   for (uint8_t i = 0; i < 3; i++) {
@@ -74,8 +74,8 @@ void setup() {
     delay(2000);
   }
 
-  Serial1.println();
-  Serial1.println(F("TurnLeftRight.ino: Done."));
+  Serial.println();
+  Serial.println(F("TurnLeftRight.ino: Done."));
 }
 
 /**

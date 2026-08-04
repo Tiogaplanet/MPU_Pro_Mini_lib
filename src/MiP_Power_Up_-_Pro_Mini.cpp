@@ -21,9 +21,6 @@
 // Number of milliseconds to wait between retries in begin().
 #define MIP_BEGIN_RETRY_WAIT 500
 
-// Baud rate used for the ESP8266 debug channel.
-#define ESP8266_DEBUG_BAUD_RATE 74880
-
 // Fast baud rate for MiP communications.
 #define MIP_FAST_BAUD_RATE 115200
 
@@ -53,24 +50,28 @@ MiP::MiP()
 }
 
 /**
- * @brief Toggles the hardware multiplexer to route UART pins (TX/RX) to the MiP robot.
+ * @brief Toggles the hardware multiplexer to route UART pins (TX/RX) to the MiP
+ * robot.
  */
 void MiP::switchSerialToMiP() {
   if (!m_serialGoingToMiP) {
     if (m_serialSelectPin >= 0) {
-      digitalWrite(m_serialSelectPin, LOW); // LOW = Route Hardware UART to MiP Robot
+      digitalWrite(m_serialSelectPin,
+                   LOW);  // LOW = Route Hardware UART to MiP Robot
     }
     m_serialGoingToMiP = true;
   }
 }
 
 /**
- * @brief Toggles the hardware multiplexer to route UART pins (TX/RX) to the PC / FTDI Monitor.
+ * @brief Toggles the hardware multiplexer to route UART pins (TX/RX) to the PC
+ * / FTDI Monitor.
  */
 void MiP::switchSerialToPC() {
   if (m_serialGoingToMiP) {
     if (m_serialSelectPin >= 0) {
-      digitalWrite(m_serialSelectPin, HIGH); // HIGH = Route Hardware UART to PC / FTDI
+      digitalWrite(m_serialSelectPin,
+                   HIGH);  // HIGH = Route Hardware UART to PC / FTDI
     }
     m_serialGoingToMiP = false;
   }
@@ -84,8 +85,7 @@ bool MiP::begin() {
   // Initialize the class members.
   clear();
 
-  // Setup the debugging channel.
-  Serial1.begin(115200);
+  Serial.begin(MIP_FAST_BAUD_RATE);
 
   // Switch UART Multiplexer to MiP (Pin 2 = LOW)
   switchSerialToMiP();
@@ -129,12 +129,7 @@ void MiP::end() {
 
   clear();
 
-  // Swap the UART on the D1 mini back to the default RX/TX pair.
-  Serial.swap();
   Serial.end();
-
-  // Shutdown the debugging channel.
-  Serial1.end();
 }
 
 void MiP::sleep() {
@@ -243,13 +238,10 @@ void MiP::clear() {
   m_flags = 0;
   m_lastError = MIP_ERROR_NONE;
   m_lastStatus.clear();
-  // ... initialize other subcomponents
-  m_serialGoingToMiP(false) {
-  
-  // Set Pin 2 as OUTPUT and default to PC (HIGH)
+  // Set Pin 6 as OUTPUT and default to PC (HIGH)
   pinMode(UART_SELECT_PIN, OUTPUT);
   digitalWrite(UART_SELECT_PIN, HIGH);
-      
+  m_serialSelectPin = 6;
   clap.clear();
   gesture.clear();
   infrared.clear();
@@ -264,9 +256,6 @@ int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
   // Set baud rate to specified rate.
   Serial.begin(baudRate);
 
-  // Swap the UART of the D1 mini to the alternate pins.
-  Serial.swap();
-
   // Send 0xFF to the MiP via UART to enable the UART communication channel in
   // the MiP.
   const uint8_t initMipCommand[] = {0xFF};
@@ -279,8 +268,8 @@ int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
   // Flush any outstanding junk data in receive buffer.
   serial.discardUnexpectedSerialData();
 
-  // Attempt to get MiP's latest status to see if the connection was successful
-  // or not.
+  // Attempt to get MiP's latest status to see if the connection was
+  // successful or not.
   int8_t result = rawGetStatus(m_lastStatus);
   if (result == MIP_ERROR_NONE) {
     // Let the user know at which baud rate the connection to MiP was made.
@@ -294,8 +283,8 @@ int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
 }
 
 // This internal protected method sends the get status command with minimal
-// error handling. The error recovery happens at a higher level of the driver in
-// begin(). All status updates after begin() come from events.
+// error handling. The error recovery happens at a higher level of the driver
+// in begin(). All status updates after begin() come from events.
 int8_t MiP::rawGetStatus(MiPStatus& status) {
   const uint8_t getStatus[1] = {MIP_CMD_GET_STATUS};
   uint8_t response[1 + 2];

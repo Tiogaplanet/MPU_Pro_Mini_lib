@@ -6,7 +6,7 @@
  * This sketch initializes communication with a MiP and continuously polls for
  * incoming IR dongle codes transmitted by another MiP. When an IR code event
  * is available, the sketch reads the 32-bit code using readIRDongleCode() and
- * prints the four constituent bytes in hexadecimal to Serial1 for inspection.
+ * prints the four constituent bytes in hexadecimal to Serial for inspection.
  *
  * The example exercises these API calls:
  *   - begin()
@@ -48,18 +48,18 @@ bool connectResult;
  *
  * @details
  * - Attempts to initialize the MiP connection via mip.begin().
- * - If the connection fails, prints an error to Serial1 and returns early.
- * - On success, prints a short description to Serial1 indicating the sketch
+ * - If the connection fails, prints an error to Serial and returns early.
+ * - On success, prints a short description to Serial indicating the sketch
  *   is ready to receive IR dongle codes.
  */
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("ReadIRDongleCode.ino: Failed connecting to MiP!"));
+    Serial.println(F("ReadIRDongleCode.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("ReadIRDongleCode.ino: Receive code from another MiP using IR."));
+  Serial.println(F("ReadIRDongleCode.ino: Receive code from another MiP using IR."));
 }
 
 /**
@@ -69,7 +69,7 @@ void setup() {
  * - Polls for pending IR code events using infrared.availableCodeEvents().
  * - When an event is available, calls infrared.readDongleCode() to retrieve a 32-bit
  *   code value.
- * - Prints the code as four separate bytes in hexadecimal format to Serial1.
+ * - Prints the code as four separate bytes in hexadecimal format to Serial.
  *
  * The printed format breaks the 32-bit value into four bytes:
  *   - (receiveCode >> 28) & 0xFF
@@ -88,15 +88,15 @@ void loop() {
   if (mip.infrared.availableCodeEvents()) {
     receiveCode = mip.infrared.readDongleCode();
 
-    Serial1.print(F(" Received "));
-    Serial1.print(((receiveCode >> 28) & 0xFF), HEX);
-    Serial1.print(F(" "));
-    Serial1.print(((receiveCode >> 16) & 0xFF), HEX);
-    Serial1.print(F(" "));
-    Serial1.print(((receiveCode >> 8) & 0xFF), HEX);
-    Serial1.print(F(" "));
-    Serial1.print((receiveCode & 0xFF), HEX);
-    Serial1.println();
+    Serial.print(F(" Received "));
+    Serial.print(((receiveCode >> 28) & 0xFF), HEX);
+    Serial.print(F(" "));
+    Serial.print(((receiveCode >> 16) & 0xFF), HEX);
+    Serial.print(F(" "));
+    Serial.print(((receiveCode >> 8) & 0xFF), HEX);
+    Serial.print(F(" "));
+    Serial.print((receiveCode & 0xFF), HEX);
+    Serial.println();
   }
 }
 

@@ -5,7 +5,7 @@
  * @details This sketch shows how to use the MiP library's driveForward() and
  * driveBackward() functions to move the robot a fixed speed for a specified
  * duration. The example drives forward for one second, waits, then drives
- * backward for one second. It prints status messages to Serial1 to indicate
+ * backward for one second. It prints status messages to Serial to indicate
  * progress and completion.
  *
  * The example exercises these API calls:
@@ -35,7 +35,7 @@ MiP mip;
  *
  * @details Called once after the board powers up or resets. This function:
  *  - Initializes communication with the MiP robot by calling mip.begin().
- *  - If the connection fails, prints an error to Serial1 and returns early.
+ *  - If the connection fails, prints an error to Serial and returns early.
  *  - If successful, prints a description of the demonstration and issues
  *    a forward drive command for 1000 ms, waits 2000 ms, then issues a
  *    backward drive command for 1000 ms and waits another 2000 ms.
@@ -46,11 +46,11 @@ MiP mip;
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("DriveForwardBackward.ino: Failed connecting to MiP!"));
+    Serial.println(F("DriveForwardBackward.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("DriveForwardBackward.ino: Use motion.driveForward() and "
+  Serial.println(F("DriveForwardBackward.ino: Use motion.driveForward() and "
                     "motion.driveBackward() functions. Drive ahead and back, 1 "
                     "second in each direction."));
 
@@ -66,8 +66,8 @@ void setup() {
    */
   delay(2000);
 
-  Serial1.println();
-  Serial1.println(F("DriveForwardBackward.ino: Done."));
+  Serial.println();
+  Serial.println(F("DriveForwardBackward.ino: Done."));
 }
 
 /**

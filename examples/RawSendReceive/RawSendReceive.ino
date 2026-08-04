@@ -7,7 +7,7 @@
  * packets. The example sends a 4-byte command to set the chest LED to purple
  * and then requests the MiP firmware revision using a raw receive command. If a
  * valid firmware response is returned, the sketch prints a human-readable
- * software version string to Serial1.
+ * software version string to Serial.
  *
  * The example exercises these API calls:
  *   - serial.rawSend()
@@ -35,7 +35,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to Serial1 and setup
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. On success, the sketch:
  *   - Sends a 4-byte raw command to set the chest LED to purple.
  *   - Sends a raw request to query the MiP firmware version and attempts to
@@ -47,11 +47,11 @@ MiP mip;
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("RawSendReceive.ino: Failed connecting to MiP!"));
+    Serial.println(F("RawSendReceive.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("RawSendReceive.ino: Use raw*() functions. Should set "
+  Serial.println(F("RawSendReceive.ino: Use raw*() functions. Should set "
                     "chest LED to purple and display MiP firmware revision."));
 
   /* Send 4-byte MiP command to set Chest LED to Purple.
@@ -80,19 +80,19 @@ void setup() {
    *   response[4] contains the build number.
    */
   if (result == MiP::MIP_ERROR_NONE && responseLength == 5 && response[0] == 0x14) {
-    Serial1.print(F(" MiP Software Version: "));
-    Serial1.print(response[1] + 2000);  // Year offset stored as (year - 2000)
-    Serial1.print('-');
-    Serial1.print(response[2]);  // Month
-    Serial1.print('-');
-    Serial1.print(response[3]);  // Day
-    Serial1.print(F(" (build #"));
-    Serial1.print(response[4]);  // Build number
-    Serial1.print(')');
+    Serial.print(F(" MiP Software Version: "));
+    Serial.print(response[1] + 2000);  // Year offset stored as (year - 2000)
+    Serial.print('-');
+    Serial.print(response[2]);  // Month
+    Serial.print('-');
+    Serial.print(response[3]);  // Day
+    Serial.print(F(" (build #"));
+    Serial.print(response[4]);  // Build number
+    Serial.print(')');
   }
 
-  Serial1.println();
-  Serial1.println(F("RawSendReceive.ino: Done."));
+  Serial.println();
+  Serial.println(F("RawSendReceive.ino: Done."));
 }
 
 /**

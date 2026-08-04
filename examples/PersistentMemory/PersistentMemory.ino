@@ -16,7 +16,7 @@
  *   - Verifies return values from LittleFS.begin(), LittleFS.open(), and
  *     LittleFS.remove().
  *   - Checks File objects before reading/writing.
- *   - Prints clear diagnostic messages to Serial1.
+ *   - Prints clear diagnostic messages to Serial.
  *
  * Demonstrates these APIs:
  *   - begin()
@@ -51,7 +51,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes Serial1 for diagnostics.
+ * - Initializes Serial for diagnostics.
  * - Attempts to initialize the MiP connection via mip.begin() and sets the
  *   global `connectResult` flag.
  * - Mounts LittleFS and verifies success.
@@ -67,35 +67,35 @@ void setup() {
   bool connectResult = mip.begin();
 
   if (!connectResult) {
-    Serial1.println(F("LittleFS.ino: Failed connecting to MiP!"));
+    Serial.println(F("LittleFS.ino: Failed connecting to MiP!"));
     return;
   }
 
   const String password = "1234secret";
 
-  Serial1.println(F("LittleFS.ino: Read and write the LittleFS flash file system."));
-  Serial1.println(F("Chest turns violet if the read matches the write, else red."));
+  Serial.println(F("LittleFS.ino: Read and write the LittleFS flash file system."));
+  Serial.println(F("Chest turns violet if the read matches the write, else red."));
 
   // Mount the LittleFS filesystem and verify success.
   if (!LittleFS.begin()) {
-    Serial1.println(F("LittleFS.ino: LittleFS failed to mount."));
+    Serial.println(F("LittleFS.ino: LittleFS failed to mount."));
     // Indicate error on chest LED (red) and stop.
     mip.chestLED.write(0xFF, 0x00, 0x00);
     while (true) {
       delay(1000);
     }
   }
-  Serial1.println(F("LittleFS mounted."));
+  Serial.println(F("LittleFS mounted."));
 
   // Write the password to a temporary file.
   {
     File f = LittleFS.open("/f.txt", "w");
     if (!f) {
-      Serial1.println(F("LittleFS.ino: File creation failed."));
+      Serial.println(F("LittleFS.ino: File creation failed."));
     } else {
       f.println(password);
       f.close();
-      Serial1.println(F("LittleFS.ino: Wrote password to /f.txt"));
+      Serial.println(F("LittleFS.ino: Wrote password to /f.txt"));
     }
   }
 
@@ -104,7 +104,7 @@ void setup() {
   {
     File f = LittleFS.open("/f.txt", "r");
     if (!f) {
-      Serial1.println(F("LittleFS.ino: Failed to open /f.txt for reading."));
+      Serial.println(F("LittleFS.ino: Failed to open /f.txt for reading."));
       // Indicate error on chest LED (red).
       mip.chestLED.write(0xFF, 0x00, 0x00);
     } else {
@@ -114,34 +114,34 @@ void setup() {
 
       line.trim();
 
-      Serial1.print(F(" Password is "));
-      Serial1.println(password);
-      Serial1.print(F(" File contained "));
-      Serial1.println(line);
+      Serial.print(F(" Password is "));
+      Serial.println(password);
+      Serial.print(F(" File contained "));
+      Serial.println(line);
 
       if (line == password) {
         // Violet: R=0xB6, G=0x00, B=0xFF
         mip.chestLED.write(0xB6, 0x00, 0xFF);
-        Serial1.println(F(" LittleFS.ino: Read matches write. Chest set to violet."));
+        Serial.println(F(" LittleFS.ino: Read matches write. Chest set to violet."));
       } else {
         // Red: R=0xFF, G=0x00, B=0x00
         mip.chestLED.write(0xFF, 0x00, 0x00);
-        Serial1.println(F(" LittleFS.ino: Read does NOT match write. Chest set to red."));
+        Serial.println(F(" LittleFS.ino: Read does NOT match write. Chest set to red."));
       }
     }
   }
 
   // Attempt to remove the temporary file and report result.
   if (LittleFS.remove("/f.txt")) {
-    Serial1.println(F(" File deleted."));
+    Serial.println(F(" File deleted."));
   } else {
-    Serial1.println(F(" Error deleting file /f.txt."));
+    Serial.println(F(" Error deleting file /f.txt."));
   }
 
   // Allow the user to observe the chest LED color, then restore to green.
   delay(5000);
   mip.chestLED.write(0x00, 0xFF, 0x00);
-  Serial1.println(F("LittleFS.ino: Done."));
+  Serial.println(F("LittleFS.ino: Done."));
 }
 
 /**

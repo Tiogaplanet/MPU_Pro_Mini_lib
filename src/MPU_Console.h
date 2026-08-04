@@ -4,7 +4,8 @@
  *
  * This header defines the MiP_Console class, which inherits from Arduino's
  * Stream class. It provides transparent redirection of print statements to
- * the PC Serial Monitor over a shared single hardware UART on the Arduino Pro Mini.
+ * the PC Serial Monitor over a shared single hardware UART on the Arduino Pro
+ * Mini.
  *
  * @author Adam Green, Samuel Trassare
  * @date 2026-08-04
@@ -50,15 +51,25 @@ class MiP_Console : public Stream {
   void end();
 
   // --- Inline Disambiguation Overloads for Arduino Print API ---
-  inline size_t write(unsigned long n) { return write((uint8_t)n); }
-  inline size_t write(long n)          { return write((uint8_t)n); }
-  inline size_t write(unsigned int n)  { return write((uint8_t)n); }
-  inline size_t write(int n)           { return write((uint8_t)n); }
+  inline size_t write(unsigned long n) {
+    return write((uint8_t)n);
+  }
+  inline size_t write(long n) {
+    return write((uint8_t)n);
+  }
+  inline size_t write(unsigned int n) {
+    return write((uint8_t)n);
+  }
+  inline size_t write(int n) {
+    return write((uint8_t)n);
+  }
 
   /**
    * @brief Boolean evaluation operator for Arduino stream checking.
    */
-  operator bool() { return true; }
+  operator bool() {
+    return true;
+  }
 
  private:
   /**
@@ -66,8 +77,8 @@ class MiP_Console : public Stream {
    */
   void initIfNeeded();
 
-  MiP& m_mip;    ///< Reference to the main orchestrator class
-  bool m_isInit; ///< Flag tracking HardwareSerial initialization status
+  MiP& m_mip;     ///< Reference to the main orchestrator class
+  bool m_isInit;  ///< Flag tracking HardwareSerial initialization status
 };
 
-#endif // MPU_CONSOLE_H
+#endif  // MPU_CONSOLE_H

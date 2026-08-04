@@ -6,7 +6,7 @@
  * This sketch demonstrates how to store and retrieve a single byte of user
  * data in the MiP's EEPROM using the eeprom.write() and eeprom.read() APIs.
  * It writes a test value (secretPassword) to an EEPROM offset, then reads it
- * back and prints the original, scrambled, and recovered values to Serial1.
+ * back and prints the original, scrambled, and recovered values to Serial.
  *
  * The example shows how EEPROM data can be preserved across power cycles by
  * writing the value to the MiP device; to verify persistence, power-cycle the
@@ -60,12 +60,12 @@ uint8_t recoveredPassword;
  *
  * @details
  * - Initializes communication with the MiP via mip.begin().
- * - If the connection fails, prints an error to Serial1 and returns early.
+ * - If the connection fails, prints an error to Serial and returns early.
  * - Prints the original secretPassword, writes it to EEPROM using
  *   setUserData(eepromAddressOffset, secretPassword), then scrambles the
  *   in-memory secretPassword and reads the stored value back using
  *   getUserData(eepromAddressOffset). The recovered value is printed to
- *   Serial1 so the user can verify the write/read operation.
+ *   Serial so the user can verify the write/read operation.
  *
  * Note: To verify persistence across power cycles, comment out the call to
  * setUserData(), reflash or power-cycle the MiP, and observe that the
@@ -74,15 +74,15 @@ uint8_t recoveredPassword;
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("ReadWriteEEPROM.ino: Failed connecting to MiP!"));
+    Serial.println(F("ReadWriteEEPROM.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(
+  Serial.println(
     F("ReadWriteEEPROM.ino: Writes data to EEPROM and reads it back."));
 
-  Serial1.print(F(" Original password: "));
-  Serial1.printf("0x%02X\n\r", secretPassword);
+  Serial.print(F(" Original password: "));
+  Serial.printf("0x%02X\n\r", secretPassword);
 
   /* Write the secret password to the MiP's user EEPROM at the configured
    * offset. Comment out this line to test persistence across power cycles.
@@ -93,15 +93,15 @@ void setup() {
    * comes from EEPROM rather than the local variable.
    */
   secretPassword = 0xFF;
-  Serial1.print(F(" Scrambled password: "));
-  Serial1.printf("0x%02X\n\r", secretPassword);
+  Serial.print(F(" Scrambled password: "));
+  Serial.printf("0x%02X\n\r", secretPassword);
 
   /* Read the stored value back from EEPROM and print it. */
   recoveredPassword = mip.eeprom.read(eepromAddressOffset);
-  Serial1.print(F(" Recovered password: "));
-  Serial1.printf("0x%02X\n\r", recoveredPassword);
+  Serial.print(F(" Recovered password: "));
+  Serial.printf("0x%02X\n\r", recoveredPassword);
 
-  Serial1.println(F("ReadWriteEeprom.ino: Done."));
+  Serial.println(F("ReadWriteEeprom.ino: Done."));
 }
 
 /**

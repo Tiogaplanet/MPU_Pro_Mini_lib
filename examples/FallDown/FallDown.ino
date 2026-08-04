@@ -6,7 +6,7 @@
  * robot to intentionally fall forward and backward using the motion.fallForward()
  * and motion.fallBackward() APIs. The sketch first waits for the robot to be
  * standing upright (position.isUpright()) before issuing each fall command and prints
- * status messages to Serial1 so the sequence can be observed.
+ * status messages to Serial so the sequence can be observed.
  *
  * The example exercises these API calls:
  *   - motion.fallForward()
@@ -35,7 +35,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to Serial1 and setup
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. On success, the function:
  *   - Waits until the robot reports it is upright using position.isUpright().
  *   - Pauses briefly to ensure stability.
@@ -43,39 +43,39 @@ MiP mip;
  *   - Waits again for the robot to become upright, then commands a fall
  *     backward with motion.fallBackward().
  *
- * The function prints progress and status messages to Serial1 to make the
+ * The function prints progress and status messages to Serial to make the
  * demonstration easy to follow.
  */
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("FallDown.ino: Failed connecting to MiP!"));
+    Serial.println(F("FallDown.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("FallDown.ino: Fall forward and backward.\n"));
+  Serial.println(F("FallDown.ino: Fall forward and backward.\n"));
 
-  Serial1.println(F(" Waiting for MiP to be standing upright."));
+  Serial.println(F(" Waiting for MiP to be standing upright."));
   while (!mip.position.isUpright()) {
     // Waiting for the robot to report upright state.
   }
   delay(1000);
 
-  Serial1.println(F(" Falling forward."));
+  Serial.println(F(" Falling forward."));
   mip.motion.fallForward();
 
   delay(1000);
-  Serial1.println(F(" Waiting for robot to be standing upright again."));
+  Serial.println(F(" Waiting for robot to be standing upright again."));
   while (!mip.position.isUpright()) {
     // Waiting for the robot to report upright state after falling.
   }
   delay(1000);
 
-  Serial1.println(F(" Falling backward."));
+  Serial.println(F(" Falling backward."));
   mip.motion.fallBackward();
 
-  Serial1.println();
-  Serial1.println(F("FallDown.ino: Done."));
+  Serial.println();
+  Serial.println(F("FallDown.ino: Done."));
 }
 
 /**

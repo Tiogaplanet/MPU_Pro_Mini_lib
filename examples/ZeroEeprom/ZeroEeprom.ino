@@ -6,7 +6,7 @@
  * This sketch demonstrates how to iterate over the MiP's user EEPROM address
  * range and write a zero value to each byte using the eeprom.write() API.
  * After writing each byte the sketch reads it back with eeprom.read() and
- * prints the address and recovered value to Serial1 for verification.
+ * prints the address and recovered value to Serial for verification.
  *
  * The example exercises these API calls:
  *   - eeprom.write()
@@ -16,7 +16,7 @@
  *   - Running this sketch will overwrite the MiP user EEPROM contents with
  *     zeros. Use with caution if the EEPROM contains important data.
  *   - The sketch pauses one second between writes so the user can observe
- *     progress on Serial1 and the device.
+ *     progress on Serial and the device.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -50,14 +50,14 @@ uint8_t eepromContents;
  *
  * @details
  * - Initializes the MiP connection via mip.begin(). If the connection fails,
- *   prints an error to Serial1 and returns early.
+ *   prints an error to Serial and returns early.
  * - Iterates over the MiP user EEPROM address range from 0x00 up to
  *   (MiP_EEPROM::LAST_EEPROM_ADDRESS - MiP_EEPROM::BASE_EEPROM_ADDRESS)
  * inclusive and:
  *     1. Writes a zero to each EEPROM offset using eeprom.write(offset, 0x00).
  *     2. Waits one second to allow observation and avoid flooding the device.
  *     3. Reads the byte back with eeprom.read(offset) and prints the address
- *        and recovered value in hexadecimal to Serial1 for verification.
+ *        and recovered value in hexadecimal to Serial for verification.
  *
  * Note:
  *   - This operation will irreversibly overwrite any existing user EEPROM
@@ -66,11 +66,11 @@ uint8_t eepromContents;
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("ZeroEEPROM.ino: Failed connecting to MiP!"));
+    Serial.println(F("ZeroEEPROM.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("ZeroEEPROM.ino: Writes zeros to each byte in EEPROM."));
+  Serial.println(F("ZeroEEPROM.ino: Writes zeros to each byte in EEPROM."));
 
   // Iterate over the valid user EEPROM offsets and write zeros.
   for (uint8_t i = 0x00;
@@ -86,14 +86,14 @@ void setup() {
     eepromContents = mip.eeprom.read(i);
 
     // Print the EEPROM offset and the recovered value in hex.
-    Serial1.print(F(" 0x2"));
-    Serial1.print(i, HEX);
-    Serial1.print(F(": "));
-    Serial1.print(F("0x0"));
-    Serial1.println(eepromContents, HEX);
+    Serial.print(F(" 0x2"));
+    Serial.print(i, HEX);
+    Serial.print(F(": "));
+    Serial.print(F("0x0"));
+    Serial.println(eepromContents, HEX);
   }
 
-  Serial1.print(F("ZeroEEPROM.ino: Done."));
+  Serial.print(F("ZeroEEPROM.ino: Done."));
 }
 
 /**

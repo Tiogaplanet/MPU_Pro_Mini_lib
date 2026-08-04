@@ -67,18 +67,18 @@ bool connectResult;
  * @brief Initialize connection to MiP and print demo banner.
  *
  * @details Attempts to initialize the MiP connection via g_mip.begin().
- * If the connection fails, an error is printed to Serial1 and setup returns
+ * If the connection fails, an error is printed to Serial and setup returns
  * early. On success, a short banner is printed to indicate the demo is running.
  */
 void setup() {
-  // First need to initialize the Serial1 connection with the MiP.
+  // First need to initialize the Serial connection with the MiP.
   connectResult = g_mip.begin();
   if (!connectResult) {
-    Serial1.println(F("Failed connecting to MiP!"));
+    Serial.println(F("Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("Seattle Robotics Society Demo for April 21st, 2018."));
+  Serial.println(F("Seattle Robotics Society Demo for April 21st, 2018."));
 }
 
 /**

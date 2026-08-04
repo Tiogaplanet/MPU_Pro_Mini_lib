@@ -5,7 +5,7 @@
  *
  * @details
  * This sketch demonstrates how to query the MiP weight sensor and print
- * changes to Serial1. It repeatedly reads the device weight using
+ * changes to Serial. It repeatedly reads the device weight using
  * weight.read() and prints the value only when it changes to avoid spamming
  * the serial output. This is useful for monitoring payload changes on MiP's
  * tray or detecting when the robot is picked up or placed down.
@@ -16,7 +16,7 @@
  * Usage notes:
  *   - Ensure the MiP is powered and connected before running this sketch.
  *   - MiP must be standing upright, not propped on the kickstand.
- *   - Open Serial1 to observe printed weight updates.
+ *   - Open Serial to observe printed weight updates.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -60,18 +60,18 @@ bool connectResult;
  *
  * @details
  * - Initializes the MiP connection via mip.begin().
- * - If the connection fails, prints an error to Serial1 and returns early.
+ * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short banner indicating the sketch will display
  *   weight updates.
  */
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("Weight.ino: Failed connecting to MiP!"));
+    Serial.println(F("Weight.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(
+  Serial.println(
     F("Weight.ino: Read MiP's weight with different objects on the tray."));
 }
 
@@ -81,7 +81,7 @@ void setup() {
  * @details
  * - Polls the MiP weight sensor using readWeight().
  * - If the current weight differs from the last reported value, prints the
- *   new weight to Serial1 and updates lastWeight.
+ *   new weight to Serial and updates lastWeight.
  *
  * The loop is intentionally lightweight and prints only on changes to avoid
  * flooding the serial output with repeated identical values.
@@ -93,8 +93,8 @@ void loop() {
   int8_t currentWeight = mip.weight.read();
 
   if (currentWeight != lastWeight) {
-    Serial1.print(F(" Weight = "));
-    Serial1.println(currentWeight);
+    Serial.print(F(" Weight = "));
+    Serial.println(currentWeight);
     lastWeight = currentWeight;
   }
 }

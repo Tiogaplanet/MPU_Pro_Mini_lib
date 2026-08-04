@@ -14,53 +14,60 @@
  */
 
 #include "MPU_Console.h"
-#include "MPU_Pro_Mini.h" // Main header to access m_mip methods and constants
+#include "MiP_Power_Up_-_Pro_Mini.h"
 
 /**
  * @brief Constructs the MiP_Console component.
- * @param mip Reference to the main MiP object for access to UART multiplexer controls.
+ * @param mip Reference to the main MiP object for access to UART multiplexer
+ * controls.
  */
 MiP_Console::MiP_Console(MiP& mip) : m_mip(mip), m_isInit(false) {}
 
 /**
- * @brief Internal helper to lazily initialize the HardwareSerial port if begin() wasn't called.
+ * @brief Internal helper to lazily initialize the HardwareSerial port if
+ * begin() wasn't called.
  */
 void MiP_Console::initIfNeeded() {
   if (!m_isInit) {
-    begin(115200);
+    Serial.begin(115200);
   }
 }
 
 /**
- * @brief Initializes the HardwareSerial port at 115200 baud 8N1 (required by MiP).
- * @param baud Baud rate parameter (fixed internally to 115200 to maintain MiP compatibility).
+ * @brief Initializes the HardwareSerial port at 115200 baud 8N1 (required by
+ * MiP).
+ * @param baud Baud rate parameter (fixed internally to 115200 to maintain MiP
+ * compatibility).
  * @param mode Serial protocol mode (fixed internally to SERIAL_8N1).
  */
 void MiP_Console::begin(unsigned long baud, uint8_t mode) {
   (void)baud;
   (void)mode;
-  if (m_isInit) return;
+  if (m_isInit)
+    return;
 
   m_isInit = true;
   // Fix the HardwareSerial baud rate to 115200 8N1 as required by the MiP robot
-  HardwareSerial::begin(115200, SERIAL_8N1);
+  Serial.begin(115200, SERIAL_8N1);
 }
 
 /**
  * @brief Shuts down the HardwareSerial interface.
  */
 void MiP_Console::end() {
-  if (!m_isInit) return;
-  HardwareSerial::end();
+  if (!m_isInit)
+    return;
+  Serial.end();
   m_isInit = false;
 }
 
 /**
- * @brief Returns the number of bytes available to read from the PC Serial Monitor.
+ * @brief Returns the number of bytes available to read from the PC Serial
+ * Monitor.
  */
 int MiP_Console::available() {
   initIfNeeded();
-  return HardwareSerial::available();
+  return Serial.available();
 }
 
 /**
@@ -68,15 +75,16 @@ int MiP_Console::available() {
  */
 int MiP_Console::read() {
   initIfNeeded();
-  return HardwareSerial::read();
+  return Serial.read();
 }
 
 /**
- * @brief Peeks at the next incoming byte from the PC Serial Monitor without removing it.
+ * @brief Peeks at the next incoming byte from the PC Serial Monitor without
+ * removing it.
  */
 int MiP_Console::peek() {
   initIfNeeded();
-  return HardwareSerial::peek();
+  return Serial.peek();
 }
 
 /**
@@ -84,7 +92,7 @@ int MiP_Console::peek() {
  */
 int MiP_Console::availableForWrite() {
   initIfNeeded();
-  return HardwareSerial::availableForWrite();
+  return Serial.availableForWrite();
 }
 
 /**
@@ -92,7 +100,7 @@ int MiP_Console::availableForWrite() {
  */
 void MiP_Console::flush() {
   initIfNeeded();
-  HardwareSerial::flush();
+  Serial.flush();
 }
 
 /**
@@ -114,7 +122,7 @@ size_t MiP_Console::write(uint8_t byte) {
   m_mip.switchSerialToPC();
 
   // 3. Perform physical write to HardwareSerial TX pin
-  size_t result = HardwareSerial::write(byte);
+  size_t result = Serial.write(byte);
 
   // 4. Restore multiplexer back to MiP if it was active before this print call
   if (needToRestore) {
@@ -135,8 +143,9 @@ size_t MiP_Console::write(uint8_t byte) {
  * @return size_t Number of bytes successfully written.
  */
 size_t MiP_Console::write(const uint8_t* pBuffer, size_t size) {
-  if (pBuffer == nullptr || size == 0) return 0;
-  
+  if (pBuffer == nullptr || size == 0)
+    return 0;
+
   initIfNeeded();
 
   // 1. Query main MiP object: Is the UART currently routed to the MiP robot?
@@ -146,7 +155,7 @@ size_t MiP_Console::write(const uint8_t* pBuffer, size_t size) {
   m_mip.switchSerialToPC();
 
   // 3. Perform physical write to HardwareSerial TX pin
-  size_t result = HardwareSerial::write(pBuffer, size);
+  size_t result = Serial.write(pBuffer, size);
 
   // 4. Restore multiplexer back to MiP if it was active before this print call
   if (needToRestore) {

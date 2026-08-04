@@ -42,18 +42,18 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to Serial1 and setup
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. On success, a brief status message is printed describing the
  * continuous drive demonstration.
  */
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("ContinuousDrive.ino: Failed connecting to MiP!"));
+    Serial.println(F("ContinuousDrive.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("ContinuousDrive.ino: Use continuousDrive() function. Drive forward with right turn and then backward with left turn."));
+  Serial.println(F("ContinuousDrive.ino: Use continuousDrive() function. Drive forward with right turn and then backward with left turn."));
 }
 
 /**
@@ -118,8 +118,8 @@ void loop() {
          */
         mip.motion.continuousDrive(-16, -16);
       } else {
-        Serial1.println();
-        Serial1.println(F("ContinuousDrive.ino: Done."));
+        Serial.println();
+        Serial.println(F("ContinuousDrive.ino: Done."));
         state = DONE;
       }
       break;

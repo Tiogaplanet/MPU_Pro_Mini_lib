@@ -4,7 +4,7 @@
  *
  * @details This sketch shows how to use the MiP library to read the total
  * distance the robot has traveled since the last reset and how to reset that
- * odometer value. It prints the current distance in centimeters to Serial1,
+ * odometer value. It prints the current distance in centimeters to Serial,
  * then calls odometer.reset() to clear the measurement.
  *
  * The example exercises these API calls:
@@ -34,36 +34,36 @@ MiP mip;
  *
  * @details Called once after the board powers up or resets. This function:
  *   - Initializes communication with the MiP robot via mip.begin().
- *   - If the connection fails, prints an error to Serial1 and returns early.
+ *   - If the connection fails, prints an error to Serial and returns early.
  *   - Reads the current odometer value (in centimeters) using
- *     odometer.read() and prints it to Serial1.
+ *     odometer.read() and prints it to Serial.
  *   - Resets the odometer using odometer.reset().
  *
- * The function prints progress and completion messages to Serial1 so the
+ * The function prints progress and completion messages to Serial so the
  * user can observe the odometer reading and the reset action.
  */
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("Odometer.ino: Failed connecting to MiP!"));
+    Serial.println(F("Odometer.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("Odometer.ino: Read out current odometer reading and reset."));
+  Serial.println(F("Odometer.ino: Read out current odometer reading and reset."));
 
   float cm = mip.odometer.read();
-  Serial1.print(F(" MiP has travelled "));
-  Serial1.print(cm);
-  Serial1.println(F(" cm since the last reset."));
+  Serial.print(F(" MiP has travelled "));
+  Serial.print(cm);
+  Serial.println(F(" cm since the last reset."));
 
   mip.odometer.reset();
 
-  Serial1.print(F(" MiP has travelled "));
-  Serial1.print(cm);
-  Serial1.println(F(" cm since the last reset."));
+  Serial.print(F(" MiP has travelled "));
+  Serial.print(cm);
+  Serial.println(F(" cm since the last reset."));
 
-  Serial1.println();
-  Serial1.println(F("Odometer.ino: Done."));
+  Serial.println();
+  Serial.println(F("Odometer.ino: Done."));
 }
 
 /**

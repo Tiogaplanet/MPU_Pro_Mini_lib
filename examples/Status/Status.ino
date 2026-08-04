@@ -7,7 +7,7 @@
  * a MiP robot using the MiP library. It connects to the robot, then
  * continuously polls for changes to the battery voltage and the robot's
  * positional state. When a change is detected the new value is printed to
- * Serial1. The sketch is intended as a simple diagnostic example to show
+ * Serial. The sketch is intended as a simple diagnostic example to show
  * how to use the status-related API calls.
  *
  * The example exercises these API calls:
@@ -68,18 +68,18 @@ bool connectResult;
  *
  * @details
  * - Initializes the MiP connection via mip.begin().
- * - If the connection fails, prints an error to Serial1 and returns early.
+ * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short banner indicating the sketch will display
  *   status changes.
  */
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("Status.ino: Failed connecting to MiP!"));
+    Serial.println(F("Status.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("Status.ino: Display MiP status as it changes."));
+  Serial.println(F("Status.ino: Display MiP status as it changes."));
 }
 
 /**
@@ -105,34 +105,34 @@ void loop() {
 
   /* Report battery voltage when it changes. */
   if (currentBatteryLevel != lastBatteryLevel) {
-    Serial1.print(F(" Battery: "));
-    Serial1.print(currentBatteryLevel);
-    Serial1.println(F("V"));
+    Serial.print(F(" Battery: "));
+    Serial.print(currentBatteryLevel);
+    Serial.println(F("V"));
     lastBatteryLevel = currentBatteryLevel;
   }
 
   /* Report position changes by evaluating all position predicates. */
   if (currentPosition != lastPosition) {
     if (mip.position.isOnBack()) {
-      Serial1.println(F(" Position: On Back"));
+      Serial.println(F(" Position: On Back"));
     }
     if (mip.position.isFaceDown()) {
-      Serial1.println(F(" Position: Face Down"));
+      Serial.println(F(" Position: Face Down"));
     }
     if (mip.position.isUpright()) {
-      Serial1.println(F(" Position: Upright"));
+      Serial.println(F(" Position: Upright"));
     }
     if (mip.position.isPickedUp()) {
-      Serial1.println(F(" Position: Picked Up"));
+      Serial.println(F(" Position: Picked Up"));
     }
     if (mip.position.isHandStanding()) {
-      Serial1.println(F(" Position: Hand Stand"));
+      Serial.println(F(" Position: Hand Stand"));
     }
     if (mip.position.isFaceDownOnTray()) {
-      Serial1.println(F(" Position: Face Down on Tray"));
+      Serial.println(F(" Position: Face Down on Tray"));
     }
     if (mip.position.isOnBackWithKickstand()) {
-      Serial1.println(F(" Position: On Back With Kickstand"));
+      Serial.println(F(" Position: On Back With Kickstand"));
     }
 
     lastPosition = currentPosition;

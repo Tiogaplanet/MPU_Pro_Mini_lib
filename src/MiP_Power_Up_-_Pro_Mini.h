@@ -13,8 +13,8 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-#ifndef MPU_PRO_MINI_H
-#define MPU_PRO_MINI_H
+#ifndef MIP_POWER_UP_PRO_MINI_H
+#define MIP_POWER_UP_PRO_MINI_H
 
 #include <Arduino.h>
 #include <stdint.h>
@@ -41,19 +41,19 @@
 #include "MPU_Weight.h"
 
 // MiP Power Up - D1 mini library versioning
-#define MPU_D1_MINI_VERSION_MAJOR 2
-#define MPU_D1_MINI_VERSION_MINOR 0
-#define MPU_D1_MINI_VERSION_PATCH 0
+#define MPU_PRO_MINI_VERSION_MAJOR 2
+#define MPU_PRO_MINI_VERSION_MINOR 0
+#define MPU_PRO_MINI_VERSION_PATCH 0
 
 // Combined string representation matching library.properties
-#define MPU_D1_MINI_VERSION "2.0.0"
+#define MPU_PRO_MINI_VERSION "2.0.0"
 
 // Combined numerical value for preprocessor version checks (2.0.0 -> 20000)
-#define MPU_D1_MINI_VERSION_NUMBER \
-  (MPU_D1_MINI_VERSION_MAJOR * 10000 + MPU_D1_MINI_VERSION_MINOR * 100 + \
-   MPU_D1_MINI_VERSION_PATCH)
+#define MPU_PRO_MINI_VERSION_NUMBER                                        \
+  (MPU_PRO_MINI_VERSION_MAJOR * 10000 + MPU_PRO_MINI_VERSION_MINOR * 100 + \
+   MPU_PRO_MINI_VERSION_PATCH)
 
-// Setup some debug levels for reporting library status via Serial1.
+// Setup some debug levels for reporting library status via Serial.
 #define MIP_DEBUG_NONE 0
 #define MIP_DEBUG_ERROR 1
 #define MIP_DEBUG_WARN 2
@@ -64,17 +64,17 @@
 #define MIP_DEBUG_LEVEL MIP_DEBUG_NONE
 #endif
 
-// Create the macros for conditional printing of debug messages via Serial1.
+// Create the macros for conditional printing of debug messages via Serial.
 #if MIP_DEBUG_LEVEL >= MIP_DEBUG_ERROR
 #define MIP_DEBUG_ERROR_PRINT(...) \
-  Serial1.print(F("[ERROR] "));    \
-  Serial1.print(__VA_ARGS__)
+  Serial.print(F("[ERROR] "));     \
+  Serial.print(__VA_ARGS__)
 #define MIP_DEBUG_ERROR_PRINTLN(...) \
-  Serial1.print(F("[ERROR] "));      \
-  Serial1.println(__VA_ARGS__)
+  Serial.print(F("[ERROR] "));       \
+  Serial.println(__VA_ARGS__)
 #define MIP_DEBUG_ERROR_PRINTF(...) \
-  Serial1.print(F("[ERROR] "));     \
-  Serial1.printf(__VA_ARGS__)
+  Serial.print(F("[ERROR] "));      \
+  Serial.printf(__VA_ARGS__)
 #else
 #define MIP_DEBUG_ERROR_PRINT(...)
 #define MIP_DEBUG_ERROR_PRINTLN(...)
@@ -82,14 +82,14 @@
 #endif
 #if MIP_DEBUG_LEVEL >= MIP_DEBUG_WARN
 #define MIP_DEBUG_WARN_PRINT(...) \
-  Serial1.print(F("[WARN] "));    \
-  Serial1.print(__VA_ARGS__)
+  Serial.print(F("[WARN] "));     \
+  Serial.print(__VA_ARGS__)
 #define MIP_DEBUG_WARN_PRINTLN(...) \
-  Serial1.print(F("[WARN] "));      \
-  Serial1.println(__VA_ARGS__)
+  Serial.print(F("[WARN] "));       \
+  Serial.println(__VA_ARGS__)
 #define MIP_DEBUG_WARN_PRINTF(...) \
-  Serial1.print(F("[WARN] "));     \
-  Serial1.printf(__VA_ARGS__)
+  Serial.print(F("[WARN] "));      \
+  Serial.printf(__VA_ARGS__)
 #else
 #define MIP_DEBUG_WARN_PRINT(...)
 #define MIP_DEBUG_WARN_PRINTLN(...)
@@ -97,14 +97,14 @@
 #endif
 #if MIP_DEBUG_LEVEL >= MIP_DEBUG_INFO
 #define MIP_DEBUG_INFO_PRINT(...) \
-  Serial1.print(F("[INFO] "));    \
-  Serial1.print(__VA_ARGS__)
+  Serial.print(F("[INFO] "));     \
+  Serial.print(__VA_ARGS__)
 #define MIP_DEBUG_INFO_PRINTLN(...) \
-  Serial1.print(F("[INFO] "));      \
-  Serial1.println(__VA_ARGS__)
+  Serial.print(F("[INFO] "));       \
+  Serial.println(__VA_ARGS__)
 #define MIP_DEBUG_INFO_PRINTF(...) \
-  Serial1.print(F("[INFO] "));     \
-  Serial1.printf(__VA_ARGS__)
+  Serial.print(F("[INFO] "));      \
+  Serial.printf(__VA_ARGS__)
 #else
 #define MIP_DEBUG_INFO_PRINT(...)
 #define MIP_DEBUG_INFO_PRINTLN(...)
@@ -155,7 +155,7 @@ class MiP {
   static constexpr uint8_t MIP_CMD_GET_STATUS = 0x79;
 
   // --- Fixed Hardware Pin for Pro Mini UART Multiplexer ---
-  static constexpr uint8_t UART_SELECT_PIN = 6; // Hardcoded to Pin 6!
+  static constexpr uint8_t UART_SELECT_PIN = 6;  // Hardcoded to Pin 6!
 
   /**
    * @brief Integer error codes that can be encountered by the MiP library.
@@ -180,7 +180,7 @@ class MiP {
    * @brief Initializes the core UART connection to the MiP robot.
    *
    * Attempts connection at both 115200 and 9600 baud rates with retries.
-   * Sets up debug output on Serial1 and prepares internal state.
+   * Sets up debug output on Serial and prepares internal state.
    *
    * @return true if successfully connected to MiP, false otherwise.
    */
@@ -221,9 +221,12 @@ class MiP {
   bool isInitialized();
 
   /**
-   * @brief Queries whether the hardware UART multiplexer is currently routed to the MiP.
+   * @brief Queries whether the hardware UART multiplexer is currently routed to
+   * the MiP.
    */
-  bool isSerialGoingToMiP() const { return m_serialGoingToMiP; }
+  bool isSerialGoingToMiP() const {
+    return m_serialGoingToMiP;
+  }
 
   // Error Handling.
   /**
@@ -260,7 +263,7 @@ class MiP {
 
   /**
    * @brief Prints a human-readable description of the last error to the debug
-   *        channel (Serial1).
+   *        channel (Serial).
    */
   void printLastCallResult();
 
@@ -318,8 +321,6 @@ class MiP {
   // See MPU_Weight.h for reading MiP's weight.
   MiP_Weight weight;
 
-  bool isSerialGoingToMiP() const { return m_serialGoingToMiP; }
-
  protected:
   void clear();
 
@@ -329,7 +330,7 @@ class MiP {
   void switchSerialToMiP();
   void switchSerialToPC();
 
-  bool   m_serialGoingToMiP; ///< Current state of the multiplexer switch
+  bool m_serialGoingToMiP;  ///< Current state of the multiplexer switch
 
   /**
    * @brief Assert mechanism that logs the failure location and then halts.
@@ -378,6 +379,7 @@ class MiP {
   uint8_t m_flags;
   int8_t m_lastError;
   MiPStatus m_lastStatus;
+  uint8_t m_serialSelectPin;
 };
 
-#endif  // MPU_PRO_MINI_H
+#endif  // MIP_POWER_UP_PRO_MINI_H

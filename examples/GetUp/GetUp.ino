@@ -14,7 +14,7 @@
  *   - Command MiP to fall forward on the tray.
  *   - Attempt to get up again.
  *
- * The sketch prints status messages to Serial1 so the user can observe the
+ * The sketch prints status messages to Serial so the user can observe the
  * sequence. The example exercises the following API calls:
  *   - motion.fallForward()
  *   - motion.getUp()
@@ -42,33 +42,33 @@ MiP mip;
  *
  * @details Called once after the board powers up or resets. This function:
  *   - Initializes communication with the MiP robot via mip.begin().
- *   - If the connection fails, prints an error to Serial1 and returns early.
+ *   - If the connection fails, prints an error to Serial and returns early.
  *   - Commands MiP to get up from the kickstand then fall forward, wait 
  *     briefly, then attempt to get up from the tray.
- *   - Prints progress and completion messages to Serial1.
+ *   - Prints progress and completion messages to Serial.
  */
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("GetUp.ino: Failed connecting to MiP!"));
+    Serial.println(F("GetUp.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("GetUp.ino: Get up from the kickstand and tray."));
+  Serial.println(F("GetUp.ino: Get up from the kickstand and tray."));
 
-  Serial1.println(F(" Getting up from kickstand."));
+  Serial.println(F(" Getting up from kickstand."));
   mip.motion.getUp(MIP_GETUP_FROM_BACK);
   delay(1000);
 
-  Serial1.println(F(" Falling forward."));
+  Serial.println(F(" Falling forward."));
   mip.motion.fallForward();
   delay(1000);
 
-  Serial1.println(F(" Getting up again."));
+  Serial.println(F(" Getting up again."));
   mip.motion.getUp(MIP_GETUP_FROM_FRONT);
   delay(3000);
 
-  Serial1.println(F("GetUp.ino: Done."));
+  Serial.println(F("GetUp.ino: Done."));
 }
 
 /**

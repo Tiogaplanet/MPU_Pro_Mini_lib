@@ -6,7 +6,7 @@
  * This sketch connects to a MiP robot and demonstrates how to set the device
  * volume using sound.writeVolume() and then read the current volume back using
  * sound.readVolume(). The example sets the volume to the predefined constant
- * MIP_VOLUME_OFF (mute) and prints the resulting volume level to Serial1.
+ * MIP_VOLUME_OFF (mute) and prints the resulting volume level to Serial.
  *
  * The example exercises these API calls:
  *   - sound.writeVolume()
@@ -41,19 +41,19 @@ MiP mip;
  *
  * @details
  * - Initializes the MiP connection via mip.begin().
- * - If the connection fails, prints an error to Serial1 and returns early.
+ * - If the connection fails, prints an error to Serial and returns early.
  * - On success, sets the MiP volume to MIP_VOLUME_OFF using writeVolume(),
  *   reads the current volume back with readVolume(), and prints the value to
- *   Serial1 for verification.
+ *   Serial for verification.
  */
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("Volume.ino: Failed connecting to MiP!"));
+    Serial.println(F("Volume.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(
+  Serial.println(
     F("Volume.ino: Use sound.readVolume() and sound.writeVolume(). Set "
       "volume level to off (0) and read out afterwards."));
 
@@ -63,11 +63,11 @@ void setup() {
   // Read the current volume level from the device.
   uint8_t volume = mip.sound.readVolume();
 
-  Serial1.print(F(" Volume = "));
-  Serial1.println(volume);
+  Serial.print(F(" Volume = "));
+  Serial.println(volume);
 
-  Serial1.println();
-  Serial1.println(F("Volume.ino: Done."));
+  Serial.println();
+  Serial.println(F("Volume.ino: Done."));
 }
 
 /**

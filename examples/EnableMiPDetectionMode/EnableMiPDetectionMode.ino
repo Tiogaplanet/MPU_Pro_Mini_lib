@@ -64,7 +64,7 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to Serial1 and setup
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. The function then demonstrates disabling detection mode and
  * verifying the disabled state, followed by enabling detection mode with the
  * configured ID and IR power and verifying the enabled state.
@@ -78,25 +78,25 @@ bool connectResult;
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial1.println(F("EnableMiPDetectionMode.ino: Failed connecting to MiP!"));
+    Serial.println(F("EnableMiPDetectionMode.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial1.println(F("EnableMiPDetectionMode.ino: Enable MiP to be discovered "
+  Serial.println(F("EnableMiPDetectionMode.ino: Enable MiP to be discovered "
                     "by another MiP using IR."));
 
   /* Ensure detection mode is off and verify. */
   mip.infrared.disableMiPDetectionMode();
 
   if (!mip.infrared.isMiPDetectionModeEnabled()) {
-    Serial1.println(F(" I am not discoverable."));
+    Serial.println(F(" I am not discoverable."));
   }
 
   /* Enable detection mode with configured ID and IR transmit power. */
   mip.infrared.enableMiPDetectionMode(MIP_ID_NO, MIP_IR_TX_POWER);
 
   if (mip.infrared.isMiPDetectionModeEnabled()) {
-    Serial1.println(F(" Now I can be discovered."));
+    Serial.println(F(" Now I can be discovered."));
   }
 }
 
@@ -106,7 +106,7 @@ void setup() {
  * @details Polls for detected MiP events using
  * infrared.availableDetectedMiPEvents(). When an event is available,
  * infrared.readDetectedMiP() returns the detected MiP ID, which is printed to
- * Serial1 in hexadecimal format.
+ * Serial in hexadecimal format.
  *
  * API usage in this function:
  *   - mip.infrared.availableDetectedMiPEvents()
@@ -117,8 +117,8 @@ void loop() {
     return;  // If connecting to MiP failed in setup(), exit now.
 
   if (mip.infrared.availableDetectedMiPEvents()) {
-    Serial1.print(F(" I detected MiP with ID number "));
-    Serial1.println(mip.infrared.readDetectedMiP(), HEX);
+    Serial.print(F(" I detected MiP with ID number "));
+    Serial.println(mip.infrared.readDetectedMiP(), HEX);
   }
 }
 
