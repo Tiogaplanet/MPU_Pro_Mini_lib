@@ -155,7 +155,7 @@ class MiP {
   static constexpr uint8_t MIP_CMD_GET_STATUS = 0x79;
 
   // --- Fixed Hardware Pin for Pro Mini UART Multiplexer ---
-  static constexpr uint8_t UART_SELECT_PIN = 2; // Hardcoded to Pin 2!
+  static constexpr uint8_t UART_SELECT_PIN = 6; // Hardcoded to Pin 6!
 
   /**
    * @brief Integer error codes that can be encountered by the MiP library.
@@ -318,6 +318,8 @@ class MiP {
   // See MPU_Weight.h for reading MiP's weight.
   MiP_Weight weight;
 
+  bool isSerialGoingToMiP() const { return m_serialGoingToMiP; }
+
  protected:
   void clear();
 
@@ -327,8 +329,6 @@ class MiP {
   void switchSerialToMiP();
   void switchSerialToPC();
 
-  // --- Pro Mini Hardware Member Variables ---
-  int8_t m_serialSelectPin;  ///< Digital pin controlling the 2:1 multiplexer (e.g. Pin 6)
   bool   m_serialGoingToMiP; ///< Current state of the multiplexer switch
 
   /**
