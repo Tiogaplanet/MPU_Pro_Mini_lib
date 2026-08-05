@@ -34,7 +34,7 @@ jobs:
           for example in $HOME/Arduino/libraries/MPU_Pro_Mini_lib/examples/*; do
             if [ -d "$example" ]; then
               echo "Building $example..."
-              arduino-cli compile --warnings all "$example"
+              arduino-cli compile --warnings all --fqbn arduino:avr:pro:cpu=16MHzatmega328 "$example"
             fi
           done
 
