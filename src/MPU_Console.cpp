@@ -2,17 +2,19 @@
  * @file MPU_Console.cpp
  * @brief Auto-switching UART console for sending debug text to the PC.
  *
- * This component handles sending text and debug messages to the PC / FTDI
+ * @details This component handles sending text and debug messages to the PC / FTDI
  * Serial Monitor over the Arduino Pro Mini's single hardware UART. It
  * automatically toggles the hardware UART multiplexer to PC before writing
  * and restores it back to the MiP robot afterward.
  *
- * @author Adam Green, Samuel Trassare
- * @date 2026-08-04
- * @version 2.0.0
- * @copyright Apache License, Version 2.0
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  */
-
 #include "MPU_Console.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
