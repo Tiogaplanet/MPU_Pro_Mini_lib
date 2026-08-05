@@ -379,7 +379,7 @@ class MiP {
   uint8_t m_flags;
   int8_t m_lastError;
   MiPStatus m_lastStatus;
-  uint8_t m_serialSelectPin;
+  int8_t m_serialSelectPin;
 };
 
 #endif  // MIP_POWER_UP_PRO_MINI_H
