@@ -24,6 +24,12 @@ jobs:
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v2
 
+      # Required: install the AVR core so the FQBN works
+      - name: Install Arduino AVR core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
+          
       - name: Install Local Library
         run: |
           mkdir -p $HOME/Arduino/libraries
