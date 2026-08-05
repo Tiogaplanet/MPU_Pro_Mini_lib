@@ -62,7 +62,7 @@
 //  * If MiP connection or LittleFS mount fails, the function halts in a safe loop
 //  * after printing an error so loop() will not run and cause further errors.
 //  */
-// void setup() {
+ void setup() {
 //   // Initialize MiP and record result in global flag.
 //   bool connectResult = mip.begin();
 
@@ -142,7 +142,7 @@
 //   delay(5000);
 //   mip.chestLED.write(0x00, 0xFF, 0x00);
 //   Serial.println(F("LittleFS.ino: Done."));
-// }
+ }
 
 // /**
 //  * @brief Arduino loop function.
@@ -151,6 +151,6 @@
 //  * This example performs its demonstration in setup() and does not require
 //  * repeated work in loop().
 //  */
-// void loop() {
-// }
+ void loop() {
+ }
 
