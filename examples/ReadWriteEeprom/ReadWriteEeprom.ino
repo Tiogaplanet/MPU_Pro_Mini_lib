@@ -82,7 +82,7 @@ void setup() {
     F("ReadWriteEEPROM.ino: Writes data to EEPROM and reads it back."));
 
   Serial.print(F(" Original password: "));
-  Serial.printf("0x%02X\n\r", secretPassword);
+  // Fix use of Serial.printf later.  Serial.printf("0x%02X\n\r", secretPassword);
 
   /* Write the secret password to the MiP's user EEPROM at the configured
    * offset. Comment out this line to test persistence across power cycles.
@@ -94,12 +94,12 @@ void setup() {
    */
   secretPassword = 0xFF;
   Serial.print(F(" Scrambled password: "));
-  Serial.printf("0x%02X\n\r", secretPassword);
+  // Fix use of Serial.printf later.  Serial.printf("0x%02X\n\r", secretPassword);
 
   /* Read the stored value back from EEPROM and print it. */
   recoveredPassword = mip.eeprom.read(eepromAddressOffset);
   Serial.print(F(" Recovered password: "));
-  Serial.printf("0x%02X\n\r", recoveredPassword);
+  // Fix use of Serial.printf later.  Serial.printf("0x%02X\n\r", recoveredPassword);
 
   Serial.println(F("ReadWriteEeprom.ino: Done."));
 }
