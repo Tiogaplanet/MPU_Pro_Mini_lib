@@ -1,4 +1,4 @@
-name: Deploy Doxygen to GitHub Wiki
+name: Deploy Doxygen API Docs to GitHub Wiki
 
 on:
   push:
@@ -8,36 +8,49 @@ on:
 jobs:
   deploy-wiki:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
 
-      - name: Install Doxygen and Doxybook2
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Doxygen & Python
         run: |
           sudo apt-get update
-          sudo apt-get install -y doxygen
-          wget https://github.com/matusnovak/doxybook2/releases/download/v2.1.0/doxybook2-linux-amd64.zip
-          unzip doxybook2-linux-amd64.zip -d /usr/local/bin/
+          sudo apt-get install -y doxygen python3-pip
+          pip3 install doxygen2md
 
       - name: Generate Doxygen XML
         run: doxygen Doxyfile
 
-      - name: Convert XML to Markdown
-        run: doxybook2 --input xml --output wiki_output
+      - name: Convert Doxygen XML to Markdown
+        run: |
+          mkdir -p wiki_markdown
+          # doxygen2md converts the generated Doxygen XML directory into Markdown files
+          doxygen2md xml/ wiki_markdown/
 
       - name: Checkout Wiki Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}.wiki
           path: wiki_repo
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Copy & Push to Wiki
+      - name: Commit and Push to Wiki
         run: |
-          cp -r wiki_output/* wiki_repo/
+          # Copy generated markdown files into wiki repository
+          cp -r wiki_markdown/* wiki_repo/
           cd wiki_repo
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
           git add .
-          git diff-index --quiet HEAD || git commit -m "Auto-update API docs from Doxygen"
-          git push
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Auto-update API documentation from Doxygen"
+            git push
+          else
+            echo "No changes to commit to Wiki."
+          fi
