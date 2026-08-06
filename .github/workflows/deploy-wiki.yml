@@ -26,13 +26,17 @@ jobs:
           # Generate default Doxyfile
           doxygen -g
           
-          # Configure Doxygen to scan header/source files and exclude markdown/build artifacts
+          # Enable XML generation and point to source headers/files
           sed -i 's/GENERATE_XML           = NO/GENERATE_XML           = YES/' Doxyfile
           sed -i 's/XML_OUTPUT             = xml/XML_OUTPUT             = xml/' Doxyfile
           sed -i 's/GENERATE_HTML          = YES/GENERATE_HTML          = NO/' Doxyfile
           sed -i 's/GENERATE_LATEX         = YES/GENERATE_LATEX         = NO/' Doxyfile
           sed -i 's/RECURSIVE              = NO/RECURSIVE              = YES/' Doxyfile
           sed -i 's/EXCLUDE_PATTERNS       =/EXCLUDE_PATTERNS       = *.md/' Doxyfile
+          
+          # Point Doxygen to your Arduino examples directory and include .ino files
+          sed -i 's|EXAMPLE_PATH           =|EXAMPLE_PATH           = examples|' Doxyfile
+          sed -i 's|FILE_PATTERNS          =|FILE_PATTERNS          = *.h *.cpp *.ino|' Doxyfile
           
           # Run doxygen
           doxygen Doxyfile
