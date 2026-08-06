@@ -13,7 +13,7 @@ MiP is a hacker friendly self-balancing robot. WowWee not only provides the [MiP
 *   Detect the MiP's current pose via its inertial sensors, the same sensors that make its balancing magic possible.
 *   And more!
   
-Be sure to check out the [MiP Power Up: Pro Mini](https://github.com/Tiogaplanet/MiP_Power_Up_Pro_Mini) (Coming soon) which conveniently allows you to mount an Arduino Pro Mini to MiP's battery compartment.
+Be sure to check out the [MiP Power Up - Pro Mini](https://github.com/Tiogaplanet/MPU_Pro_Mini) (Coming soon) which conveniently allows you to mount an Arduino Pro Mini to MiP's battery compartment.
 
 ## Acknowledgement
 *   This project is a fork of adamgreen's [MiP ProMini-Pack](https://github.com/adamgreen/MiP_ProMini-Pack) which is in turn based on the now retired Sparkfun MiP ProMini Pack. 
