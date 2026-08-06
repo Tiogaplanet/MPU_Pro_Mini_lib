@@ -72,7 +72,7 @@ bool MiP_Serial::processAllResponseData() {
         m_expectedResponseCommand = 0;
         m_expectedResponseSize = 0;
         m_responseBuffer[0] = 0;
-        char buf;
+        char buf[48];
         snprintf(buf,
                  sizeof(buf),
                  "MiP: Response too short: %d, %d\r\n",
@@ -234,7 +234,7 @@ bool MiP_Serial::readIrLength(size_t& length) {
 
   if (length < 2 || length > 4) {
     uint8_t discarded = discardUnexpectedSerialData();  // ← add this
-    char buf;
+    char buf[48];
     snprintf(buf,
              sizeof(buf),
              "MiP: Bad IR code length: 0x%02x (discarded %d bytes)\r\n",
