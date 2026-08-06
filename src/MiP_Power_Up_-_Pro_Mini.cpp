@@ -13,6 +13,9 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
+// For debugging messages.
+#define MIP_INTERNAL_COMPILE
+
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
 // Number of times that begin() method should try to initialize the MiP.
@@ -56,7 +59,7 @@ MiP::MiP()
 void MiP::switchSerialToMiP() {
   if (!m_serialGoingToMiP) {
     digitalWrite(UART_SELECT_PIN, HIGH);
-    delayMicroseconds(50);               // let the mux settle
+    delayMicroseconds(50);  // let the mux settle
     m_serialGoingToMiP = true;
   }
 }
@@ -68,7 +71,7 @@ void MiP::switchSerialToMiP() {
 void MiP::switchSerialToPC() {
   if (m_serialGoingToMiP) {
     digitalWrite(UART_SELECT_PIN, LOW);
-    delayMicroseconds(50);               // let the mux settle
+    delayMicroseconds(50);  // let the mux settle
     m_serialGoingToMiP = false;
   }
 }
@@ -214,7 +217,9 @@ void MiP::dispatchEvent(uint8_t command,
       break;
     default:
       // An unknown OOB event was received.
-      MIP_DEBUG_WARN_PRINTF("MiP: Unknown OOB Event: 0x%02X\n", command);
+      char buf;
+      snprintf(buf, sizeof(buf), "MiP: Unknown OOB Event: 0x%02X\n", command);
+      MIP_DEBUG_WARN_PRINT(buf);
       break;
   }
 }
@@ -231,7 +236,7 @@ void MiP::clear() {
   // Default: UART routed to the PC / FTDI
   pinMode(UART_SELECT_PIN, OUTPUT);
   digitalWrite(UART_SELECT_PIN, LOW);  // LOW = PC
-  m_serialGoingToMiP = false;           // matches the HIGH above
+  m_serialGoingToMiP = false;          // matches the HIGH above
 
   clap.clear();
   gesture.clear();
@@ -263,7 +268,9 @@ int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
   switchSerialToPC();
 
   if (result == MIP_ERROR_NONE) {
-    MIP_DEBUG_INFO_PRINTF("MiP: Connected at %lu baud\r\n", baudRate);
+    char buf;
+    snprintf(buf, sizeof(buf), "MiP: Connected at %lu baud\r\n", baudRate);
+    MIP_DEBUG_INFO_PRINT(buf);
   } else {
     delay(MIP_BEGIN_RETRY_WAIT);
   }
@@ -307,8 +314,13 @@ void MiP::mipAssert(bool condition, uint32_t lineNumber, const char* fileName) {
   (void)lineNumber;
   (void)fileName;
   if (!condition) {
-    MIP_DEBUG_ERROR_PRINTF(
-        "MiP: Assert failed in file %s at line: %d\n", fileName, lineNumber);
+    char buf;
+    snprintf(buf,
+             sizeof(buf),
+             "MiP: Assert failed in file %s at line: %d\n",
+             fileName,
+             lineNumber);
+    MIP_DEBUG_ERROR_PRINT(buf);
     while (true) {
       delay(100);
     }

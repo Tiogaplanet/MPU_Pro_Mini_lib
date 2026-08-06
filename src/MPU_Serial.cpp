@@ -13,6 +13,9 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
+// For debugging messages.
+#define MIP_INTERNAL_COMPILE
+
 #include "MPU_Serial.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -69,8 +72,13 @@ bool MiP_Serial::processAllResponseData() {
         m_expectedResponseCommand = 0;
         m_expectedResponseSize = 0;
         m_responseBuffer[0] = 0;
-        MIP_DEBUG_ERROR_PRINTF(
-            "MiP: Response too short: %d, %d\r\n", bytesRead, bytesToRead * 2);
+        char buf;
+        snprintf(buf,
+                 sizeof(buf),
+                 "MiP: Response too short: %d, %d\r\n",
+                 bytesRead,
+                 bytesToRead * 2);
+        m_mip.MIP_DEBUG_ERROR_PRINT(buf);
         break;
       }
     } else {
@@ -181,11 +189,14 @@ void MiP_Serial::processOobResponseData(uint8_t commandByte) {
       break;
 
     default: {
-      uint8_t discarded = discardUnexpectedSerialData();  // ← add this
-      MIP_DEBUG_ERROR_PRINTF(
-          "MiP: Bad OOB command byte: 0x%02x (discarded %d bytes)\r\n",
-          commandByte,
-          discarded);
+      uint8_t discarded = discardUnexpectedSerialData();
+      char buf[64];
+      snprintf(buf,
+               sizeof(buf),
+               "MiP: Bad OOB command byte: 0x%02x (discarded %d bytes)\r\n",
+               commandByte,
+               discarded);
+      m_mip.MIP_DEBUG_ERROR_PRINT(buf);
     }
       return;
   }
@@ -194,8 +205,13 @@ void MiP_Serial::processOobResponseData(uint8_t commandByte) {
   uint8_t buffer[4 * 2];  // max payload for IR dongle code is 4 bytes
   bytesRead = Serial.readBytes(buffer, length * 2);
   if (bytesRead != length * 2) {
-    MIP_DEBUG_ERROR_PRINTF(
-        "MiP: OOB too short: %d, %d\r\n", bytesRead, length * 2);
+    char buf[30];  // Ensure this size is large enough for the entire string
+    snprintf(buf,
+             sizeof(buf),
+             "MiP: OOB too short: %d, %d\r\n",
+             bytesRead,
+             length * 2);
+    m_mip.MIP_DEBUG_ERROR_PRINT(buf);
     return;
   }
 
@@ -210,7 +226,7 @@ void MiP_Serial::processOobResponseData(uint8_t commandByte) {
 bool MiP_Serial::readIrLength(size_t& length) {
   uint8_t nibbles[2];
   if (Serial.readBytes(nibbles, sizeof(nibbles)) != sizeof(nibbles)) {
-    MIP_DEBUG_ERROR_PRINTLN(F("MiP: Missing IR code length"));
+    m_mip.MIP_DEBUG_ERROR_PRINTLN(F("MiP: Missing IR code length"));
     return false;
   }
 
@@ -218,10 +234,13 @@ bool MiP_Serial::readIrLength(size_t& length) {
 
   if (length < 2 || length > 4) {
     uint8_t discarded = discardUnexpectedSerialData();  // ← add this
-    MIP_DEBUG_ERROR_PRINTF(
-        "MiP: Bad IR code length: 0x%02x (discarded %d bytes)\r\n",
-        static_cast<unsigned>(length),
-        discarded);
+    char buf;
+    snprintf(buf,
+             sizeof(buf),
+             "MiP: Bad IR code length: 0x%02x (discarded %d bytes)\r\n",
+             static_cast<unsigned>(length),
+             discarded);
+    m_mip.MIP_DEBUG_ERROR_PRINT(buf);
     return false;
   }
   return true;

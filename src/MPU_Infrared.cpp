@@ -13,6 +13,9 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
+ // For debugging messages.
+#define MIP_INTERNAL_COMPILE
+
 #include "MPU_Infrared.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
