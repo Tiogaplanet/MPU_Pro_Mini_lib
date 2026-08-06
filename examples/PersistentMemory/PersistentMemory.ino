@@ -1,156 +1,115 @@
 /**
-//  * @file LittleFS.ino
-//  * @brief Robust LittleFS read/write example with MiP chest-LED verification.
-//  *
-//  * @details
-//  * This sketch is a LittleFS-based rewrite of the original SPIFFS example.
-//  * It mounts the LittleFS filesystem onboard the D1 mini, writes a short 
-//  * password to a temporary file, reads it back, compares the contents, and
-//  * indicates success or failure using the MiP chest LED:
-//  *   - Violet when the read matches the written password.
-//  *   - Red when the read does not match or an error occurs.
-//  * After verification, the temporary file is removed and the chest LED is
-//  * restored to green.
-//  *
-//  * Safety and robustness improvements:
-//  *   - Verifies return values from LittleFS.begin(), LittleFS.open(), and
-//  *     LittleFS.remove().
-//  *   - Checks File objects before reading/writing.
-//  *   - Prints clear diagnostic messages to Serial.
-//  *
-//  * Demonstrates these APIs:
-//  *   - begin()
-//  *   - chestLED.write()
-//  *   - LittleFS.begin(), LittleFS.open(), LittleFS.remove()
-//  *
-//  * This sketch primarily shows how MiP can be used as an output device, rather
-//  * than strictly testing MiP or its API.
-//  *
-//  * Notes:
-//  *   - LittleFS is provided by the ESP8266 core for Wemos D1 mini boards.
-//  *
-//  * @author Samuel Trassare (Original Author)
-//  * @copyright Copyright (C) 2018-2026 Samuel Trassare
-//  * (https://github.com/Tiogaplanet) Licensed under the Apache License,
-//  * Version 2.0 (the "License"); you may not use this file except in compliance
-//  * with the License. You may obtain a copy of the License at
-//  * http://www.apache.org/licenses/LICENSE-2.0
-//  */
-// #include <MiP_Power_Up_-_Pro_Mini.h>
-// #include <FS.h>
-// #include <LittleFS.h>
+* @file PersistentMemory.ino
+* @brief Robust EEPROM read/write example with MiP chest-LED verification.
+*
+* @details
+Uses the internal EEPROM.
+ * Writes a password to EEPROM starting at address 0, reads it back, compares
+ * the contents, and indicates success or failure using MiP's chest LED:
+ *   - Violet when the read matches the written password.
+ *   - Red when the read does not match or an error occurs.
+ * After verification, the chest LED is restored to green.
+ *
+ * Demonstrates these APIs:
+ *   - EEPROM.put(), EEPROM.get()
+ *   - mip.begin()
+ *   - mip.chestLED.write()
+ *
+ * This sketch primarily shows how MiP can be used as an output device, rather
+ * than strictly testing MiP or its API.
+  *
+  *
+ * @author Samuel Trassare (Original Author)
+  * @copyright Copyright (C) 2018-2026 Samuel Trassare
+  * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+  * Version 2.0 (the "License"); you may not use this file except in compliance
+  * with the License. You may obtain a copy of the License at
+  * http://www.apache.org/licenses/LICENSE-2.0
+  */
+#include <Arduino.h>
+#include <EEPROM.h>
+#include <MiP_Power_Up_-_Pro_Mini.h>
 
-// /**
-//  * @brief Global MiP instance used to communicate with the robot.
-//  *
-//  * @details Use this object to call MiP API functions such as begin(), etc.
-//  */
-// MiP mip;
+/**
+ * @brief Global MiP instance used to communicate with the robot.
+ *
+ * @details Use this object to call MiP API functions such as begin(), etc.
+ */
+MiP mip;
 
-// /**
-//  * @brief Arduino setup function.
-//  *
-//  * @details
-//  * - Initializes Serial for diagnostics.
-//  * - Attempts to initialize the MiP connection via mip.begin() and sets the
-//  *   global `connectResult` flag.
-//  * - Mounts LittleFS and verifies success.
-//  * - Writes a password to /f.txt, reads it back, trims whitespace, compares
-//  *   to the original, and sets the chest LED to violet on match or red on mismatch.
-//  * - Deletes the temporary file and restores the chest LED to green after a delay.
-//  *
-//  * If MiP connection or LittleFS mount fails, the function halts in a safe loop
-//  * after printing an error so loop() will not run and cause further errors.
-//  */
- void setup() {
-//   // Initialize MiP and record result in global flag.
-//   bool connectResult = mip.begin();
+// Starting EEPROM address where password data will be stored
+const int EEPROM_START_ADDR = 0;
 
-//   if (!connectResult) {
-//     Serial.println(F("LittleFS.ino: Failed connecting to MiP!"));
-//     return;
-//   }
+/**
+ * @brief Arduino setup function.
+ *
+ * @details
+ * - Initializes Serial for diagnostics.
+ * - Attempts to initialize the MiP connection via mip.begin() and sets the
+ *   global `connectResult` flag.
+ * - Mounts LittleFS and verifies success.
+ * - Writes a password to /f.txt, reads it back, trims whitespace, compares
+ *   to the original, and sets the chest LED to violet on match or red on
+ * mismatch.
+ * - Deletes the temporary file and restores the chest LED to green after a
+ * delay.
+ *
+ * If MiP connection or LittleFS mount fails, the function halts in a safe loop
+ * after printing an error so loop() will not run and cause further errors.
+ */
+void setup() {
+  // Initialize MiP connection
+  bool connectResult = mip.begin();
 
-//   const String password = "1234secret";
+  if (!connectResult) {
+    Serial.println(F("PersistentMemory: Failed connecting to MiP!"));
+    return;
+  }
 
-//   Serial.println(F("LittleFS.ino: Read and write the LittleFS flash file system."));
-//   Serial.println(F("Chest turns violet if the read matches the write, else red."));
+  // Define test password as fixed-size char array to save RAM on ATmega328P
+  const char writePassword[16] = "1234secret";
+  char readPassword[16] = { 0 };
 
-//   // Mount the LittleFS filesystem and verify success.
-//   if (!LittleFS.begin()) {
-//     Serial.println(F("LittleFS.ino: LittleFS failed to mount."));
-//     // Indicate error on chest LED (red) and stop.
-//     mip.chestLED.write(0xFF, 0x00, 0x00);
-//     while (true) {
-//       delay(1000);
-//     }
-//   }
-//   Serial.println(F("LittleFS mounted."));
+  Serial.println(
+    F("PersistentMemory: Read and write internal EEPROM on Pro Mini."));
+  Serial.println(F("Chest turns violet if read matches write, else red."));
 
-//   // Write the password to a temporary file.
-//   {
-//     File f = LittleFS.open("/f.txt", "w");
-//     if (!f) {
-//       Serial.println(F("LittleFS.ino: File creation failed."));
-//     } else {
-//       f.println(password);
-//       f.close();
-//       Serial.println(F("LittleFS.ino: Wrote password to /f.txt"));
-//     }
-//   }
+  // Write password structure to EEPROM
+  EEPROM.put(EEPROM_START_ADDR, writePassword);
+  Serial.println(F("PersistentMemory: Wrote password to EEPROM address 0."));
 
-//   // Read the file back and compare.
-//   String line;
-//   {
-//     File f = LittleFS.open("/f.txt", "r");
-//     if (!f) {
-//       Serial.println(F("LittleFS.ino: Failed to open /f.txt for reading."));
-//       // Indicate error on chest LED (red).
-//       mip.chestLED.write(0xFF, 0x00, 0x00);
-//     } else {
-//       // Read the first line (file contains one line in this example).
-//       line = f.readStringUntil('\n');
-//       f.close();
+  // Read password structure back from EEPROM
+  EEPROM.get(EEPROM_START_ADDR, readPassword);
 
-//       line.trim();
+  Serial.print(F(" Password is: "));
+  Serial.println(writePassword);
+  Serial.print(F(" EEPROM contained: "));
+  Serial.println(readPassword);
 
-//       Serial.print(F(" Password is "));
-//       Serial.println(password);
-//       Serial.print(F(" File contained "));
-//       Serial.println(line);
+  // Compare read data against written data
+  if (strcmp(writePassword, readPassword) == 0) {
+    // Violet: R=0xB6, G=0x00, B=0xFF
+    mip.chestLED.write(0xB6, 0x00, 0xFF);
+    Serial.println(
+      F(" PersistentMemory: Read matches write. Chest set to violet."));
+  } else {
+    // Red: R=0xFF, G=0x00, B=0x00
+    mip.chestLED.write(0xFF, 0x00, 0x00);
+    Serial.println(
+      F(" PersistentMemory: Read does NOT match write. Chest set to red."));
+  }
 
-//       if (line == password) {
-//         // Violet: R=0xB6, G=0x00, B=0xFF
-//         mip.chestLED.write(0xB6, 0x00, 0xFF);
-//         Serial.println(F(" LittleFS.ino: Read matches write. Chest set to violet."));
-//       } else {
-//         // Red: R=0xFF, G=0x00, B=0x00
-//         mip.chestLED.write(0xFF, 0x00, 0x00);
-//         Serial.println(F(" LittleFS.ino: Read does NOT match write. Chest set to red."));
-//       }
-//     }
-//   }
+  // Allow observing chest LED, then restore to green
+  delay(5000);
+  mip.chestLED.write(0x00, 0xFF, 0x00);
+  Serial.println(F("PersistentMemory: Done."));
+}
 
-//   // Attempt to remove the temporary file and report result.
-//   if (LittleFS.remove("/f.txt")) {
-//     Serial.println(F(" File deleted."));
-//   } else {
-//     Serial.println(F(" Error deleting file /f.txt."));
-//   }
-
-//   // Allow the user to observe the chest LED color, then restore to green.
-//   delay(5000);
-//   mip.chestLED.write(0x00, 0xFF, 0x00);
-//   Serial.println(F("LittleFS.ino: Done."));
- }
-
-// /**
-//  * @brief Arduino loop function.
-//  *
-//  * @details
-//  * This example performs its demonstration in setup() and does not require
-//  * repeated work in loop().
-//  */
- void loop() {
- }
-
+/**
+ * @brief Arduino loop function.
+ *
+ * @details
+ * This example performs its demonstration in setup() and does not require
+ * repeated work in loop().
+ */
+void loop() {}
