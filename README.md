@@ -19,7 +19,7 @@ Be sure to check out the [MiP Power Up - Pro Mini](https://github.com/Tiogaplane
 *   This project is a fork of adamgreen's [MiP ProMini-Pack](https://github.com/adamgreen/MiP_ProMini-Pack) which is in turn based on the now retired Sparkfun MiP ProMini Pack. 
 
 ## Installation
-*  The MiP Power Up: Pro Mini library is intended for use with the Arduino IDE.  Installation is the same as for other libraries.  Download the zip and select `Sketch->Include Library->Add .ZIP Library...`.  Browse to the downloaded zip file and the Arduino IDE will do the rest.
+*  The MiP Power Up - Pro Mini library is intended for use with the Arduino IDE.  Installation is the same as for other libraries.  Download the zip and select `Sketch->Include Library->Add .ZIP Library...`.  Browse to the downloaded zip file and the Arduino IDE will do the rest.
 
 ## Usage
 A very thorough guide to using the MiP Power Up - Pro Mini library is provided in the [wiki](https://github.com/Tiogaplanet/MiP_Power_Up_Pro_Mini_lib/wiki). (Coming soon.)
