@@ -55,10 +55,8 @@ MiP::MiP()
  */
 void MiP::switchSerialToMiP() {
   if (!m_serialGoingToMiP) {
-    if (m_serialSelectPin >= 0) {
-      digitalWrite(m_serialSelectPin,
-                   LOW);  // LOW = Route Hardware UART to MiP Robot
-    }
+    digitalWrite(UART_SELECT_PIN, HIGH);
+    delayMicroseconds(50);               // let the mux settle
     m_serialGoingToMiP = true;
   }
 }
@@ -69,10 +67,8 @@ void MiP::switchSerialToMiP() {
  */
 void MiP::switchSerialToPC() {
   if (m_serialGoingToMiP) {
-    if (m_serialSelectPin >= 0) {
-      digitalWrite(m_serialSelectPin,
-                   HIGH);  // HIGH = Route Hardware UART to PC / FTDI
-    }
+    digitalWrite(UART_SELECT_PIN, LOW);
+    delayMicroseconds(50);               // let the mux settle
     m_serialGoingToMiP = false;
   }
 }
@@ -82,35 +78,28 @@ MiP::~MiP() {
 }
 
 bool MiP::begin() {
-  // Initialize the class members.
-  clear();
+  clear();  // mux → PC
 
-  Serial.begin(MIP_FAST_BAUD_RATE);
+  Serial.begin(MIP_FAST_BAUD_RATE);  // start at 115200
 
-  // Switch UART Multiplexer to MiP (Pin 2 = LOW)
-  switchSerialToMiP();
-
-  // Assume that the connection to MiP will be successfully initialized. Will
-  // clear the flag if a connection error is detected. If this wasn't done then
-  // the calls to rawSend() and rawGetStatus() below would fail.
   m_flags |= MIP_FLAG_INITIALIZED;
 
-  // Sometimes the init fails. It seems to happen when the MiP is busy at
-  // power-up doing other things like attempting to balance.
-  int8_t retry;
-  for (retry = 0; retry < MIP_MAX_BEGIN_RETRIES; retry++) {
-    // Try to connect at 115200 baud, the rate used by some MiPs.
-    int8_t result = attemptMiPConnection(MIP_FAST_BAUD_RATE);
-    if (result == MIP_ERROR_NONE)
+  for (int8_t retry = 0; retry < MIP_MAX_BEGIN_RETRIES; ++retry) {
+    if (attemptMiPConnection(MIP_FAST_BAUD_RATE) == MIP_ERROR_NONE) {
+      // Keep 115200 – this is what the console & monitor expect
+      switchSerialToMiP();
       return true;
+    }
 
-    // Try to connect at 9600 baud if the fast attempt failed.
-    result = attemptMiPConnection(MIP_SLOW_BAUD_RATE);
-    if (result == MIP_ERROR_NONE)
+    if (attemptMiPConnection(MIP_SLOW_BAUD_RATE) == MIP_ERROR_NONE) {
+      // MiP only spoke at 9600.  Switch the UART back to 115200
+      // so the console works, then leave the mux on the MiP.
+      Serial.begin(MIP_FAST_BAUD_RATE);
+      switchSerialToMiP();
       return true;
+    }
   }
 
-  // Get here if the connection attempt to MiP never succeeds.
   m_flags &= ~MIP_FLAG_INITIALIZED;
   end();
   return false;
@@ -238,10 +227,12 @@ void MiP::clear() {
   m_flags = 0;
   m_lastError = MIP_ERROR_NONE;
   m_lastStatus.clear();
-  // Set Pin 6 as OUTPUT and default to PC (HIGH)
+
+  // Default: UART routed to the PC / FTDI
   pinMode(UART_SELECT_PIN, OUTPUT);
-  digitalWrite(UART_SELECT_PIN, HIGH);
-  m_serialSelectPin = 6;
+  digitalWrite(UART_SELECT_PIN, LOW);  // LOW = PC
+  m_serialGoingToMiP = false;           // matches the HIGH above
+
   clap.clear();
   gesture.clear();
   infrared.clear();
@@ -253,30 +244,27 @@ void MiP::clear() {
 // This internal protected method provides the common code for connection
 // attempts at baud rates of 115200 or 9600.
 int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
-  // Set baud rate to specified rate.
+  // Make sure we are talking to the MiP for this attempt
+  switchSerialToMiP();
+
   Serial.begin(baudRate);
 
-  // Send 0xFF to the MiP via UART to enable the UART communication channel in
-  // the MiP.
+  // 0xFF tells the MiP to enable its UART
   const uint8_t initMipCommand[] = {0xFF};
   serial.rawSend(initMipCommand, sizeof(initMipCommand));
+  delay(30);  // required by the MiP docs
 
-  // The MiP UART documentation indicates that this delay is required after
-  // sending 0xFF.
-  delay(30);
-
-  // Flush any outstanding junk data in receive buffer.
   serial.discardUnexpectedSerialData();
 
-  // Attempt to get MiP's latest status to see if the connection was
-  // successful or not.
   int8_t result = rawGetStatus(m_lastStatus);
+
+  // ALWAYS put the mux back to the PC when we are done probing.
+  // The caller (begin) will switch it to MiP only on final success.
+  switchSerialToPC();
+
   if (result == MIP_ERROR_NONE) {
-    // Let the user know at which baud rate the connection to MiP was made.
-    MIP_DEBUG_INFO_PRINTF("MiP: Connected at %d baud\n\r", baudRate);
+    MIP_DEBUG_INFO_PRINTF("MiP: Connected at %lu baud\r\n", baudRate);
   } else {
-    // Sleep a bit before returning to code which will retry connection at
-    // alternate baud rate.
     delay(MIP_BEGIN_RETRY_WAIT);
   }
   return result;

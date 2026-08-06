@@ -155,7 +155,7 @@ class MiP {
   static constexpr uint8_t MIP_CMD_GET_STATUS = 0x79;
 
   // --- Fixed Hardware Pin for Pro Mini UART Multiplexer ---
-  static constexpr uint8_t UART_SELECT_PIN = 6;  // Hardcoded to Pin 6!
+  static constexpr uint8_t UART_SELECT_PIN = 2;  // Hardcoded to Pin 6!
 
   /**
    * @brief Integer error codes that can be encountered by the MiP library.
@@ -379,7 +379,6 @@ class MiP {
   uint8_t m_flags;
   int8_t m_lastError;
   MiPStatus m_lastStatus;
-  int8_t m_serialSelectPin;
 };
 
 #endif  // MIP_POWER_UP_PRO_MINI_H

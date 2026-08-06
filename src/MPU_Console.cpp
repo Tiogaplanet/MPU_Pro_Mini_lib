@@ -2,8 +2,8 @@
  * @file MPU_Console.cpp
  * @brief Auto-switching UART console for sending debug text to the PC.
  *
- * @details This component handles sending text and debug messages to the PC / FTDI
- * Serial Monitor over the Arduino Pro Mini's single hardware UART. It
+ * @details This component handles sending text and debug messages to the PC /
+ * FTDI Serial Monitor over the Arduino Pro Mini's single hardware UART. It
  * automatically toggles the hardware UART multiplexer to PC before writing
  * and restores it back to the MiP robot afterward.
  *
@@ -125,6 +125,7 @@ size_t MiP_Console::write(uint8_t byte) {
 
   // 3. Perform physical write to HardwareSerial TX pin
   size_t result = Serial.write(byte);
+  Serial.flush();  // <-- critical
 
   // 4. Restore multiplexer back to MiP if it was active before this print call
   if (needToRestore) {
@@ -158,6 +159,7 @@ size_t MiP_Console::write(const uint8_t* pBuffer, size_t size) {
 
   // 3. Perform physical write to HardwareSerial TX pin
   size_t result = Serial.write(pBuffer, size);
+  Serial.flush();  // <-- critical
 
   // 4. Restore multiplexer back to MiP if it was active before this print call
   if (needToRestore) {

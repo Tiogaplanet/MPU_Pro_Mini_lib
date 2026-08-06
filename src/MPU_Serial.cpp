@@ -143,8 +143,7 @@ void MiP_Serial::transportSendRequest(const uint8_t* pRequest,
   m_expectedResponseSize = 0;
   m_responseBuffer[0] = 0;
 
-  // Transmit the raw bytes (the MiP expects plain binary on the wire,
-  // but higher layers already supply the correct binary command bytes).
+  // MiP UART protocol = raw binary (same as BLE send side)
   while (requestLength-- > 0) {
     Serial.write(*pRequest++);
   }
@@ -182,7 +181,7 @@ void MiP_Serial::processOobResponseData(uint8_t commandByte) {
       break;
 
     default: {
-      discardUnexpectedSerialData();
+      uint8_t discarded = discardUnexpectedSerialData();  // ← add this
       MIP_DEBUG_ERROR_PRINTF(
           "MiP: Bad OOB command byte: 0x%02x (discarded %d bytes)\r\n",
           commandByte,
@@ -218,7 +217,7 @@ bool MiP_Serial::readIrLength(size_t& length) {
   length = (parseHexDigit(nibbles[0]) << 4) | parseHexDigit(nibbles[1]);
 
   if (length < 2 || length > 4) {
-    discardUnexpectedSerialData();
+    uint8_t discarded = discardUnexpectedSerialData();  // ← add this
     MIP_DEBUG_ERROR_PRINTF(
         "MiP: Bad IR code length: 0x%02x (discarded %d bytes)\r\n",
         static_cast<unsigned>(length),
