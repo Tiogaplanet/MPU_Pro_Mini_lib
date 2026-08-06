@@ -16,11 +16,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Doxygen & Python
+      - name: Install Doxygen
         run: |
           sudo apt-get update
-          sudo apt-get install -y doxygen python3-pip
-          pip3 install doxygen2md
+          sudo apt-get install -y doxygen
 
       - name: Generate Doxygen XML
         run: doxygen Doxyfile
@@ -28,8 +27,8 @@ jobs:
       - name: Convert Doxygen XML to Markdown
         run: |
           mkdir -p wiki_markdown
-          # doxygen2md converts the generated Doxygen XML directory into Markdown files
-          doxygen2md xml/ wiki_markdown/
+          # Run moxygen directly via npx to convert XML output into Markdown
+          npx moxygen xml/ -o wiki_markdown/API-Reference.md
 
       - name: Checkout Wiki Repository
         uses: actions/checkout@v4
@@ -40,7 +39,6 @@ jobs:
 
       - name: Commit and Push to Wiki
         run: |
-          # Copy generated markdown files into wiki repository
           cp -r wiki_markdown/* wiki_repo/
           cd wiki_repo
           
