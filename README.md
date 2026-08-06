@@ -3,7 +3,7 @@
 
 This project provides a library for the Arduino IDE and allows users to take control of [WowWee Labs'](https://github.com/WowWeeLabs/)  [MiP](https://wowwee.com/mip) robot.
 
-MiP is a hacker friendly self-balancing robot. WowWee not only provides the [MiP Protocol Specification on GitHub](https://github.com/WowWeeLabs/MiP-BLE-Protocol), they also provide a [4-pin hacker port](https://cdn.sparkfun.com/assets/learn_tutorials/2/8/5/HackingPortAnnotated.png), complete with JST connector, right on the mainboard. This connector makes it easy to connect an external controller such as the [Arduino Pro Mini](https://docs.arduino.cc/retired/boards/arduino-pro-mini/) or compatible boards and take control of your MiP. Once connected, you can:
+MiP is a hacker friendly self-balancing robot. WowWee not only provides the [MiP Protocol Specification on GitHub](https://github.com/WowWeeLabs/MiP-BLE-Protocol), they also provide a [4-pin serial port](https://cdn.sparkfun.com/assets/learn_tutorials/2/8/5/HackingPortAnnotated.png), complete with JST connector, right on the mainboard. This connector makes it easy to connect an external controller such as the [Arduino Pro Mini](https://docs.arduino.cc/retired/boards/arduino-pro-mini/) or compatible boards and take control of your MiP. Once connected, you can:
 *   Command the speed and direction of motion for the gravity defying MiP.
 *   Command the individual control (on, off, blink) of the 4 LED eye segments on the head.
 *   Take full control of the RGB LED in MiP's chest.
