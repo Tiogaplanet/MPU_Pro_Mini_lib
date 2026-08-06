@@ -22,7 +22,19 @@ jobs:
           sudo apt-get install -y doxygen
 
       - name: Generate Doxygen XML
-        run: doxygen Doxyfile
+        run: |
+          # Generate default Doxyfile
+          doxygen -g
+          
+          # Enable XML generation and point to source headers/files
+          sed -i 's/GENERATE_XML           = NO/GENERATE_XML           = YES/' Doxyfile
+          sed -i 's/XML_OUTPUT             = xml/XML_OUTPUT             = xml/' Doxyfile
+          sed -i 's/GENERATE_HTML          = YES/GENERATE_HTML          = NO/' Doxyfile
+          sed -i 's/GENERATE_LATEX         = YES/GENERATE_LATEX         = NO/' Doxyfile
+          sed -i 's/RECURSIVE              = NO/RECURSIVE              = YES/' Doxyfile
+          
+          # Run doxygen
+          doxygen Doxyfile
 
       - name: Convert Doxygen XML to Markdown
         run: |
