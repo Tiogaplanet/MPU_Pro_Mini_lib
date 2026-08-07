@@ -1,6 +1,6 @@
 /**
  * @file ReadWriteEEPROM.ino
- * @brief Example sketch demonstrating reading and writing MiP user EEPROM.
+ * @brief Example sketch demonstrating reading from and writing to MiP's EEPROM.
  *
  * @details
  * This sketch demonstrates how to store and retrieve a single byte of user
@@ -8,10 +8,9 @@
  * It writes a test value (secretPassword) to an EEPROM offset, then reads it
  * back and prints the original, scrambled, and recovered values to mip.console.
  *
- * The example shows how EEPROM data can be preserved across power cycles by
- * writing the value to the MiP device; to verify persistence, power-cycle
- * MiP (or comment out the write call and reload the sketch) and observe the
- * recovered value.
+ * The example shows how EEPROM data can be preserved across power cycles. To
+ * verify persistence, power-cycle MiP (or comment out the write call and reload
+ * the sketch) and observe the recovered value.
  *
  * The example exercises these API calls:
  *   - eeprom.read()
@@ -28,7 +27,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * eeprom.write(), and eeprom.read().
@@ -38,8 +37,8 @@ MiP mip;
 /**
  * @brief EEPROM address offset to use for storing user data.
  *
- * @details Valid offsets are typically in the range 0x00..0x0F for this
- * device. Change this value to store multiple independent bytes.
+ * @details Valid offsets are typically in the range 0x00..0x0F.
+ * Change this value to store multiple independent bytes.
  */
 const uint8_t eepromAddressOffset = 0x00;
 
@@ -59,7 +58,7 @@ uint8_t recoveredPassword;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes communication with the MiP via mip.begin().
+ * - Initializes communication with MiP via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - Prints the original secretPassword, writes it to EEPROM using
  *   eeprom.write(eepromAddressOffset, secretPassword), then scrambles the
@@ -73,6 +72,7 @@ uint8_t recoveredPassword;
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("ReadWriteEEPROM.ino: Failed connecting to MiP!"));
     return;
@@ -84,7 +84,7 @@ void setup() {
   mip.console.print(F(" Original password: "));
   // Fix use of mip.console.printf later.  mip.console.printf("0x%02X\n\r", secretPassword);
 
-  /* Write the secret password to the MiP's user EEPROM at the configured
+  /* Write the secret password to MiP's user EEPROM at the configured
    * offset. Comment out this line to test persistence across power cycles.
    */
   mip.eeprom.write(eepromAddressOffset, secretPassword);
@@ -101,7 +101,7 @@ void setup() {
   mip.console.print(F(" Recovered password: "));
   // Fix use of mip.console.printf later.  mip.console.printf("0x%02X\n\r", recoveredPassword);
 
-  mip.console.println(F("ReadWriteEeprom.ino: Done."));
+  mip.console.println(F("ReadWriteEEPROM.ino: Done."));
 }
 
 /**
