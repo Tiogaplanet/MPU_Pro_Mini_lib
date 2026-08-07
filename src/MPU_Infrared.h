@@ -56,7 +56,7 @@ class MiP_Infrared {
    * @brief Constructs the infrared manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Infrared(MiP& mip);
+  explicit MiP_Infrared(MiP& mip);
 
   /**
    * @brief Enables MiP detection mode (allows detecting other MiPs via IR).

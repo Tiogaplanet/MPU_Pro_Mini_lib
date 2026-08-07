@@ -34,7 +34,7 @@ class MiP_Console : public Stream {
    * @brief Constructs the Console manager.
    * @param mip Reference to the main MiP instance for multiplexer control.
    */
-  MiP_Console(MiP& mip);
+  explicit MiP_Console(MiP& mip);
 
   // --- Stream Interface Overrides ---
   virtual int available() override;
@@ -42,6 +42,7 @@ class MiP_Console : public Stream {
   virtual int peek() override;
 
   // --- Print Interface Overrides ---
+  using Print::write;
   virtual size_t write(uint8_t byte) override;
   virtual size_t write(const uint8_t* pBuffer, size_t size) override;
   virtual int availableForWrite() override;
@@ -51,20 +52,6 @@ class MiP_Console : public Stream {
   void begin(unsigned long baud = 115200);
   void begin(unsigned long baud, uint8_t mode);
   void end();
-
-  // --- Inline Disambiguation Overloads for Arduino Print API ---
-  inline size_t write(unsigned long n) {
-    return write((uint8_t)n);
-  }
-  inline size_t write(long n) {
-    return write((uint8_t)n);
-  }
-  inline size_t write(unsigned int n) {
-    return write((uint8_t)n);
-  }
-  inline size_t write(int n) {
-    return write((uint8_t)n);
-  }
 
   /**
    * @brief Boolean evaluation operator for Arduino stream checking.

@@ -72,7 +72,7 @@ class MiP_HeadLEDs {
    * @brief Constructs the eye LED manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_HeadLEDs(MiP& mip);
+  explicit MiP_HeadLEDs(MiP& mip);
 
   /**
    * @brief Reads the current state of all four head LEDs.

@@ -29,7 +29,7 @@ class MiP_Battery {
    * @brief Constructs the battery manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Battery(MiP& mip);
+  explicit MiP_Battery(MiP& mip);
 
   /**
    * @brief Reads MiP's cached battery voltage.

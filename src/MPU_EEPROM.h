@@ -50,7 +50,7 @@ class MiP_EEPROM {
    * @brief Constructs the EEPROM manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_EEPROM(MiP& mip);
+  explicit MiP_EEPROM(MiP& mip);
 
   /**
    * @brief Reads a byte from the MiP's user EEPROM area.

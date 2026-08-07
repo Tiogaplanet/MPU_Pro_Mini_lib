@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_HeadLEDs.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -23,7 +20,7 @@
 MiP_HeadLEDs::MiP_HeadLEDs(MiP& mip) : m_mip(mip) {}
 
 void MiP_HeadLEDs::read(MiPHeadLEDs& headLEDs) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->HeadLEDs->read()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->HeadLEDs->read()"));
   int8_t result;
 
   // Retry the read if it should fail on the first attempt.
@@ -45,7 +42,7 @@ void MiP_HeadLEDs::write(MiPHeadLED led1,
                          MiPHeadLED led2,
                          MiPHeadLED led3,
                          MiPHeadLED led4) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->HeadLEDs->write()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->HeadLEDs->write()"));
   int8_t result;
 
   // Send the set command and then issue the corresponding get command. Retry if
@@ -80,7 +77,7 @@ void MiP_HeadLEDs::write(MiPHeadLED led1,
 }
 
 void MiP_HeadLEDs::write(const MiPHeadLEDs& headLEDs) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->HeadLEDs->write()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->HeadLEDs->write()"));
   write(headLEDs.led1, headLEDs.led2, headLEDs.led3, headLEDs.led4);
 }
 
@@ -88,12 +85,12 @@ void MiP_HeadLEDs::unverifiedWrite(MiPHeadLED led1,
                                    MiPHeadLED led2,
                                    MiPHeadLED led3,
                                    MiPHeadLED led4) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->HeadLEDs->unverifiedWrite()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->HeadLEDs->unverifiedWrite()"));
   rawSet(led1, led2, led3, led4);
 }
 
 void MiP_HeadLEDs::unverifiedWrite(const MiPHeadLEDs& headLEDs) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->HeadLEDs->unverifiedWrite()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->HeadLEDs->unverifiedWrite()"));
   unverifiedWrite(headLEDs.led1, headLEDs.led2, headLEDs.led3, headLEDs.led4);
 }
 
@@ -115,7 +112,7 @@ int8_t MiP_HeadLEDs::rawGet(MiPHeadLEDs& headLEDs) {
   if (result)
     return result;
   if (responseLength != sizeof(response) ||
-      response[0] != (uint8_t)MIP_CMD_GET_HEAD_LEDS ||
+      response[0] != MIP_CMD_GET_HEAD_LEDS ||
       !isValidSingleLED(response[1]) || !isValidSingleLED(response[2]) ||
       !isValidSingleLED(response[3]) || !isValidSingleLED(response[4])) {
     return MiP::MIP_ERROR_BAD_RESPONSE;

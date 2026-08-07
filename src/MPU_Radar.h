@@ -63,7 +63,7 @@ class MiP_Radar {
    * @brief Constructs the radar manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Radar(MiP& mip);
+  explicit MiP_Radar(MiP& mip);
 
   void clear();
 

@@ -58,7 +58,7 @@ void setup() {
   }
 
   mip.console.println(F("HeadLEDs.ino: Use head LED functions. Should set each "
-                    "head LED to different state."));
+                        "head LED to different state."));
   mip.headLEDs.write(MIP_HEAD_LED_OFF, MIP_HEAD_LED_ON, MIP_HEAD_LED_BLINK_SLOW,
                      MIP_HEAD_LED_BLINK_FAST);
 
@@ -143,4 +143,3 @@ static void printLEDString(MiPHeadLED led) {
  * demonstration runs only once during initialization.
  */
 void loop() {}
-

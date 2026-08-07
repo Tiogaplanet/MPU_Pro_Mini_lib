@@ -44,7 +44,7 @@ class MiP_Position {
    * @brief Constructs the position manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Position(MiP& mip);
+  explicit MiP_Position(MiP& mip);
 
   /**
    * @brief Reads the current physical position or orientation of the MiP.

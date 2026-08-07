@@ -177,7 +177,7 @@ class MiP_Sound {
    * @brief Constructs the sound manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Sound(MiP& mip);
+  explicit MiP_Sound(MiP& mip);
 
   /**
    * @brief Starts a new sound list sequence.

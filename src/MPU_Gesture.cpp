@@ -32,18 +32,22 @@ void MiP_Gesture::processEvent(uint8_t gestureCode) {
 }
 
 void MiP_Gesture::enable() {
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->enable()"));
   verifiedSet(MIP_GESTURE);
 }
 
 void MiP_Gesture::disable() {
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->disable()"));
   verifiedSet(MIP_GESTURE_RADAR_DISABLED);
 }
 
 bool MiP_Gesture::isEnabled() {
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->isEnabled()"));
   return check(MIP_GESTURE);
 }
 
 uint8_t MiP_Gesture::availableEvents() {
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->availableEvents()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -52,6 +56,7 @@ uint8_t MiP_Gesture::availableEvents() {
 }
 
 MiPGesture MiP_Gesture::readEvent() {
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->readEvent()"));
   m_mip.serial.processAllResponseData();
   MiPGesture gestureEvent = MIP_GESTURE_INVALID;
   if (!m_gestureEvents.pop(gestureEvent)) {
@@ -70,11 +75,11 @@ bool MiP_Gesture::areGestureAndRadarModesDisabled() {
 // mode and then sends a request to get the new state. If this request fails or
 // the new state isn't as expected, it will retry the command.
 void MiP_Gesture::verifiedSet(MiPGestureMode desiredMode) {
-  int8_t result;
+  int8_t result = MiP::MIP_FLAG_RADAR_VALID;
 
   // Always mark cached RADAR data as invalid when changing modes.
-
   m_mip.m_flags &= ~MiP::MIP_FLAG_RADAR_VALID;
+
   for (uint8_t retry = 0; retry < MiP_Serial::MIP_MAX_RETRIES; retry++) {
     rawSet(desiredMode);
 

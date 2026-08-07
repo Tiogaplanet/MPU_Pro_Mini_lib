@@ -81,7 +81,7 @@ class MiP_Version {
    * @brief Constructs the Version manager.
    * @param mip A reference to the main MiP object for core services.
    */
-  MiP_Version(MiP& mip);
+  explicit MiP_Version(MiP& mip);
 
   /**
    * @brief Reads the MiP's software version information.

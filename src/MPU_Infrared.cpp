@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Infrared.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -31,13 +28,13 @@ void MiP_Infrared::clear() {
 }
 
 void MiP_Infrared::enableMiPDetectionMode(uint8_t id, uint8_t txPower) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->enableMiPDetectionMode()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->enableMiPDetectionMode()"));
   m_irId = id;
   rawSetMiPDetectionMode(id, txPower);
 }
 
 void MiP_Infrared::disableMiPDetectionMode() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->disableMiPDetectionMode()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->disableMiPDetectionMode()"));
   m_irId = MIP_IR_DETECTION_MODE_DISABLE;
 
   // According to WowWee documentation, TX power must be between 1 and 120 even
@@ -46,12 +43,12 @@ void MiP_Infrared::disableMiPDetectionMode() {
 }
 
 bool MiP_Infrared::isMiPDetectionModeEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->isMiPDetectionModeEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->isMiPDetectionModeEnabled()"));
   return m_irId > MIP_IR_DETECTION_MODE_DISABLE;
 }
 
 uint8_t MiP_Infrared::readDetectedMiP() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->readDetectedMiP()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->readDetectedMiP()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -65,7 +62,7 @@ uint8_t MiP_Infrared::readDetectedMiP() {
 }
 
 uint8_t MiP_Infrared::availableDetectedMiPEvents() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->availableDetectedMiPEvents()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->availableDetectedMiPEvents()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -74,16 +71,16 @@ uint8_t MiP_Infrared::availableDetectedMiPEvents() {
 }
 
 void MiP_Infrared::enableRemoteControl() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->enableIRRemoteControl()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->enableIRRemoteControl()"));
   verifiedRemoteControl(MIP_IR_REMOTE_CONTROL_ENABLE);
 }
 void MiP_Infrared::disableRemoteControl() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->disableIRRemoteControl()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->disableIRRemoteControl()"));
   verifiedRemoteControl(MIP_IR_REMOTE_CONTROL_DISABLE);
 }
 
 bool MiP_Infrared::isRemoteControlEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->isIRRemoteControlEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->isIRRemoteControlEnabled()"));
   const uint8_t remoteControlEnabled[1] = {MIP_CMD_GET_IR_REMOTE_CONTROL};
   uint8_t response[1 + 1];
   size_t responseLength;
@@ -106,7 +103,9 @@ bool MiP_Infrared::isRemoteControlEnabled() {
 }
 
 void MiP_Infrared::sendDongleCode(uint16_t sendCode, uint8_t transmitPower) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->sendIRDongleCode()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->sendIRDongleCode()"));
+  m_mip.MIP_ASSERT(transmitPower >= 1 && transmitPower <=120);
+  
   uint8_t command[1 + 6] = {MIP_CMD_SEND_IR_DONGLE_CODE,
                             0x00,
                             0x00,
@@ -118,10 +117,11 @@ void MiP_Infrared::sendDongleCode(uint16_t sendCode, uint8_t transmitPower) {
   // Send this command blindly with no error checking since there is no robust
   // way to determine if it has failed.
   m_mip.serial.rawSend(command, sizeof(command));
+  m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
 uint32_t MiP_Infrared::readDongleCode() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->readIRDongleCode()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->readIRDongleCode()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -135,7 +135,7 @@ uint32_t MiP_Infrared::readDongleCode() {
 }
 
 uint8_t MiP_Infrared::availableCodeEvents() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Infrared->availableIRCodeEvents()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->availableIRCodeEvents()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();

@@ -39,7 +39,7 @@ class MiP_Shake {
    * @brief Constructs the shake manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Shake(MiP& mip);
+  explicit MiP_Shake(MiP& mip);
 
   /**
    * @brief Checks whether the MiP has been shaken since the last call.

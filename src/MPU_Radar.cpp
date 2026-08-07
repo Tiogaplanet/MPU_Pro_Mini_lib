@@ -12,9 +12,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Radar.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -28,17 +25,17 @@ void MiP_Radar::clear() {
 }
 
 void MiP_Radar::enable() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Radar->enable()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Radar->enable()"));
   verifiedSet(MIP_RADAR);
 }
 
 void MiP_Radar::disable() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Radar->disable()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Radar->disable()"));
   verifiedSet(MIP_RADAR_DISABLED);
 }
 
 bool MiP_Radar::isEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Radar->isEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Radar->isEnabled()"));
   return check(MIP_RADAR);
 }
 
@@ -46,7 +43,7 @@ MiPRadar MiP_Radar::read() {
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
-  if ((m_mip.m_flags & m_mip.MIP_FLAG_RADAR_VALID) == 0) {
+  if ((m_mip.m_flags & MiP::MIP_FLAG_RADAR_VALID) == 0) {
     // Haven't received a radar event yet.
     m_mip.m_lastError = MiP::MIP_ERROR_NO_EVENT;
     return MIP_RADAR_INVALID;

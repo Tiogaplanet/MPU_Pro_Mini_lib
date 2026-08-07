@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include <Arduino.h>
 
 #include "MiP_Power_Up_-_Pro_Mini.h"
@@ -28,7 +25,7 @@ MiP_Weight::MiP_Weight(MiP& mip) : m_mip(mip) {
 
 void MiP_Weight::processEvent(int8_t weightValue) {
   m_lastWeight = weightValue;
-  m_mip.m_flags |= m_mip.MIP_FLAG_WEIGHT_VALID;
+  m_mip.m_flags |= MiP::MIP_FLAG_WEIGHT_VALID;
 }
 
 void MiP_Weight::clear() {
@@ -36,11 +33,11 @@ void MiP_Weight::clear() {
 }
 
 int8_t MiP_Weight::read() {
-  // MIP_DEBUG_INFO_PRINTLN("MiP->Weight->readWeight()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Weight->readWeight()"));
   //  Fetch bytes from the Serial receive buffer and process any event data
   //  found within.
   m_mip.serial.processAllResponseData();
-  if ((m_mip.m_flags & m_mip.MIP_FLAG_WEIGHT_VALID)) {
+  if ((m_mip.m_flags & MiP::MIP_FLAG_WEIGHT_VALID)) {
     // Have a cached weight event already, so just return it.
     m_mip.m_lastError = MiP::MIP_ERROR_NONE;
     return m_lastWeight;
@@ -57,7 +54,7 @@ int8_t MiP_Weight::read() {
       // Cache the returned value and return it to the caller.
       m_mip.m_lastError = MiP::MIP_ERROR_NONE;
       m_lastWeight = weight;
-      m_mip.m_flags |= m_mip.MIP_FLAG_WEIGHT_VALID;  // From the enum FlagBits
+      m_mip.m_flags |= MiP::MIP_FLAG_WEIGHT_VALID;  // From the enum FlagBits
                                                      // in MiP_Power_Up_-_Pro_Mini.h.
       return weight;
     }

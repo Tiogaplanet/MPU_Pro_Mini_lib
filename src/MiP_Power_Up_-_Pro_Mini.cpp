@@ -184,8 +184,8 @@ void MiP::dispatchEvent(uint8_t command,
     case MiP_Weight::MIP_CMD_GET_WEIGHT:
       // A weight event was found. Dispatch it to the Weight component.
       MIP_DEBUG_INFO_PRINT(
-          "MiP->Core->dispatchEvent(), in weight case. payload[1]: ");
-      MIP_DEBUG_INFO_PRINTLN(payload[1]);
+          *this, F("MiP->Core->dispatchEvent(), in weight case. payload[1]: "));
+      MIP_DEBUG_INFO_PRINTLN(*this, payload[1]);
       if (length >= 2) {
         weight.processEvent(payload[1]);
       }
@@ -220,7 +220,7 @@ void MiP::dispatchEvent(uint8_t command,
       // An unknown OOB event was received.
       char buf[48];
       snprintf(buf, sizeof(buf), "MiP: Unknown OOB Event: 0x%02X\n", command);
-      MIP_DEBUG_WARN_PRINT(buf);
+      MIP_DEBUG_WARN_PRINT(*this, buf);
       break;
   }
 }
@@ -271,7 +271,7 @@ int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
   if (result == MIP_ERROR_NONE) {
     char buf[48];
     snprintf(buf, sizeof(buf), "MiP: Connected at %lu baud\r\n", baudRate);
-    MIP_DEBUG_INFO_PRINT(buf);
+    MIP_DEBUG_INFO_PRINT(*this, buf);
   } else {
     delay(MIP_BEGIN_RETRY_WAIT);
   }
@@ -313,11 +313,13 @@ int8_t MiP::parseStatus(MiPStatus& status,
 
 void MiP::mipAssert(bool condition, uint32_t lineNumber, const char* fileName) {
   if (!condition) {
-    char buf[64];   // a bit larger is safer
-    snprintf(buf, sizeof(buf),
-             "MiP: Assert failed in file %s at line: %lu\n",
-             fileName,
-             static_cast<unsigned long>(lineNumber));  // or just %lu with the cast
+    char buf[64];  // a bit larger is safer
+    snprintf(
+        buf,
+        sizeof(buf),
+        "MiP: Assert failed in file %s at line: %lu\n",
+        fileName,
+        static_cast<unsigned long>(lineNumber));  // or just %lu with the cast
     MIP_DEBUG_ERROR_PRINT(*this, buf);
     while (true) {
       delay(100);

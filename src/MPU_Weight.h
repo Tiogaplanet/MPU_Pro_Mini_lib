@@ -41,7 +41,7 @@ class MiP_Weight {
    * @brief Constructs the Weight manager.
    * @param mip A reference to the main MiP object for core services.
    */
-  MiP_Weight(MiP& mip);
+  explicit MiP_Weight(MiP& mip);
 
   void processEvent(int8_t weightValue);
 

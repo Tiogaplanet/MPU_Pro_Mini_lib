@@ -12,7 +12,7 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
+// For debugging messages.
 #define MIP_INTERNAL_COMPILE
 
 #include "MPU_Motion.h"
@@ -20,8 +20,7 @@
 
 // Implement the constructor to store the MiP reference.
 MiP_Motion::MiP_Motion(MiP& mip) : m_mip(mip) {
-  m_lastContinuousDriveTime =
-      millis() - MIP_CONTINUOUS_DRIVE_DELAY;
+  m_lastContinuousDriveTime = millis() - MIP_CONTINUOUS_DRIVE_DELAY;
 }
 
 void MiP_Motion::continuousDrive(int8_t velocity, int8_t turnRate) {
@@ -33,7 +32,7 @@ void MiP_Motion::continuousDrive(int8_t velocity, int8_t turnRate) {
   // Ignore requests if they come in too fast so that it can be done in a
   // tight loop but not overload MiP.
   if (millis() - m_lastContinuousDriveTime < MIP_CONTINUOUS_DRIVE_DELAY) {
-    m_mip.m_lastError = m_mip.MIP_ERROR_NONE;
+    m_mip.m_lastError = MiP::MIP_ERROR_NONE;
     return;
   }
   m_lastContinuousDriveTime = millis();
@@ -49,7 +48,7 @@ void MiP_Motion::continuousDrive(int8_t velocity, int8_t turnRate) {
   // Send this command blindly with no error checking since there is no way to
   // determine if it has failed.
   m_mip.serial.rawSend(command, sizeof(command));
-  m_mip.m_lastError = m_mip.MIP_ERROR_NONE;
+  m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
 void MiP_Motion::distanceDrive(MiPDriveDirection driveDirection,
@@ -69,16 +68,18 @@ void MiP_Motion::distanceDrive(MiPDriveDirection driveDirection,
   // Send this command blindly with no error checking since there is no way to
   // determine if it has failed.
   m_mip.serial.rawSend(command, sizeof(command));
-  m_mip.m_lastError = m_mip.MIP_ERROR_NONE;
+  m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
 void MiP_Motion::driveForward(uint8_t speed, uint16_t time) {
-  // The time parameter is in units of 7 milliseconds.
-  uint8_t command[1 + 2];
-
   m_mip.MIP_ASSERT(speed <= 30);
   m_mip.MIP_ASSERT(time <= 255 * 7);
 
+  if (time > 255 * 7)
+    time = 255 * 7;
+
+  // The time parameter is in units of 7 milliseconds.
+  uint8_t command[1 + 2];
   command[0] = MIP_CMD_DRIVE_FORWARD;
   command[1] = speed;
   command[2] = time / 7;
@@ -86,16 +87,18 @@ void MiP_Motion::driveForward(uint8_t speed, uint16_t time) {
   // Send this command blindly with no error checking since there is no way to
   // determine if it has failed.
   m_mip.serial.rawSend(command, sizeof(command));
-  m_mip.m_lastError = m_mip.MIP_ERROR_NONE;
+  m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
 void MiP_Motion::driveBackward(uint8_t speed, uint16_t time) {
-  // The time parameters is in units of 7 milliseconds.
-  uint8_t command[1 + 2];
-
   m_mip.MIP_ASSERT(speed <= 30);
   m_mip.MIP_ASSERT(time <= 255 * 7);
 
+  if (time > 255 * 7)
+    time = 255 * 7;
+
+  // The time parameters is in units of 7 milliseconds.
+  uint8_t command[1 + 2];
   command[0] = MIP_CMD_DRIVE_BACKWARD;
   command[1] = speed;
   command[2] = time / 7;
@@ -139,7 +142,7 @@ void MiP_Motion::turnRight(uint16_t degrees, uint8_t speed) {
   // Send this command blindly with no error checking since there is no way to
   // determine if it has failed.
   m_mip.serial.rawSend(command, sizeof(command));
-  m_mip.m_lastError = m_mip.MIP_ERROR_NONE;
+  m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
 void MiP_Motion::stop() {

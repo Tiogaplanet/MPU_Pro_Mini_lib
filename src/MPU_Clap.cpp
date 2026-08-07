@@ -12,9 +12,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-// For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Clap.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -24,16 +21,16 @@ MiP_Clap::MiP_Clap(MiP& mip) : m_mip(mip) {
 }
 
 void MiP_Clap::enableEvents() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Clap->enableClapEvents()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Clap->enableClapEvents()"));
   checkedEnableEvents(MIP_CLAP_ENABLED);
 }
 void MiP_Clap::disableEvents() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Clap->disableEvents()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Clap->disableEvents()"));
   checkedEnableEvents(MIP_CLAP_DISABLED);
 }
 
 bool MiP_Clap::areEventsEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Clap->areEventsEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Clap->areEventsEnabled()"));
   MiPClapSettings settings;
   int8_t result = readSettings(settings);
   if (result != MiP::MIP_ERROR_NONE) {
@@ -45,7 +42,7 @@ bool MiP_Clap::areEventsEnabled() {
 }
 
 uint8_t MiP_Clap::availableEvents() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Clap->availableEvents()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Clap->availableEvents()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -55,7 +52,7 @@ uint8_t MiP_Clap::availableEvents() {
 }
 
 uint8_t MiP_Clap::readEvent() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Clap->readEvent()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Clap->readEvent()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -75,7 +72,7 @@ void MiP_Clap::processEvent(uint8_t clapCode) {
 }
 
 uint16_t MiP_Clap::readDelay() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Clap->readDelay()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Clap->readDelay()"));
   MiPClapSettings settings;
   int8_t result = readSettings(settings);
   if (result != MiP::MIP_ERROR_NONE) {
@@ -87,7 +84,7 @@ uint16_t MiP_Clap::readDelay() {
 }
 
 void MiP_Clap::writeDelay(uint16_t delayTime) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Clap->writeDelay()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Clap->writeDelay()"));
   int8_t result;
 
   // Send the set command and then issue the corresponding get command. Retry if

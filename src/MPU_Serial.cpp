@@ -41,12 +41,10 @@ uint8_t MiP_Serial::rawReceive(const uint8_t request[],
 bool MiP_Serial::processAllResponseData() {
   bool responseFound = false;
   uint8_t buffer[(MIP_RESPONSE_MAX_LEN - 1) * 2];
-  size_t bytesToRead;
-  size_t bytesRead;
+  size_t bytesToRead = 0;
+  size_t bytesRead = 0;
 
   while (Serial.available() >= 2) {
-    // Every MiP message starts with two hex ASCII digits that form the command
-    // byte.
     uint8_t highNibble = Serial.read();
     uint8_t lowNibble = Serial.read();
     uint8_t commandByte =
@@ -54,32 +52,35 @@ bool MiP_Serial::processAllResponseData() {
 
     if (m_expectedResponseCommand != 0 &&
         commandByte == m_expectedResponseCommand) {
-      // This is the reply we are waiting for.
       m_responseBuffer[0] = commandByte;
 
       bytesToRead = m_expectedResponseSize - 1;
-      bytesRead = Serial.readBytes(buffer, bytesToRead * 2);
+      bytesRead =
+          Serial.readBytes(reinterpret_cast<char*>(buffer), bytesToRead * 2);
 
       if (bytesRead == bytesToRead * 2) {
         copyHexTextToBinary(&m_responseBuffer[1], buffer, bytesToRead);
         responseFound = true;
-        // Keep draining the buffer so later OOB events are not lost.
       } else {
-        // Incomplete response – abandon this attempt.
+        // Reset expected response tracking state upon incomplete read
         m_expectedResponseCommand = 0;
         m_expectedResponseSize = 0;
         m_responseBuffer[0] = 0;
-        char buf[48];
+
+        // CRITICAL FIX: Flush trailing partial nibbles from RX buffer to
+        // prevent byte misalignment
+        discardUnexpectedSerialData();
+
+        char buf[64];
         snprintf(buf,
                  sizeof(buf),
-                 "MiP: Response too short: %d, %d\r\n",
-                 bytesRead,
-                 bytesToRead * 2);
+                 "MiP: Response too short: %u, expected %u\r\n",
+                 static_cast<unsigned>(bytesRead),
+                 static_cast<unsigned>(bytesToRead * 2));
         MIP_DEBUG_ERROR_PRINT(m_mip, buf);
         break;
       }
     } else {
-      // Not the expected reply → treat as Out-Of-Band notification.
       processOobResponseData(commandByte);
     }
   }
@@ -202,7 +203,7 @@ void MiP_Serial::processOobResponseData(uint8_t commandByte) {
   uint8_t buffer[4 * 2];  // max payload for IR dongle code is 4 bytes
   bytesRead = Serial.readBytes(buffer, length * 2);
   if (bytesRead != length * 2) {
-    char buf[30];  // Ensure this size is large enough for the entire string
+    char buf[64];  // Ensure this size is large enough for the entire string
     snprintf(buf,
              sizeof(buf),
              "MiP: OOB too short: %d, %d\r\n",

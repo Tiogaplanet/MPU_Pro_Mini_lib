@@ -61,7 +61,7 @@
 
 // Default to NONE if not defined by the user in the sketch.
 #ifndef MIP_DEBUG_LEVEL
-#define MIP_DEBUG_LEVEL MIP_DEBUG_ERROR
+#define MIP_DEBUG_LEVEL MIP_DEBUG_INFO
 #endif
 
 // Create the macros for conditional printing of debug messages via console.
@@ -70,7 +70,7 @@
   (mip).console.print(F("[ERROR] "));   \
   (mip).console.print(__VA_ARGS__)
 #define MIP_DEBUG_ERROR_PRINTLN(mip, ...) \
-  (mip).console.print(F("[ERROR] "));   \
+  (mip).console.print(F("[ERROR] "));     \
   (mip).console.println(__VA_ARGS__)
 #else
 #define MIP_DEBUG_ERROR_PRINT(...)
@@ -78,10 +78,10 @@
 #endif
 #if MIP_DEBUG_LEVEL >= MIP_DEBUG_WARN
 #define MIP_DEBUG_WARN_PRINT(mip, ...) \
-  (mip).console.print(F("[WARN] "));    \
+  (mip).console.print(F("[WARN] "));   \
   (mip).console.print(__VA_ARGS__)
 #define MIP_DEBUG_WARN_PRINTLN(mip, ...) \
-  (mip).console.print(F("[WARN] "));    \
+  (mip).console.print(F("[WARN] "));     \
   (mip).console.println(__VA_ARGS__)
 #else
 #define MIP_DEBUG_WARN_PRINT(...)
@@ -89,10 +89,10 @@
 #endif
 #if MIP_DEBUG_LEVEL >= MIP_DEBUG_INFO
 #define MIP_DEBUG_INFO_PRINT(mip, ...) \
-  (mip).console.print(F("[INFO] "));    \
+  (mip).console.print(F("[INFO] "));   \
   (mip).console.print(__VA_ARGS__)
 #define MIP_DEBUG_INFO_PRINTLN(mip, ...) \
-  (mip).console.print(F("[INFO] "));    \
+  (mip).console.print(F("[INFO] "));     \
   (mip).console.println(__VA_ARGS__)
 #else
 #define MIP_DEBUG_INFO_PRINT(...)

@@ -81,7 +81,7 @@ class MiP_Motion {
    * @brief Constructs the drive system manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Motion(MiP& mip);
+  explicit MiP_Motion(MiP& mip);
 
   /**
    * @brief Sends continuous drive command (velocity + turn rate).

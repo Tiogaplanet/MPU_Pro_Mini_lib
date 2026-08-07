@@ -12,61 +12,58 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
 // Implement the constructor to store the MiP reference.
 MiP_Mode::MiP_Mode(MiP& mip) : m_mip(mip) {}
 
 void MiP_Mode::enableApp() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->enableApp()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->enableApp()"));
   verifiedSet(MIP_APP_MODE);
 }
 void MiP_Mode::enableCage() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->enableCage()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->enableCage()"));
   verifiedSet(MIP_CAGE_MODE);
 }
 void MiP_Mode::enableDance() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->enableDance()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->enableDance()"));
   verifiedSet(MIP_DANCE_MODE);
 }
 void MiP_Mode::enableStack() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->enableStack()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->enableStack()"));
   verifiedSet(MIP_STACK_MODE);
 }
 void MiP_Mode::enableTrick() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->enableTrick()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->enableTrick()"));
   verifiedSet(MIP_TRICK_MODE);
 }
 void MiP_Mode::enableRoam() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->enableRoam()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->enableRoam()"));
   verifiedSet(MIP_ROAM_MODE);
 }
 
 bool MiP_Mode::isAppEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->isAppEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->isAppEnabled()"));
   return check(MIP_APP_MODE);
 }
 bool MiP_Mode::isCageEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->isCageEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->isCageEnabled()"));
   return check(MIP_CAGE_MODE);
 }
 bool MiP_Mode::isDanceEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->isDanceEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->isDanceEnabled()"));
   return check(MIP_DANCE_MODE);
 }
 bool MiP_Mode::isStackEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->isStackEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->isStackEnabled()"));
   return check(MIP_STACK_MODE);
 }
 bool MiP_Mode::isTrickEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->isTrickEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->isTrickEnabled()"));
   return check(MIP_TRICK_MODE);
 }
 bool MiP_Mode::isRoamEnabled() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->isRoamEnabled()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->isRoamEnabled()"));
   return check(MIP_ROAM_MODE);
 }
 
@@ -75,7 +72,7 @@ bool MiP_Mode::isRoamEnabled() {
 // ==========================================================================
 
 bool MiP_Mode::check(MiPGameMode expectedMode) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Mode->check()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Mode->check()"));
   int8_t result;
   for (uint8_t retry = 0; retry < MiP_Serial::MIP_MAX_RETRIES; retry++) {
     MiPGameMode currentMode;
@@ -108,7 +105,7 @@ void MiP_Mode::rawSet(MiPGameMode mode) {
 int8_t MiP_Mode::rawGet(MiPGameMode& mode) {
   const uint8_t getGameMode[1] = {MIP_CMD_GET_GAME_MODE};
   uint8_t response[1 + 1];
-  size_t responseLength;
+  size_t responseLength = 0;
 
   // Might not accept get game mode command when currently running a game mode
   // so Stop first.

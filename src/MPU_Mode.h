@@ -54,7 +54,7 @@ class MiP_Mode {
    * @brief Constructs the mode manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Mode(MiP& mip);
+  explicit MiP_Mode(MiP& mip);
 
   /**
    * @brief Switches MiP into App Mode.

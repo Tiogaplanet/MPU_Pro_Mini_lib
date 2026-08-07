@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_EEPROM.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -23,14 +20,14 @@
 MiP_EEPROM::MiP_EEPROM(MiP& mip) : m_mip(mip) {}
 
 uint8_t MiP_EEPROM::read(uint8_t addressOffset) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->EEPROM->read()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->EEPROM->read()"));
   uint8_t address = BASE_EEPROM_ADDRESS + addressOffset;
 
   // Address must be between 0x20 and 0x2F, inclusive.
   m_mip.MIP_ASSERT(BASE_EEPROM_ADDRESS <= address &&
                    address <= LAST_EEPROM_ADDRESS);
 
-  int8_t result;
+  int8_t result = MiP::MIP_ERROR_NONE;
 
   // Retry the read if it should fail on the first attempt.
   for (uint8_t retry = 0; retry < MiP_Serial::MIP_MAX_RETRIES; retry++) {
@@ -50,14 +47,14 @@ uint8_t MiP_EEPROM::read(uint8_t addressOffset) {
 }
 
 void MiP_EEPROM::write(uint8_t addressOffset, uint8_t userData) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->EEPROM->write()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->EEPROM->write()"));
   uint8_t address = BASE_EEPROM_ADDRESS + addressOffset;
 
   // Address must be between 0x20 and 0x2F, inclusive.
   m_mip.MIP_ASSERT(BASE_EEPROM_ADDRESS <= address &&
                    address <= LAST_EEPROM_ADDRESS);
 
-  int8_t result;
+  int8_t result = MiP::MIP_ERROR_NONE;
 
   for (uint8_t retry = 0; retry < MiP_Serial::MIP_MAX_RETRIES; retry++) {
     rawWrite(address, userData);

@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Sound.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -33,24 +30,17 @@ void MiP_Sound::beginList() {
 }
 
 void MiP_Sound::addEntryToList(MiPSoundIndex sound,
-                               uint16_t delayTime /* = 0 */,
-                               MiPVolume volume /* = MIP_VOLUME_DEFAULT */) {
-  // Must call beginSoundList() before calling this function.
+                               uint16_t delayTime,
+                               MiPVolume volume) {
   m_mip.MIP_ASSERT(m_soundIndex != -1);
-
-  // Delay is in units of 30 msecs and can't exceed 255 * 30.
   m_mip.MIP_ASSERT(delayTime <= 255 * 30);
-
-  // Volume can only be set to values between 0 and 7 or 0xFF (which means keep
-  // volume as it was).
   m_mip.MIP_ASSERT(volume <= MIP_VOLUME_7 || volume == MIP_VOLUME_DEFAULT);
 
-  // Need to issue volume command if volume is being changed and
-  // if we have to inject a volume instruction, verify we don't overflow the
-  // buffer.
+  // If a custom volume is specified for this entry and differs from current
+  // list volume
   if (volume != MIP_VOLUME_DEFAULT && volume != m_playVolume) {
-    // Safe check to prevent index 18 out-of-bounds write.
-    // The sound list can only hold 8 sound entries.
+    // CRITICAL FIX: Assert list bounds prior to injecting inline volume change
+    // instruction
     m_mip.MIP_ASSERT(m_soundIndex < 8);
     m_playCommand[1 + m_soundIndex * 2] = MIP_SOUND_VOLUME_OFF + volume;
     m_playCommand[1 + m_soundIndex * 2 + 1] = 0;
@@ -58,10 +48,11 @@ void MiP_Sound::addEntryToList(MiPSoundIndex sound,
     m_soundIndex++;
   }
 
-  // The sound list can only hold 8 sound entries.
+  // Assert list bounds prior to adding sound entry
   m_mip.MIP_ASSERT(m_soundIndex < 8);
   m_playCommand[1 + m_soundIndex * 2] = sound;
-  m_playCommand[1 + m_soundIndex * 2 + 1] = delayTime / 30;
+  m_playCommand[1 + m_soundIndex * 2 + 1] =
+      static_cast<uint8_t>(delayTime / 30);
   m_soundIndex++;
 
   m_mip.m_lastError = MiP::MIP_ERROR_NONE;

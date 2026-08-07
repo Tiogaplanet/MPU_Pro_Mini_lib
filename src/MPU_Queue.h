@@ -42,11 +42,11 @@ class CircularQueue {
     m_writeIndex = 0;
   }
 
-  bool isEmpty() {
+  bool isEmpty() const {
     return m_count == 0;
   }
 
-  uint8_t available() {
+  uint8_t available() const {
     return m_count;
   }
 

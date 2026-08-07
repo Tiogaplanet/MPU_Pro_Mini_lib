@@ -12,9 +12,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Odometer.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -22,7 +19,7 @@
 MiP_Odometer::MiP_Odometer(MiP& mip) : m_mip(mip) {}
 
 float MiP_Odometer::read() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Odometer->read()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Odometer->read()"));
   int8_t result;
 
   // Retry the read if it should fail on the first attempt.
@@ -43,7 +40,7 @@ float MiP_Odometer::read() {
 }
 
 void MiP_Odometer::reset() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Odometer->reset()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Odometer->reset()"));
   uint8_t command[1] = {MIP_CMD_RESET_ODOMETER};
 
   // Send this command blindly with no error checking since there is no robust
@@ -51,6 +48,7 @@ void MiP_Odometer::reset() {
   // TODO: Not true.  Read the odometer.  If the value is greater than 0.0, call
   // reset, then check for 0.0.
   m_mip.serial.rawSend(command, sizeof(command));
+  m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
 // ==========================================================================

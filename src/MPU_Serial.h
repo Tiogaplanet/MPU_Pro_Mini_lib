@@ -49,7 +49,7 @@ class MiP_Serial {
    * @brief Constructs the serial port manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Serial(MiP& mip);
+  explicit MiP_Serial(MiP& mip);
 
   /**
    * @brief Sends a raw command to the MiP (fire-and-forget).

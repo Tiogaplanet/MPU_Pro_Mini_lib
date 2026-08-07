@@ -68,7 +68,7 @@ class MiP_Gesture {
    * @brief Constructs the gesture subsystem manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Gesture(MiP& mip);
+  explicit MiP_Gesture(MiP& mip);
 
   /**
    * @brief Enables gesture detection mode on the MiP.

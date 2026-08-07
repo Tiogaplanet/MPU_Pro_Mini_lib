@@ -15,9 +15,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Console.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -39,10 +36,17 @@ void MiP_Console::initIfNeeded() {
 }
 
 /**
- * @brief Initializes the HardwareSerial port at 115200 baud 8N1 (required by
+ * @brief Initializes the HardwareSerial port at the specified baud.
+ * @param baud Baud rate parameter.  Should be 115200 or 9600.
+ */
+void MiP_Console::begin(unsigned long baud) {
+  Serial.begin(baud);
+}
+
+/**
+ * @brief Initializes the HardwareSerial port at the specified baud and 8N1 (required by
  * MiP).
- * @param baud Baud rate parameter (fixed internally to 115200 to maintain MiP
- * compatibility).
+ * @param baud Baud rate parameter.  Should be 115200 or 9600.
  * @param mode Serial protocol mode (fixed internally to SERIAL_8N1).
  */
 void MiP_Console::begin(unsigned long baud, uint8_t mode) {
@@ -52,8 +56,8 @@ void MiP_Console::begin(unsigned long baud, uint8_t mode) {
     return;
 
   m_isInit = true;
-  // Fix the HardwareSerial baud rate to 115200 8N1 as required by the MiP robot
-  Serial.begin(115200, SERIAL_8N1);
+  // Fix the HardwareSerial baud rate to 115200 8N1 as required by MiP.
+  Serial.begin(baud, SERIAL_8N1);
 }
 
 /**

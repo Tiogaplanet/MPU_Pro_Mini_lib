@@ -42,7 +42,7 @@ class MiP_Odometer {
    * @brief Constructs the odometer manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Odometer(MiP& mip);
+  explicit MiP_Odometer(MiP& mip);
 
   /**
    * @brief Reads the total distance travelled by the MiP.

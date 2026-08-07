@@ -1,6 +1,6 @@
 /**
  * @file MPU_Clap.h
- * @brief Defines the public interface for clap event handling in the MPU
+ * @brief Defines the public interface for clap event handling in the MiP
  * library.
  *
  * @details This header declares the clap-detection API used by the MiP library.
@@ -55,7 +55,7 @@ class MiP_Clap {
   /**
    * @brief MiP protocol command bytes used by the clap detection subsystem.
    *
-   * These values are placed in the first byte of requests sent to the MiP
+   * These values are placed in the first byte of requests sent to MiP
    * (and appear in the corresponding responses).  See the official
    * [MiP BLE
    * Protocol](https://github.com/WowWeeLabs/MiP-BLE-Protocol/blob/master/MiP-Protocol.md)
@@ -67,15 +67,15 @@ class MiP_Clap {
   static constexpr uint8_t MIP_CMD_GET_CLAP_SETTINGS = 0x1F;
 
   /**
-   * @brief Constructs the Clap system manager.
+   * @brief Constructs the clap system manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_Clap(MiP& mip);
+  explicit MiP_Clap(MiP& mip);
 
   void processEvent(uint8_t clapCode);
 
   /**
-   * @brief Enables clap event reporting from the MiP robot.
+   * @brief Enables clap event reporting from MiP.
    *
    * This verified method sends the enable command and reads back settings
    * to confirm success. It retries on failure.
@@ -83,7 +83,7 @@ class MiP_Clap {
   void enableEvents();
 
   /**
-   * @brief Disables clap event reporting from the MiP robot.
+   * @brief Disables clap event reporting from MiP.
    *
    * This verified method sends the disable command and reads back settings
    * to confirm success. It retries on failure.

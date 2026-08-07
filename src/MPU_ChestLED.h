@@ -65,7 +65,7 @@ class MiP_ChestLED {
    * @brief Constructs the chest LED manager.
    * @param mip A reference to the main MiP object to access core services.
    */
-  MiP_ChestLED(MiP& mip);
+  explicit MiP_ChestLED(MiP& mip);
 
   /**
    * @brief Reads the current RGB state and flash timings of the chest LED.
