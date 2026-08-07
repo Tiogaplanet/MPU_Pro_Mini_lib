@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-// For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_ChestLED.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -23,7 +20,7 @@
 MiP_ChestLED::MiP_ChestLED(MiP& mip) : m_mip(mip) {}
 
 void MiP_ChestLED::read(MiPChestLED& chestLED) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->ChestLED->read()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->ChestLED->read()"));
   int8_t result;
 
   // Retry the read if it should fail on the first attempt.
@@ -43,7 +40,7 @@ void MiP_ChestLED::read(MiPChestLED& chestLED) {
 }
 
 void MiP_ChestLED::write(uint8_t red, uint8_t green, uint8_t blue) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->ChestLED->write()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->ChestLED->write()"));
   int8_t result;
 
   // The blue channel is actually only 6-bit and not a full 8-bit so zero out
@@ -80,56 +77,35 @@ void MiP_ChestLED::write(uint8_t red, uint8_t green, uint8_t blue) {
   }
 }
 
-void MiP_ChestLED::write(uint8_t red,
-                         uint8_t green,
-                         uint8_t blue,
-                         uint16_t onTime,
-                         uint16_t offTime) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->ChestLED->write()");
-  int8_t result;
+void MiP_ChestLED::write(uint8_t red, uint8_t green, uint8_t blue, uint16_t onTime, uint16_t offTime) {
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->ChestLED->write(flash)"));
+  int8_t result = MIP_ERROR_NONE;
 
-  // on/off time are in units of 20 msecs.
   m_mip.MIP_ASSERT(onTime / 20 <= 255 && offTime / 20 <= 255);
-  onTime = (onTime + 10) / 20;
-  offTime = (offTime + 10) / 20;
-
-  // The blue channel is actually only 6-bit and not a full 8-bit so zero out
-  // lower 2 bits (the MiP does this too).
+  uint8_t onTicks = static_cast<uint8_t>((onTime + 10) / 20);
+  uint8_t offTicks = static_cast<uint8_t>((offTime + 10) / 20);
   blue &= ~3;
 
-  // Send the set command and then issue the corresponding get command. Retry if
-  // the get fails or doesn't return the expected new setting.
   for (uint8_t retry = 0; retry < MiP_Serial::MIP_MAX_RETRIES; retry++) {
-    rawFlash(red, green, blue, onTime, offTime);
+    rawFlash(red, green, blue, onTicks, offTicks);
 
-    // Read back and make sure that it was set as expected.
     MiPChestLED actualChestLED;
     result = rawGet(actualChestLED);
     if (result == MiP::MIP_ERROR_NONE && actualChestLED.red == red &&
         actualChestLED.green == green && actualChestLED.blue == blue &&
-        actualChestLED.onTime == onTime && actualChestLED.offTime == offTime) {
-      // The set was successful so return immediately.
+        actualChestLED.onTime == (uint16_t)onTicks * 20 &&
+        actualChestLED.offTime == (uint16_t)offTicks * 20) {
       m_mip.m_lastError = MiP::MIP_ERROR_NONE;
       return;
     }
-
-    // An error was encountered so we will loop around and try again.
-    // Wait for a bit before the next retry.
     delay(MiP_Serial::MIP_RETRY_WAIT);
   }
 
-  if (result != MiP::MIP_ERROR_NONE) {
-    // Kept getting an error back from read attempt.
-    m_mip.m_lastError = result;
-  } else {
-    // Read was successful but didn't match setting to which we were attempting
-    // to change.
-    m_mip.m_lastError = MiP::MIP_ERROR_MAX_RETRIES;
-  }
+  m_mip.m_lastError = (result != MiP::MIP_ERROR_NONE) ? result : MiP::MIP_ERROR_MAX_RETRIES;
 }
 
 void MiP_ChestLED::write(const MiPChestLED& chestLED) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->ChestLED->write()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->ChestLED->write()"));
   write(chestLED.red,
         chestLED.green,
         chestLED.blue,
@@ -138,7 +114,7 @@ void MiP_ChestLED::write(const MiPChestLED& chestLED) {
 }
 
 void MiP_ChestLED::unverifiedWrite(uint8_t red, uint8_t green, uint8_t blue) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->ChestLED->unverifiedWriteChestLED()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->ChestLED->unverifiedWrite()"));
   rawSet(red, green, blue);
 }
 
@@ -147,7 +123,7 @@ void MiP_ChestLED::unverifiedWrite(uint8_t red,
                                    uint8_t blue,
                                    uint16_t onTime,
                                    uint16_t offTime) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->ChestLED->unverifiedWrite()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->ChestLED->unverifiedWrite()"));
   // on/off time are in units of 20 msecs.
   m_mip.MIP_ASSERT(onTime / 20 <= 255 && offTime / 20 <= 255);
   onTime = (onTime + 10) / 20;
@@ -156,7 +132,7 @@ void MiP_ChestLED::unverifiedWrite(uint8_t red,
 }
 
 void MiP_ChestLED::unverifiedWrite(const MiPChestLED& chestLED) {
-  MIP_DEBUG_INFO_PRINTLN("MiP->HeadLEDs->unverifiedWriteChestLED()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->ChestLED->unverifiedWrite()"));
   unverifiedWrite(chestLED.red,
                   chestLED.green,
                   chestLED.blue,
