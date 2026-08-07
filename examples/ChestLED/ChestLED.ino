@@ -1,11 +1,11 @@
 /**
  * @file ChestLED.ino
- * @brief Example sketch demonstrating MiP chest LED read/write operations.
+ * @brief Example sketch demonstrating MiP's chest LED read/write operations.
  *
  * @details This sketch shows how to use the MiP library to set and read the
  * chest LED color and blink timing. It demonstrates the verified write APIs,
  * chestLED.read() and chestLED.write(), and the unverified write APIs,
- * chestLED.unverifiedWrite() which may not always be accepted by the robot.
+ * chestLED.unverifiedWrite() which may not always be accepted by MiP.
  * This sketch exhaustively tests the MiP_ChestLED class.
  *
  * The example exercises these API calls:
@@ -47,6 +47,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     mip.console.println(F("ChestLED.ino: Failed connecting to MiP!"));
     return;
