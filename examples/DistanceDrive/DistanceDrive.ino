@@ -1,17 +1,17 @@
 /**
  * @file DistanceDrive.ino
- * @brief Example sketch demonstrating MiP distance-based drive commands.
+ * @brief Example sketch demonstrating MiP's distance-based drive commands.
  *
  * @details This sketch shows how to use the MiP library to queue and execute
- * motion.distanceDrive() commands that move the robot forward/backward and
+ * motion.distanceDrive() commands that move MiP forward,backward, and
  * rotate it by specified degrees. The example queues a sequence of commands:
  *   - Drive forward a short distance.
  *   - Turn 360 degrees left.
  *   - Turn 360 degrees right.
  *   - Drive backward a short distance.
  *
- * Commands are queued with consecutive calls to distanceDrive() so the robot
- * executes them in order. Timing and blocking are handled by the MiP device
+ * Commands are queued with consecutive calls to distanceDrive() so MiP
+ * executes them in order. Timing and blocking are handled by MiP's
  * firmware; the sketch simply issues the commands during setup().
  *
  * The example exercises these API calls:
@@ -28,7 +28,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin() and
  * distanceDrive().
@@ -38,10 +38,10 @@ MiP mip;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to mip.console and setup
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. On success, the sketch prints a short description and then
- * queues a series of distanceDrive() commands to be executed by the robot.
+ * queues a series of distanceDrive() commands.
  *
  * The queued sequence:
  *   1. Drive forward a short distance (30 units) without turning.
@@ -51,6 +51,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("DistanceDrive.ino: Failed connecting to MiP!"));
     return;
@@ -79,4 +80,3 @@ void setup() {
  * intervention from the sketch.
  */
 void loop() {}
-
