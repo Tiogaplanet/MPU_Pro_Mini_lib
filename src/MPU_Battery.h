@@ -32,7 +32,7 @@ class MiP_Battery {
   MiP_Battery(MiP& mip);
 
   /**
-   * @brief Reads the current battery voltage of the MiP robot.
+   * @brief Reads MiP's cached battery voltage.
    * @return Battery voltage, typically 4.0V (low) to 6.4V (full).
    */
   float readVoltage();
