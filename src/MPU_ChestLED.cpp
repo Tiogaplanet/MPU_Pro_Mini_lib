@@ -79,7 +79,7 @@ void MiP_ChestLED::write(uint8_t red, uint8_t green, uint8_t blue) {
 
 void MiP_ChestLED::write(uint8_t red, uint8_t green, uint8_t blue, uint16_t onTime, uint16_t offTime) {
   MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->ChestLED->write(flash)"));
-  int8_t result = MIP_ERROR_NONE;
+  int8_t result = MiP::MIP_ERROR_NONE;
 
   m_mip.MIP_ASSERT(onTime / 20 <= 255 && offTime / 20 <= 255);
   uint8_t onTicks = static_cast<uint8_t>((onTime + 10) / 20);
