@@ -218,7 +218,7 @@ void MiP::dispatchEvent(uint8_t command,
       break;
     default:
       // An unknown OOB event was received.
-      char buf;
+      char buf[48];
       snprintf(buf, sizeof(buf), "MiP: Unknown OOB Event: 0x%02X\n", command);
       MIP_DEBUG_WARN_PRINT(buf);
       break;
@@ -269,7 +269,7 @@ int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
   switchSerialToPC();
 
   if (result == MIP_ERROR_NONE) {
-    char buf;
+    char buf[48];
     snprintf(buf, sizeof(buf), "MiP: Connected at %lu baud\r\n", baudRate);
     MIP_DEBUG_INFO_PRINT(buf);
   } else {
@@ -315,7 +315,7 @@ void MiP::mipAssert(bool condition, uint32_t lineNumber, const char* fileName) {
   (void)lineNumber;
   (void)fileName;
   if (!condition) {
-    char buf;
+    char buf[48];
     snprintf(buf,
              sizeof(buf),
              "MiP: Assert failed in file %s at line: %d\n",
