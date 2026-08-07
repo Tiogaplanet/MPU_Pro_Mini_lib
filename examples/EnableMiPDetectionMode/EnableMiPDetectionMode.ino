@@ -1,9 +1,9 @@
 /**
  * @file EnableMiPDetectionMode.ino
- * @brief Example sketch demonstrating MiP IR-based detection mode.
+ * @brief Example sketch demonstrating MiP's IR-based detection mode.
  *
- * @details This sketch shows how to enable and disable the MiP detection mode
- * which allows one MiP robot to be discovered by another using infrared. It
+ * @details This sketch shows how to enable and disable MiP's detection mode
+ * which allows one MiP to be discovered by another using infrared. It
  * demonstrates the infrared.enableMiPDetectionMode(),
  * infrared.disableMiPDetectionMode(), infrared.isMiPDetectionModeEnabled(),
  * infrared.availableDetectedMiPEvents(), and infrared.readDetectedMiP() APIs.
@@ -25,7 +25,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * infrared.enableMiPDetectionMode(), infrared.disableMiPDetectionMode(),
@@ -53,7 +53,7 @@ MiP mip;
 #define MIP_IR_TX_POWER 0x78
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -63,8 +63,8 @@ bool connectResult;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to mip.console and setup
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. The function then demonstrates disabling detection mode and
  * verifying the disabled state, followed by enabling detection mode with the
  * configured ID and IR power and verifying the enabled state.
