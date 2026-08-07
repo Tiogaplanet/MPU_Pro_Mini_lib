@@ -1,9 +1,9 @@
 /**
  * @file Odometer.ino
- * @brief Example sketch demonstrating MiP odometer read and reset.
+ * @brief Example sketch demonstrating MiP's odometer read and reset.
  *
  * @details This sketch shows how to use the MiP library to read the total
- * distance the robot has traveled since the last reset and how to reset that
+ * distance MiP has traveled since the last reset and how to reset that
  * odometer value. It prints the current distance in centimeters to mip.console,
  * then calls odometer.reset() to clear the measurement.
  *
@@ -22,7 +22,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * odometer.read(), and odometer.reset().
@@ -33,7 +33,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Called once after the board powers up or resets. This function:
- *   - Initializes communication with the MiP robot via mip.begin().
+ *   - Initializes communication with MiP via mip.begin().
  *   - If the connection fails, prints an error to Serial and returns early.
  *   - Reads the current odometer value (in centimeters) using
  *     odometer.read() and prints it to mip.console.
@@ -44,6 +44,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("Odometer.ino: Failed connecting to MiP!"));
     return;
