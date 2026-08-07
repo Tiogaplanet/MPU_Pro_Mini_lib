@@ -1,6 +1,6 @@
 /**
  * @file Clap.ino
- * @brief Example sketch demonstrating MiP clap event APIs.
+ * @brief Example sketch demonstrating MiP's clap event APIs.
  * @details
  * This Arduino sketch demonstrates how to use the MiP library's clap-related
  * functions to enable and disable clap event reporting, configure the clap
@@ -26,7 +26,7 @@
  *   - clap.readEvent()
  *
  * This sketch prints status and results to mip.console and is intended for use
- * with the MiP Power Up - D1 mini library and a WowWee MiP robot.
+ * with the MiP Power Up - Pro Mini library and a WowWee MiP.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -39,7 +39,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  * @details
  * This object is used throughout the sketch to call MiP API functions such as
  * begin(), clap.enableEvents(), clap.disableEvents(), clap.writeDelay(),
@@ -70,6 +70,7 @@ bool connectResult;
  */
 void setup() {
   connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("Clap.ino: Failed connecting to MiP!"));
     return;
