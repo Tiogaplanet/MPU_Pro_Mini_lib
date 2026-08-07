@@ -2,14 +2,14 @@
  * @file frustration.ino
  * @brief Playful MiP "frustration" behavior: wander, evade, then tantrum.
  *
- * @details This sketch makes a MiP wander happily using radar-based obstacle
- * detection. When the robot detects too many near obstructions within a
+ * @details This sketch makes MiP wander happily using radar-based obstacle
+ * detection. When MiP detects too many near obstructions within a
  * cooldown interval, it expresses a short "frustration" routine: chest LED
  * turns red, head LEDs flash, it plays angry sounds, spins randomly a few
  * times, then recovers (chest LED turns green and it makes an exhaustion
  * sound). The sketch uses non-blocking timing (millis()) to track a cooldown
  * period and counts near-obstruction events to determine when to trigger the
- * frustration routine. If the MiP is tipped over, the sketch relinquishes
+ * frustration routine. If MiP is tipped over, the sketch relinquishes
  * control back to factory behavior when a clap is detected.
  *
  * The example exercises these API calls:
@@ -35,7 +35,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to control the robot.
+ * @brief Global MiP instance used to control MiP.
  *
  * @details Use this object to call MiP API functions throughout the sketch.
  */
@@ -91,13 +91,14 @@ bool connectResult;
 /**
  * @brief Initialize MiP and prepare sensors and audio.
  *
- * @details Connects to the MiP, mutes initial volume, seeds the random
+ * @details Connects to MiP, mutes initial volume, seeds the random
  * generator, and enables radar mode for obstacle detection. If connection
  * fails, prints an error to Serial and returns early.
  */
 void setup() {
-  // Initialize the serial connection with the MiP.
+  // Initialize the serial connection with MiP.
   connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("Frustration.ino: Failed connecting to MiP.  Is it turned on?"));
     return;
@@ -116,9 +117,9 @@ void setup() {
 /**
  * @brief Main behavior loop.
  *
- * @details While the robot is upright, it wanders forward and uses radar
+ * @details While MiP is upright, it wanders forward and uses radar
  * readings to decide whether to evade, increment frustration, or trigger the
- * frustration routine. If the robot is tipped over, the sketch disables
+ * frustration routine. If MiP is tipped over, the sketch disables
  * radar mode and enables clap detection; a clap will end the sketch and
  * return control to factory behavior.
  */
