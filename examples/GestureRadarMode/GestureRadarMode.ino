@@ -2,7 +2,7 @@
  * @file GestureRadarMode.ino
  * @brief Example sketch demonstrating switching between gesture and radar modes.
  *
- * @details This sketch shows how to enable and disable the MiP robot's radar
+ * @details This sketch shows how to enable and disable MiP's radar
  * and gesture sensing modes and how to query their states. It performs a
  * sequence of mode changes in setup() while printing verification messages
  * to mip.console:
@@ -31,11 +31,11 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
- * enableRadarMode(), disableRadarMode(), enableGestureMode(),
- * disableGestureMode(), and the corresponding query functions.
+ * radar.enable(), radar.disable(), gesture.enable(), gesture.disable(), and 
+ * the corresponding query functions.
  */
 MiP mip;
 
@@ -43,14 +43,14 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Called once after power-up or reset. This function:
- *   - Initializes communication with the MiP via mip.begin().
+ *   - Initializes communication with MiP via mip.begin().
  *   - If connection fails, prints an error to Serial and returns early.
  *   - Demonstrates enabling/disabling radar and gesture modes and prints
- *     pass/fail verification messages using the isXModeEnabled() and
+ *     pass/fail verification messages using the x.isEnabled() and
  *     areGestureAndRadarModesDisabled() query functions.
  *
  * The function intentionally performs the checks in sequence so the user can
- * observe the robot's responses on mip.console.
+ * observe MiP's responses on mip.console.
  */
 void setup() {
   bool connectResult = mip.begin();
@@ -63,7 +63,7 @@ void setup() {
 
   mip.console.println(F(" Calling mip.radar.enable()"));
   mip.radar.enable();
-  mip.console.print(F(" mip.isRadarModeEnabled() = "));
+  mip.console.print(F(" mip.radar.isEnabled() = "));
   if (mip.radar.isEnabled()) {
     mip.console.println(F("true - Pass"));
   } else {
