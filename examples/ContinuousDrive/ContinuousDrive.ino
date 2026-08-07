@@ -1,10 +1,10 @@
 /**
  * @file ContinuousDrive.ino
- * @brief Example sketch demonstrating MiP continuous drive control.
+ * @brief Example sketch demonstrating MiP's continuous drive control.
  *
  * @details This sketch shows how to use the MiP library's continuousDrive()
- * function to drive the robot continuously with specified forward/backward
- * speed and turning rate. The example drives forward with a right turn for
+ * function to drive MiP with specified forward and backward speed and 
+ * turning rate. The example drives forward with a right turn for
  * a fixed interval, then drives backward with a left turn for a fixed
  * interval, and then stops. Timing is implemented using millis() so the
  * loop remains non-blocking.
@@ -23,7 +23,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin() and
  * continuousDrive().
@@ -31,7 +31,7 @@
 MiP mip;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -41,13 +41,14 @@ bool connectResult;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to mip.console and setup
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. On success, a brief status message is printed describing the
  * continuous drive demonstration.
  */
 void setup() {
   connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("ContinuousDrive.ino: Failed connecting to MiP!"));
     return;
