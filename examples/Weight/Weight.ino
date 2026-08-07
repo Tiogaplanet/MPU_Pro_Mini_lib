@@ -1,14 +1,14 @@
 /**
  * @file Weight.ino
- * @brief Example sketch that reads and reports the MiP weight sensor.
+ * @brief Example sketch that reads and reports MiP's weight sensor.
 
  *
  * @details
- * This sketch demonstrates how to query the MiP weight sensor and print
- * changes to mip.console. It repeatedly reads the device weight using
- * weight.read() and prints the value only when it changes to avoid spamming
- * the serial output. This is useful for monitoring payload changes on MiP's
- * tray or detecting when the robot is picked up or placed down.
+ * This sketch demonstrates how to query MiP's weight sensor and print
+ * changes to mip.console. It repeatedly reads the weight sensor using
+ * weight.read() and prints the value only when it changes, to avoid spamming
+ * the mip.console output. This is useful for monitoring payload changes on
+ * MiP's tray or detecting when MiP is picked up or placed down.
  *
  * Demonstrated API:
  *   - weight.read()
@@ -48,7 +48,7 @@ MiP mip;
 static int8_t lastWeight = -128;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -59,7 +59,7 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes the MiP connection via mip.begin().
+ * - Initializes MiP's connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short banner indicating the sketch will display
  *   weight updates.
@@ -80,12 +80,12 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details
- * - Polls the MiP weight sensor using readWeight().
+ * - Polls MiP's weight sensor using weight.read().
  * - If the current weight differs from the last reported value, prints the
  *   new weight to mip.console and updates lastWeight.
  *
  * The loop is intentionally lightweight and prints only on changes to avoid
- * flooding the serial output with repeated identical values.
+ * flooding the mip.console output with repeated identical values.
  */
 void loop() {
   if (!connectResult)

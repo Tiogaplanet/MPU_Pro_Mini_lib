@@ -1,6 +1,6 @@
 /**
  * @file TurnLeftRight.ino
- * @brief Example sketch demonstrating turning the MiP left and right.
+ * @brief Example sketch demonstrating turning MiP left and right.
  *
  * @details
  * This sketch connects to MiP and alternately commands it to turn
@@ -45,7 +45,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes the MiP connection via mip.begin().
+ * - initializes MiP's connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short description and then performs three cycles of:
  *     1) turnLeft(180, 12)

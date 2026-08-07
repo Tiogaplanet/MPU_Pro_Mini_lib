@@ -1,9 +1,9 @@
 /**
  * @file Volume.ino
- * @brief Example sketch demonstrating reading and writing MiP audio volume.
+ * @brief Example sketch demonstrating reading and writing MiP's audio volume.
  *
  * @details
- * This sketch connects to MiP and demonstrates how to set the device
+ * This sketch connects to MiP and demonstrates how to set its 
  * volume using sound.writeVolume() and then read the current volume back using
  * sound.readVolume(). The example sets the volume to the predefined constant
  * MIP_VOLUME_OFF (mute) and prints the resulting volume level to mip.console.
@@ -13,9 +13,9 @@
  *   - sound.readVolume()
  *
  * Usage notes:
- *   - Ensure the MiP is powered and able to accept UART commands.
- *   - Adjust the volume value passed to writeVolume() to experiment with
- *     different audio levels supported by the device.
+ *   - Ensure MiP is powered and able to accept UART commands.
+ *   - Adjust the volume value passed to sound.writeVolume() to experiment with
+ *     different audio levels supported by MiP.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -31,8 +31,8 @@
  * @brief Global MiP instance used to control the robot.
  *
  * @details Use this object to call MiP API functions such as begin(),
- * sound.writeVolume(), and sound.readVolume(). Keeping the instance at file scope makes
- * it available in both setup() and loop().
+ * sound.writeVolume(), and sound.readVolume(). Keeping the instance at file
+ * scope makes it available in both setup() and loop().
  */
 MiP mip;
 
@@ -40,9 +40,9 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes the MiP connection via mip.begin().
+ * - initializes MiP's connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
- * - On success, sets MiP's volume to MIP_VOLUME_OFF using writeVolume(),
+ * - On success, sets MiP's volume to MIP_VOLUME_OFF using sound.writeVolume(),
  *   reads the current volume back with readVolume(), and prints the value to
  *   mip.console for verification.
  */

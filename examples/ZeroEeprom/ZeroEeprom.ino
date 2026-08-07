@@ -3,7 +3,7 @@
  * @brief Example sketch that writes zeros to each byte of the MiP user EEPROM.
  *
  * @details
- * This sketch demonstrates how to iterate over the MiP's user EEPROM address
+ * This sketch demonstrates how to iterate over MiP's user EEPROM address
  * range and write a zero value to each byte using the eeprom.write() API.
  * After writing each byte the sketch reads it back with eeprom.read() and
  * prints the address and recovered value to mip.console for verification.
@@ -13,10 +13,10 @@
  *   - eeprom.read()
  *
  * Usage notes:
- *   - Running this sketch will overwrite the MiP user EEPROM contents with
+ *   - Running this sketch will overwrite MiP's user EEPROM contents with
  *     zeros. Use with caution if the EEPROM contains important data.
  *   - The sketch pauses one second between writes so the user can observe
- *     progress on mip.console and the device.
+ *     progress on mip.console.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -49,19 +49,21 @@ uint8_t eepromContents;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes the MiP connection via mip.begin(). If the connection fails,
+ * - Initializes MiP's connection via mip.begin(). If the connection fails,
  *   prints an error to Serial and returns early.
- * - Iterates over the MiP user EEPROM address range from 0x00 up to
- *   (MiP_EEPROM::LAST_EEPROM_ADDRESS - MiP_EEPROM::BASE_EEPROM_ADDRESS)
- * inclusive and:
- *     1. Writes a zero to each EEPROM offset using eeprom.write(offset, 0x00).
- *     2. Waits one second to allow observation and avoid flooding the device.
+ * - Iterates over MiP's user EEPROM address range from 
+ *   MiP_EEPROM::BASE_EEPROM_ADDRESS up to MiP_EEPROM::LAST_EEPROM_ADDRESS, 
+ *   inclusive and:
+ *     1. Writes a zero to each EEPROM offset using eeprom.write(offset,
+ *        MiP_EEPROM::BASE_EEPROM_ADDRESS).
+ *     2. Waits one second to allow observation and avoid spamming MiP's
+ *        connection.
  *     3. Reads the byte back with eeprom.read(offset) and prints the address
  *        and recovered value in hexadecimal to mip.console for verification.
  *
  * Note:
  *   - This operation will irreversibly overwrite any existing user EEPROM
- *     data stored on the MiP. Back up any important data before running.
+ *     data stored in MiP. Back up any important data before running.
  */
 void setup() {
   bool connectResult = mip.begin();

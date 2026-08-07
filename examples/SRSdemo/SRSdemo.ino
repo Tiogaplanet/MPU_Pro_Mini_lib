@@ -4,18 +4,18 @@
  *
  * @details
  * This sketch was used as a live demonstration at the Seattle Robotics Society
- * meeting on April 21, 2018. It connects to a MiP robot, waits for the robot
- * to stand upright, enables gesture mode, and then responds to left/right
- * hand-sweep gestures by playing a short eye LED animation in the direction
- * of the gesture. When idle the outer eye LEDs blink rapidly to indicate the
+ * meeting on April 21, 2018. It connects to MiP, waits for it to stand 
+ * upright, enables gesture mode, and then responds to left/right hand-sweep
+ * gestures by playing a short eye LED animation in the direction of the 
+ * gesture. When idle the outer eye LEDs blink rapidly to indicate the
  * robot is ready for input.
  *
  * The sketch implements a small state machine with the following states:
  *   - RESTART: clear LEDs and disable gesture mode while waiting for upright.
- *   - WAITING_TO_STANDUP: wait for the robot to report upright.
+ *   - WAITING_TO_STANDUP: wait for MiP to report upright.
  *   - WAITING_FOR_GESTURE: blink outer eyes and poll for left/right gestures.
  *   - PLAYING_EYE_ANIMATION: play a 5-frame eye animation in the chosen
- * direction.
+ *     direction.
  *
  * The example demonstrates use of these MiP APIs:
  *   - begin(), position.isUpright(), gesture.enable(), gesture.disable()
@@ -25,7 +25,7 @@
  * LED keyframe updates used by the animation sequence.
  *
  * A note from the maintainer: I have updated the names of the function calls
- * as they are named in the MPU:D1 mini library. Nothing else is changed.
+ * as they are named in the MPU:Pro Mini library. Nothing else is changed.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -38,7 +38,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * position.isUpright(), gesture.enable(), gesture.disable(), and
@@ -50,13 +50,13 @@ static MiP g_mip;
  * @brief Local copy of the head LED state used for animations.
  *
  * @details The MiPHeadLEDs struct stores the state for the four head LEDs
- * (led1..led4). The sketch updates this struct and writes it to the robot
- * with g_mip.writeHeadLEDs().
+ * (led1..led4). The sketch updates this struct and writes it to MiP with
+ * g_mip.writeHeadLEDs().
  */
 static MiPHeadLEDs g_headLEDs;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -66,12 +66,12 @@ bool connectResult;
 /**
  * @brief Initialize connection to MiP and print demo banner.
  *
- * @details Attempts to initialize the MiP connection via g_mip.begin().
+ * @details Attempts to initialize MiP's connection via g_mip.begin().
  * If the connection fails, an error is printed to Serial and setup returns
  * early. On success, a short banner is printed to indicate the demo is running.
  */
 void setup() {
-  // First need to initialize the mip.console connection with the MiP.
+  // First need to initialize the mip.console connection with MiP.
   connectResult = g_mip.begin();
   
   if (!connectResult) {
@@ -88,10 +88,10 @@ void setup() {
  * @details
  * Implements a compact state machine that:
  *   - Clears LEDs and disables gesture mode when restarting.
- *   - Waits for the robot to be upright before enabling gesture mode.
+ *   - Waits for MiP to be upright before enabling gesture mode.
  *   - When upright, blinks the outer eyes and waits for left/right gestures.
  *   - On gesture detection, starts a 5-frame eye animation in the gesture
- * direction.
+ *     direction.
  *
  * The animation advances every 250 ms while PLAYING_EYE_ANIMATION is active.
  */
@@ -124,10 +124,10 @@ void loop() {
       break;
 
     case WAITING_TO_STANDUP:
-      /* Waiting for the robot to indicate that it is standing upright and
+      /* Waiting for MiP to indicate that it is standing upright and
      * balancing on its own. */
       if (g_mip.position.isUpright()) {
-        /* Switch into gesture mode now that robot is up and balancing. */
+        /* Switch into gesture mode now that MiP is up and balancing. */
         g_mip.gesture.enable();
 
         /* Blink the left and right most eye LEDs in a fast mode to indicate
@@ -139,13 +139,13 @@ void loop() {
 
     case WAITING_FOR_GESTURE:
       if (!g_mip.position.isUpright()) {
-        /* Robot is no longer up and balancing so go back to restart. */
+        /* MiP is no longer up and balancing so go back to restart. */
         state = RESTART;
         return;
       }
 
-      /* Poll for a gesture event. readGestureEvent() returns the last gesture or
-     * MIP_GESTURE_INVALID. */
+      /* Poll for a gesture event. gesture.readEvent() returns the last gesture
+     * or MIP_GESTURE_INVALID. */
       gesture = g_mip.gesture.readEvent();
       if (gesture == MIP_GESTURE_LEFT) {
         /* User moved hand from right to left; animate leftward. */
@@ -198,7 +198,7 @@ void loop() {
  * @brief Blink the outer eye LEDs in fast blink mode.
  *
  * @details Sets led1 and led4 to MIP_HEAD_LED_BLINK_FAST and turns off the
- * middle LEDs, then writes the state to the robot.
+ * middle LEDs, then writes the state to MiP.
  */
 static void blinkOuterEyes() {
   g_headLEDs.led1 = MIP_HEAD_LED_BLINK_FAST;
@@ -217,7 +217,7 @@ static void blinkOuterEyes() {
  * @details
  * This function shifts the LED states across the four head LEDs to create a
  * simple traveling-light animation. After updating the local g_headLEDs state
- * it writes the new state to the robot.
+ * it writes the new state to MiP.
  */
 static void animateEyes(int8_t direction) {
   if (direction > 0) {

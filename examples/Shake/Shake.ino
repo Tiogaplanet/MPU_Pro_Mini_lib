@@ -44,7 +44,7 @@ bool connectResult;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes the MiP connection by calling mip.begin(). If the
+ * @details initializes MiP's connection by calling mip.begin(). If the
  * connection fails, an error message is printed to mip.console and the sketch
  * returns early. On success, a short description is printed to mip.console to
  * indicate the sketch is ready to detect shakes.

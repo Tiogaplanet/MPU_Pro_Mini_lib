@@ -5,7 +5,7 @@
  * @details
  * This simple example shows how to start a long turn and then interrupt it
  * using the motion.stop() function. The sketch:
- *   - Connects to the MiP using begin().
+ *   - Connects to MiP using begin().
  *   - Commands a 360-degree left turn with motion.turnLeft(360, 6).
  *   - Waits briefly and then calls motion.stop() to interrupt the motion.
  *   - Prints progress messages to mip.console for observation.
@@ -38,7 +38,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes the MiP connection via mip.begin().
+ * - initializes MiP's connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, demonstrates starting a 360-degree left turn and then
  *   interrupting it with mip.stop() after a short delay.
@@ -48,6 +48,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
+  
   if (!connectResult) {
     Serial.println(F("Stop.ino: Failed connecting to MiP!"));
     return;

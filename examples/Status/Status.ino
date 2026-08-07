@@ -1,14 +1,13 @@
 /**
  * @file Status.ino
- * @brief Example sketch that monitors and reports MiP status changes.
+ * @brief Example sketch that monitors and reports MiP's status changes.
  *
  * @details
  * This sketch demonstrates how to query and report various status values from
- * a MiP robot using the MiP library. It connects to the robot, then
- * continuously polls for changes to the battery voltage and the robot's
- * positional state. When a change is detected the new value is printed to
- * mip.console. The sketch is intended as a simple diagnostic example to show
- * how to use the status-related API calls.
+ * MiP. It connects to MiP, then continuously polls for changes to the battery
+ * voltage and the MiP's positional state. When a change is detected the new 
+ * value is printed to mip.console. The sketch is intended as a simple 
+ * diagnostic example to show how to use the status-related API calls.
  *
  * The example exercises these API calls:
  *   - battery.readVoltage()
@@ -32,7 +31,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call the MiP status APIs such as
  * battery.readVoltage() and position.read().
@@ -50,13 +49,13 @@ static float lastBatteryLevel = 0.0f;
 /**
  * @brief Last reported position enum value.
  *
- * @details Initialized to an invalid value so the first readPosition() will
+ * @details Initialized to an invalid value so the first position.read() will
  * always be treated as a change and printed.
  */
 static MiPPosition lastPosition = (MiPPosition)-1;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -67,7 +66,7 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes the MiP connection via mip.begin().
+ * - initializes MiP's connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short banner indicating the sketch will display
  *   status changes.
@@ -87,7 +86,7 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details
- * - Polls the MiP for the current battery voltage and position.
+ * - Polls MiP for the current battery voltage and position.
  * - If the battery voltage differs from the last reported value, prints the
  *   new voltage and updates lastBatteryLevel.
  * - If the position differs from the last reported position, queries the
@@ -96,7 +95,7 @@ void setup() {
  *   avoid repeated prints for the same state.
  *
  * The loop is intentionally lightweight and prints only on changes to avoid
- * spamming the serial output.
+ * spamming mip.console.
  */
 void loop() {
   if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
