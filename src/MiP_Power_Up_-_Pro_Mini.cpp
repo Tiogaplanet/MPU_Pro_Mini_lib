@@ -312,8 +312,6 @@ int8_t MiP::parseStatus(MiPStatus& status,
 }
 
 void MiP::mipAssert(bool condition, uint32_t lineNumber, const char* fileName) {
-  (void)lineNumber;
-  (void)fileName;
   if (!condition) {
     char buf[64];   // a bit larger is safer
     snprintf(buf, sizeof(buf),
