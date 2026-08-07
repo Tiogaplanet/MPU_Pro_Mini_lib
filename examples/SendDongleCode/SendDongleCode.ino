@@ -1,10 +1,10 @@
 /**
- * @file SendIRDongleCode.ino
- * @brief Example sketch demonstrating sending IR dongle codes from a MiP.
+ * @file SendDongleCode.ino
+ * @brief Example sketch demonstrating sending infrared dongle codes from MiP.
  *
  * @details
- * This sketch initializes communication with a MiP and repeatedly transmits a
- * 16-bit IR dongle code using the sendIRDongleCode() API. The transmission
+ * This sketch initializes communication with MiP and repeatedly transmits a
+ * 16-bit IR dongle code using the sendDongleCode() API. The transmission
  * power can be adjusted via the MIP_IR_TX_POWER macro to experiment with
  * range and reliability. Each transmission is logged to mip.console in a
  * human-readable hexadecimal format.
@@ -36,7 +36,7 @@
 #define MIP_IR_TX_POWER 0x78
 
 /**
- * @brief Global MiP instance used to control the robot and send IR codes.
+ * @brief Global MiP instance used to control MiP and send IR codes.
  *
  * @details Use this object to call MiP API functions such as begin() and
  * infrared.sendDongleCode().
@@ -44,7 +44,7 @@
 MiP mip;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -55,7 +55,7 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes communication with the MiP via mip.begin().
+ * - Initializes communication with MiP via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short description indicating the sketch is ready
  *   to send IR dongle codes.
@@ -63,12 +63,12 @@ bool connectResult;
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("SendIRDongleCode.ino: Failed connecting to MiP!"));
+    Serial.println(F("SendDongleCode.ino: Failed connecting to MiP!"));
     return;
   }
 
   mip.console.println(
-      F("SendIRDongleCode.ino: Send code to another MiP using IR."));
+      F("SendDongleCode.ino: Send code to another MiP using IR."));
 }
 
 /**
@@ -77,7 +77,7 @@ void setup() {
  * @details
  * - Constructs a 16-bit dongle code (high byte followed by low byte).
  * - Prints the code to mip.console in hexadecimal format for debugging.
- * - Calls sendIRDongleCode(dongleCode, MIP_IR_TX_POWER) to transmit the code.
+ * - Calls sendDongleCode(dongleCode, MIP_IR_TX_POWER) to transmit the code.
  * - Waits one second between transmissions.
  *
  * Modify the dongleCode assignment to test different transmitted values.
