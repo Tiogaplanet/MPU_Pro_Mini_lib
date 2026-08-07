@@ -26,7 +26,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to control the robot.
+ * @brief Global MiP instance used to control MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * sound.play(), sound.beginList(), sound.addEntryToList(), and
