@@ -4,22 +4,21 @@
  * information. It also displays the MPU-Pro Mini library version.
  *
  * @details
- * This sketch demonstrates how to query a MiP for its software version and
- * hardware information using the MiP library. It:
- *   - Initializes communication with the MiP using mip.begin().
+ * This sketch demonstrates how to query MiP for its software version and
+ * hardware information. It:
+ *   - Initializes communication with MiP using mip.begin().
  *   - Reads the software version into a MiPSoftwareVersion struct via
  *     version.readSoftware() and prints a formatted date and unique version.
  *   - Reads hardware information into a MiPHardwareInfo struct via
  *     version.readHardware() and prints voice chip and hardware revision
- * details.
+ *     details.
  *
  * The example exercises these API calls:
  *   - version.readSoftware()
  *   - version.readHardware()
  *
  * The output is printed to mip.console in a human-readable format so the user can
- * inspect the device's firmware date and build as well as hardware revision
- * information.
+ * inspect the device's firmware date and build and hardware revision information.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -32,7 +31,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * version.readSoftware(), and version.readHardware().
@@ -43,7 +42,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details
- * - Attempts to initialize the MiP connection via mip.begin().
+ * - Attempts to initialize MiP's connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, reads the software version into a MiPSoftwareVersion struct
  *   and prints a formatted version string (year-month-day.uniqueVersion).
