@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
- // For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Gesture.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -28,9 +25,9 @@ void MiP_Gesture::clear() {
   m_gestureEvents.clear();
 }
 
-void MiP_Gesture::processEvent(uint8_t clapCode) {
-  if (clapCode >= MIP_GESTURE_LEFT && clapCode <= MIP_GESTURE_BACKWARD) {
-    m_gestureEvents.push((MiPGesture)clapCode);
+void MiP_Gesture::processEvent(uint8_t gestureCode) {
+  if (gestureCode >= MIP_GESTURE_LEFT && gestureCode <= MIP_GESTURE_BACKWARD) {
+    m_gestureEvents.push((MiPGesture)gestureCode);
   }
 }
 
