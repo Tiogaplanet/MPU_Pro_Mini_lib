@@ -1,10 +1,10 @@
 /**
  * @file Gesture.ino
- * @brief Example sketch demonstrating MiP gesture detection and reporting.
+ * @brief Example sketch demonstrating MiP's gesture detection and reporting.
  *
  * @details This sketch shows how to use the MiP library's gesture detection
  * APIs to enable gesture mode, poll for gesture events, and report the
- * detected gestures to mip.console. The sketch waits for the robot to be upright
+ * detected gestures to mip.console. The sketch waits for MiP to be upright
  * before enabling gesture mode and then continuously reads available gesture
  * events using gesture.availableEvents() and gesture.readEvent().
  *
@@ -23,7 +23,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * position.isUpright(), gesture.enable(), gesture.availableEvents(), and
@@ -32,7 +32,7 @@
 MiP mip;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -42,13 +42,14 @@ bool connectResult;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to mip.console and setup
- * returns early. The function waits until the robot reports it is upright,
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
+ * returns early. The function waits until MiP reports it is upright,
  * then enables gesture mode so the robot will begin reporting gesture events.
  */
 void setup() {
   connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("Gesture.ino: Failed connecting to MiP!"));
     return;
@@ -68,7 +69,7 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details Continuously polls for pending gesture events using
- * availableGestureEvents(). For each available event, readGestureEvent()
+ * gesture.availableEvents(). For each available event, gesture.readEvent()
  * returns a MiPGesture value which is mapped to a human-readable message
  * printed to mip.console. The switch statement covers all defined gesture
  * values including a defensive case for MIP_GESTURE_INVALID.
