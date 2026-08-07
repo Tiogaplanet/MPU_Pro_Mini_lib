@@ -1,11 +1,11 @@
 /**
  * @file RawSendReceive.ino
- * @brief Example sketch demonstrating MiP raw send/receive operations.
+ * @brief Example sketch demonstrating MiP's raw send/receive operations.
  *
  * @details This sketch shows how to use the MiP library's serial.rawSend() and
  * serial.rawReceive() APIs to transmit and receive low-level MiP command
  * packets. The example sends a 4-byte command to set the chest LED to purple
- * and then requests the MiP firmware revision using a raw receive command. If a
+ * and then requests MiP's firmware revision using a raw receive command. If a
  * valid firmware response is returned, the sketch prints a human-readable
  * software version string to mip.console.
  *
@@ -24,7 +24,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * serial.rawSend(), and serial.rawReceive().
@@ -34,11 +34,11 @@ MiP mip;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to mip.console and setup
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. On success, the sketch:
  *   - Sends a 4-byte raw command to set the chest LED to purple.
- *   - Sends a raw request to query the MiP firmware version and attempts to
+ *   - Sends a raw request to query MiP's firmware version and attempts to
  *     parse and display the returned version information.
  *
  * The rawReceive() call demonstrates how to provide a receive buffer and
@@ -63,7 +63,7 @@ void setup() {
   uint8_t setChestPurple[] = "\x84\xFF\x01\xFF";
   mip.serial.rawSend(setChestPurple, sizeof(setChestPurple) - 1);
 
-  /* Request the MiP firmware revision information and display it.
+  /* Request MiP's firmware revision information and display it.
    * Prepare a small receive buffer and call serial.rawReceive() with the
    * request packet. On success, validate the response length and expected
    * command byte before printing a formatted version string.
