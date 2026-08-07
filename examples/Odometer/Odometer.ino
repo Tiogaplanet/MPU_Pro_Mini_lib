@@ -4,7 +4,7 @@
  *
  * @details This sketch shows how to use the MiP library to read the total
  * distance the robot has traveled since the last reset and how to reset that
- * odometer value. It prints the current distance in centimeters to Serial,
+ * odometer value. It prints the current distance in centimeters to mip.console,
  * then calls odometer.reset() to clear the measurement.
  *
  * The example exercises these API calls:
@@ -36,10 +36,10 @@ MiP mip;
  *   - Initializes communication with the MiP robot via mip.begin().
  *   - If the connection fails, prints an error to Serial and returns early.
  *   - Reads the current odometer value (in centimeters) using
- *     odometer.read() and prints it to Serial.
+ *     odometer.read() and prints it to mip.console.
  *   - Resets the odometer using odometer.reset().
  *
- * The function prints progress and completion messages to Serial so the
+ * The function prints progress and completion messages to mip.console so the
  * user can observe the odometer reading and the reset action.
  */
 void setup() {
@@ -49,21 +49,21 @@ void setup() {
     return;
   }
 
-  Serial.println(F("Odometer.ino: Read out current odometer reading and reset."));
+  mip.console.println(F("Odometer.ino: Read out current odometer reading and reset."));
 
   float cm = mip.odometer.read();
-  Serial.print(F(" MiP has travelled "));
-  Serial.print(cm);
-  Serial.println(F(" cm since the last reset."));
+  mip.console.print(F(" MiP has travelled "));
+  mip.console.print(cm);
+  mip.console.println(F(" cm since the last reset."));
 
   mip.odometer.reset();
 
-  Serial.print(F(" MiP has travelled "));
-  Serial.print(cm);
-  Serial.println(F(" cm since the last reset."));
+  mip.console.print(F(" MiP has travelled "));
+  mip.console.print(cm);
+  mip.console.println(F(" cm since the last reset."));
 
-  Serial.println();
-  Serial.println(F("Odometer.ino: Done."));
+  mip.console.println();
+  mip.console.println(F("Odometer.ino: Done."));
 }
 
 /**

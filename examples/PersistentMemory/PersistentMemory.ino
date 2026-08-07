@@ -44,7 +44,7 @@ const int EEPROM_START_ADDR = 0;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes Serial for diagnostics.
+ * - Initializes mip.console for diagnostics.
  * - Attempts to initialize the MiP connection via mip.begin() and sets the
  *   global `connectResult` flag.
  * - Mounts LittleFS and verifies success.
@@ -70,39 +70,39 @@ void setup() {
   const char writePassword[16] = "1234secret";
   char readPassword[16] = { 0 };
 
-  Serial.println(
+  mip.console.println(
     F("PersistentMemory: Read and write internal EEPROM on Pro Mini."));
-  Serial.println(F("Chest turns violet if read matches write, else red."));
+  mip.console.println(F("Chest turns violet if read matches write, else red."));
 
   // Write password structure to EEPROM
   EEPROM.put(EEPROM_START_ADDR, writePassword);
-  Serial.println(F("PersistentMemory: Wrote password to EEPROM address 0."));
+  mip.console.println(F("PersistentMemory: Wrote password to EEPROM address 0."));
 
   // Read password structure back from EEPROM
   EEPROM.get(EEPROM_START_ADDR, readPassword);
 
-  Serial.print(F(" Password is: "));
-  Serial.println(writePassword);
-  Serial.print(F(" EEPROM contained: "));
-  Serial.println(readPassword);
+  mip.console.print(F(" Password is: "));
+  mip.console.println(writePassword);
+  mip.console.print(F(" EEPROM contained: "));
+  mip.console.println(readPassword);
 
   // Compare read data against written data
   if (strcmp(writePassword, readPassword) == 0) {
     // Violet: R=0xB6, G=0x00, B=0xFF
     mip.chestLED.write(0xB6, 0x00, 0xFF);
-    Serial.println(
+    mip.console.println(
       F(" PersistentMemory: Read matches write. Chest set to violet."));
   } else {
     // Red: R=0xFF, G=0x00, B=0x00
     mip.chestLED.write(0xFF, 0x00, 0x00);
-    Serial.println(
+    mip.console.println(
       F(" PersistentMemory: Read does NOT match write. Chest set to red."));
   }
 
   // Allow observing chest LED, then restore to green
   delay(5000);
   mip.chestLED.write(0x00, 0xFF, 0x00);
-  Serial.println(F("PersistentMemory: Done."));
+  mip.console.println(F("PersistentMemory: Done."));
 }
 
 /**

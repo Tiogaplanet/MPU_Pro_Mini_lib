@@ -39,7 +39,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to Serial and setup
+ * If the connection fails, an error message is printed to mip.console and setup
  * returns early. On success, the sketch prints a short description and then
  * queues a series of distanceDrive() commands to be executed by the robot.
  *
@@ -56,7 +56,7 @@ void setup() {
     return;
   }
 
-  Serial.println(
+  mip.console.println(
     F("DistanceDrive.ino: Use distanceDrive function. Drive forward, turn "
       "360 degrees in each direction and backward."));
 
@@ -66,8 +66,8 @@ void setup() {
   mip.motion.distanceDrive(MIP_DRIVE_FORWARD, 0, MIP_TURN_RIGHT, 360);
   mip.motion.distanceDrive(MIP_DRIVE_BACKWARD, 30, MIP_TURN_RIGHT, 0);
 
-  Serial.println();
-  Serial.println(F("DistanceDrive.ino: Done."));
+  mip.console.println();
+  mip.console.println(F("DistanceDrive.ino: Done."));
 }
 
 /**

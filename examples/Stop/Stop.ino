@@ -8,7 +8,7 @@
  *   - Connects to the MiP using begin().
  *   - Commands a 360-degree left turn with motion.turnLeft(360, 6).
  *   - Waits briefly and then calls motion.stop() to interrupt the motion.
- *   - Prints progress messages to Serial for observation.
+ *   - Prints progress messages to mip.console for observation.
  *
  * The example exercises these API calls:
  *   - begin()
@@ -53,7 +53,7 @@ void setup() {
     return;
   }
 
-  Serial.println(F("Stop.ino: Use stop() function. Interrupt a 360 degree turn with stop()."));
+  mip.console.println(F("Stop.ino: Use stop() function. Interrupt a 360 degree turn with stop()."));
 
   // Start a 360-degree left turn at speed 6.
   mip.motion.turnLeft(360, 6);
@@ -63,8 +63,8 @@ void setup() {
   mip.motion.stop();
   delay(1000);
 
-  Serial.println();
-  Serial.println(F("Stop.ino: Done."));
+  mip.console.println();
+  mip.console.println(F("Stop.ino: Done."));
 }
 
 /**

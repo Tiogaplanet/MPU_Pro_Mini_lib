@@ -1,7 +1,7 @@
 /**
  * @file SoftwareHardwareVersion.ino
  * @brief Example sketch that reads MiP's software and hardware version
- * information. It also displays the MPU:D1 mini library version.
+ * information. It also displays the MPU-Pro Mini library version.
  *
  * @details
  * This sketch demonstrates how to query a MiP for its software version and
@@ -17,7 +17,7 @@
  *   - version.readSoftware()
  *   - version.readHardware()
  *
- * The output is printed to Serial in a human-readable format so the user can
+ * The output is printed to mip.console in a human-readable format so the user can
  * inspect the device's firmware date and build as well as hardware revision
  * information.
  *
@@ -50,46 +50,47 @@ MiP mip;
  * - Reads hardware information into a MiPHardwareInfo struct and prints the
  *   voice chip and hardware revision values.
  *
- * The function prints progress and completion messages to Serial so the
+ * The function prints progress and completion messages to mip.console so the
  * user can observe the retrieved version and hardware details.
  */
 void setup() {
   bool connectResult = mip.begin();
+  
   if (!connectResult) {
     Serial.println(
       F("SoftwareHardwareVersion.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(
+  mip.console.println(
     F("SoftwareHardwareVersion.ino: \n\rUse version.readSoftware() and "
       "version.readHardware() functions."));
 
-  Serial.print(F(" MiP Power Up - D1 mini library version: "));
-  Serial.println(mip.version.readMPUString());
+  mip.console.print(F(" MiP Power Up - D1 mini library version: "));
+  mip.console.println(mip.version.readMPUString());
 
   /* Read and display software version information. */
   MiPSoftwareVersion softwareVersion;
   mip.version.readSoftware(softwareVersion);
-  Serial.print(F(" Software version: "));
-  Serial.print(softwareVersion.year);
-  Serial.print('-');
-  Serial.print(softwareVersion.month);
-  Serial.print('-');
-  Serial.print(softwareVersion.day);
-  Serial.print('.');
-  Serial.println(softwareVersion.uniqueVersion);
+  mip.console.print(F(" Software version: "));
+  mip.console.print(softwareVersion.year);
+  mip.console.print('-');
+  mip.console.print(softwareVersion.month);
+  mip.console.print('-');
+  mip.console.print(softwareVersion.day);
+  mip.console.print('.');
+  mip.console.println(softwareVersion.uniqueVersion);
 
   /* Read and display hardware information. */
   MiPHardwareInfo hardwareInfo;
   mip.version.readHardware(hardwareInfo);
-  Serial.println(F(" Hardware info"));
-  Serial.print(F("  Voice chip version: "));
-  Serial.println(hardwareInfo.voiceChip);
-  Serial.print(F("  Hardware version: "));
-  Serial.println(hardwareInfo.hardware);
+  mip.console.println(F(" Hardware info"));
+  mip.console.print(F("  Voice chip version: "));
+  mip.console.println(hardwareInfo.voiceChip);
+  mip.console.print(F("  Hardware version: "));
+  mip.console.println(hardwareInfo.hardware);
 
-  Serial.println(F("SoftwareHardwareVersion.ino: Done."));
+  mip.console.println(F("SoftwareHardwareVersion.ino: Done."));
 }
 
 /**

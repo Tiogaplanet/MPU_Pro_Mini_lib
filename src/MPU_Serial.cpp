@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-// For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Serial.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -78,7 +75,7 @@ bool MiP_Serial::processAllResponseData() {
                  "MiP: Response too short: %d, %d\r\n",
                  bytesRead,
                  bytesToRead * 2);
-        m_mip.MIP_DEBUG_ERROR_PRINT(buf);
+        MIP_DEBUG_ERROR_PRINT(m_mip, buf);
         break;
       }
     } else {
@@ -118,7 +115,7 @@ uint8_t MiP_Serial::transportGetResponse(uint8_t* pResponseBuffer,
   } while (!responseFound && (millis() - startTime) < MIP_RESPONSE_TIMEOUT);
 
   if (!responseFound) {
-    MIP_DEBUG_WARN_PRINTLN(F("MiP: Response timeout"));
+    MIP_DEBUG_WARN_PRINTLN(m_mip, F("MiP: Response timeout"));
     return MiP::MIP_ERROR_TIMEOUT;
   }
 
@@ -196,7 +193,7 @@ void MiP_Serial::processOobResponseData(uint8_t commandByte) {
                "MiP: Bad OOB command byte: 0x%02x (discarded %d bytes)\r\n",
                commandByte,
                discarded);
-      m_mip.MIP_DEBUG_ERROR_PRINT(buf);
+      MIP_DEBUG_ERROR_PRINT(m_mip, buf);
     }
       return;
   }
@@ -211,7 +208,7 @@ void MiP_Serial::processOobResponseData(uint8_t commandByte) {
              "MiP: OOB too short: %d, %d\r\n",
              bytesRead,
              length * 2);
-    m_mip.MIP_DEBUG_ERROR_PRINT(buf);
+    MIP_DEBUG_ERROR_PRINT(m_mip, buf);
     return;
   }
 
@@ -226,7 +223,7 @@ void MiP_Serial::processOobResponseData(uint8_t commandByte) {
 bool MiP_Serial::readIrLength(size_t& length) {
   uint8_t nibbles[2];
   if (Serial.readBytes(nibbles, sizeof(nibbles)) != sizeof(nibbles)) {
-    m_mip.MIP_DEBUG_ERROR_PRINTLN(F("MiP: Missing IR code length"));
+    MIP_DEBUG_ERROR_PRINTLN(m_mip, F("MiP: Missing IR code length"));
     return false;
   }
 
@@ -240,7 +237,7 @@ bool MiP_Serial::readIrLength(size_t& length) {
              "MiP: Bad IR code length: 0x%02x (discarded %d bytes)\r\n",
              static_cast<unsigned>(length),
              discarded);
-    m_mip.MIP_DEBUG_ERROR_PRINT(buf);
+    MIP_DEBUG_ERROR_PRINT(m_mip, buf);
     return false;
   }
   return true;

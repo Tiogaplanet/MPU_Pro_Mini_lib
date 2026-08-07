@@ -3,7 +3,7 @@
  * @brief Example sketch demonstrating turning the MiP left and right.
  *
  * @details
- * This sketch connects to a MiP robot and alternately commands it to turn
+ * This sketch connects to MiP and alternately commands it to turn
  * 180 degrees left and then 180 degrees right three times. It demonstrates
  * how to use the MiP motion APIs to perform rotational movements and how to
  * interrupt or sequence motions using simple delays.
@@ -14,9 +14,10 @@
  *   - motion.turnRight()
  *
  * Usage notes:
- *   - Ensure the MiP is powered and able to turn in the available space.
+ *   - Ensure MiP is powered and able to turn in the available space.
  *   - Adjust turn angles and speeds passed to turnLeft/turnRight to change
  *     behavior and responsiveness.
+ *
  * @copyright Copyright (C) 2018-2026 Adam Green (https://github.com/adamgreen)
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +62,7 @@ void setup() {
     return;
   }
 
-  Serial.println(F("TurnLeftRight.ino: Use turnLeft & turnRight() functions. "
+  mip.console.println(F("TurnLeftRight.ino: Use turnLeft & turnRight() functions. "
                     "Turn 180 degrees to left and then 180 degrees to right."));
 
   for (uint8_t i = 0; i < 3; i++) {
@@ -74,8 +75,8 @@ void setup() {
     delay(2000);
   }
 
-  Serial.println();
-  Serial.println(F("TurnLeftRight.ino: Done."));
+  mip.console.println();
+  mip.console.println(F("TurnLeftRight.ino: Done."));
 }
 
 /**

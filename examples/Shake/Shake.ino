@@ -1,18 +1,18 @@
 /**
  * @file Shake.ino
- * @brief Example sketch demonstrating MiP shake detection.
+ * @brief Example sketch demonstrating MiP's shake detection.
  *
  * @details
- * This simple example initializes communication with a MiP and continuously
- * polls the device for shake events. When the MiP detects a shake, the sketch
- * prints a notification to Serial. The sketch demonstrates basic use of the
+ * This simple example initializes communication with MiP and continuously
+ * polls for shake events. When MiP detects a shake, the sketch
+ * prints a notification to mip.console. The sketch demonstrates basic use of the
  * MiP API for initialization and the shake-detection query:
  *   - begin()
  *   - shake.read()
  *
  * Typical usage:
- *   - Load this sketch onto the MPU: D1 mini connected to a MiP Power Up.
- *   - Open Serial to observe "Shake detected!" messages when the robot is shaken.
+ *   - Load this sketch onto the MPU - Pro Mini connected to MiP.
+ *   - Open mip.console to observe "Shake detected!" messages when the robot is shaken.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -45,8 +45,8 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details Initializes the MiP connection by calling mip.begin(). If the
- * connection fails, an error message is printed to Serial and the sketch
- * returns early. On success, a short description is printed to Serial to
+ * connection fails, an error message is printed to mip.console and the sketch
+ * returns early. On success, a short description is printed to mip.console to
  * indicate the sketch is ready to detect shakes.
  */
 void setup() {
@@ -56,14 +56,14 @@ void setup() {
     return;
   }
 
-  Serial.println(F("Shake.ino: Detect shakes."));
+  mip.console.println(F("Shake.ino: Detect shakes."));
 }
 
 /**
  * @brief Arduino loop function.
  *
  * @details Continuously polls the MiP for shake events using hasBeenShaken().
- * When a shake is detected, the sketch prints "Shake detected!" to Serial.
+ * When a shake is detected, the sketch prints "Shake detected!" to mip.console.
  * This loop is intentionally minimal to keep the example focused on the
  * shake-detection API.
  */
@@ -71,7 +71,7 @@ void loop() {
   if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
 
   if (mip.shake.read()) {
-    Serial.println(F(" Shake detected!"));
+    mip.console.println(F(" Shake detected!"));
   }
 }
 

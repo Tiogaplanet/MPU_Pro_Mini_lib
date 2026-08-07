@@ -53,76 +53,51 @@
   (MPU_PRO_MINI_VERSION_MAJOR * 10000 + MPU_PRO_MINI_VERSION_MINOR * 100 + \
    MPU_PRO_MINI_VERSION_PATCH)
 
-// ==========================================================================
-// UNIFIED DEBUG & CONSOLE SYSTEM
-// ==========================================================================
+// Setup some debug levels for reporting library status via console.
+#define MIP_DEBUG_NONE 0
+#define MIP_DEBUG_ERROR 1
+#define MIP_DEBUG_WARN 2
+#define MIP_DEBUG_INFO 3
 
-// --- Part 1: Debug Level Definitions ---
-#define DEBUG_LEVEL_NONE  0
-#define DEBUG_LEVEL_ERROR 1
-#define DEBUG_LEVEL_WARN  2
-#define DEBUG_LEVEL_INFO  3
-
-// --- Part 2: Library's Internal Debug Macros ---
-// These macros control the debug output from within the library's own .cpp files.
-// They always use `console` to ensure UART multiplexer safety.
-
+// Default to NONE if not defined by the user in the sketch.
 #ifndef MIP_DEBUG_LEVEL
-#define MIP_DEBUG_LEVEL DEBUG_LEVEL_ERROR // Default: Only show internal errors.
+#define MIP_DEBUG_LEVEL MIP_DEBUG_ERROR
 #endif
 
-#if MIP_DEBUG_LEVEL >= DEBUG_LEVEL_ERROR
-#define MIP_DEBUG_ERROR_PRINT(...)   console.print(__VA_ARGS__)
-#define MIP_DEBUG_ERROR_PRINTLN(...) console.println(__VA_ARGS__)
+// Create the macros for conditional printing of debug messages via console.
+#if MIP_DEBUG_LEVEL >= MIP_DEBUG_ERROR
+#define MIP_DEBUG_ERROR_PRINT(mip, ...) \
+  (mip).console.print(F("[ERROR] "));   \
+  (mip).console.print(__VA_ARGS__)
+#define MIP_DEBUG_ERROR_PRINTLN(mip, ...) \
+  (mip).console.print(F("[ERROR] "));   \
+  (mip).console.println(__VA_ARGS__)
 #else
 #define MIP_DEBUG_ERROR_PRINT(...)
 #define MIP_DEBUG_ERROR_PRINTLN(...)
 #endif
-#if MIP_DEBUG_LEVEL >= DEBUG_LEVEL_WARN
-#define MIP_DEBUG_WARN_PRINT(...)   console.print(__VA_ARGS__)
-#define MIP_DEBUG_WARN_PRINTLN(...) console.println(__VA_ARGS__)
+#if MIP_DEBUG_LEVEL >= MIP_DEBUG_WARN
+#define MIP_DEBUG_WARN_PRINT(mip, ...) \
+  (mip).console.print(F("[WARN] "));    \
+  (mip).console.print(__VA_ARGS__)
+#define MIP_DEBUG_WARN_PRINTLN(mip, ...) \
+  (mip).console.print(F("[WARN] "));    \
+  (mip).console.println(__VA_ARGS__)
 #else
 #define MIP_DEBUG_WARN_PRINT(...)
 #define MIP_DEBUG_WARN_PRINTLN(...)
 #endif
-#if MIP_DEBUG_LEVEL >= DEBUG_LEVEL_INFO
-#define MIP_DEBUG_INFO_PRINT(...)   console.print(__VA_ARGS__)
-#define MIP_DEBUG_INFO_PRINTLN(...) console.println(__VA_ARGS__)
+#if MIP_DEBUG_LEVEL >= MIP_DEBUG_INFO
+#define MIP_DEBUG_INFO_PRINT(mip, ...) \
+  (mip).console.print(F("[INFO] "));    \
+  (mip).console.print(__VA_ARGS__)
+#define MIP_DEBUG_INFO_PRINTLN(mip, ...) \
+  (mip).console.print(F("[INFO] "));    \
+  (mip).console.println(__VA_ARGS__)
 #else
 #define MIP_DEBUG_INFO_PRINT(...)
 #define MIP_DEBUG_INFO_PRINTLN(...)
 #endif
-
-
-// --- Part 3: User Sketch Debug Macros ---
-// These macros are for the user's sketch. They can be turned on/off independently.
-// They also safely use mip.console.
-
-#ifndef USER_DEBUG_LEVEL
-#define USER_DEBUG_LEVEL DEBUG_LEVEL_INFO // Default: User debug messages are ON.
-#endif
-
-#if USER_DEBUG_LEVEL > DEBUG_LEVEL_NONE
-#define USER_PRINT(...)   mip.console.print(__VA_ARGS__)
-#define USER_PRINTLN(...) mip.console.println(__VA_ARGS__)
-#define USER_PRINTF(...)  mip.console.printf(__VA_ARGS__)
-#else
-#define USER_PRINT(...)
-#define USER_PRINTLN(...)
-#define USER_PRINTF(...)
-#endif
-
-
-// --- Part 4: Unconditional 'Serial' Redirection for User Sketches ---
-// This is the key to the strategy. It intercepts any call to 'Serial' in a
-// user sketch and safely routes it through the MiP_Console multiplexer.
-
-// The MIP_INTERNAL_COMPILE guard ensures this redirection does NOT happen
-// when compiling the library's own source files.
-#ifndef MIP_INTERNAL_COMPILE
-  #define Serial mip.console
-#endif
-
 
 // Define an assert mechanism that can be used to log and halt when the user is
 // found to be calling the API incorrectly.

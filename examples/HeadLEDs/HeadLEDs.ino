@@ -38,7 +38,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to Serial and setup
+ * If the connection fails, an error message is printed to mip.console and setup
  * returns early. On success, the sketch:
  *   - Sets the four head LEDs to different states (OFF, ON, BLINK_SLOW,
  * BLINK_FAST).
@@ -47,7 +47,7 @@ MiP mip;
  *   - Restores all head LEDs to ON and demonstrates the unverified write API
  *     by attempting the same sequence with headLEDs.unverifiedWrite().
  *
- * The function prints progress and results to Serial for observation.
+ * The function prints progress and results to mip.console for observation.
  */
 void setup() {
   bool connectResult = mip.begin();
@@ -56,27 +56,27 @@ void setup() {
     return;
   }
 
-  Serial.println(F("HeadLEDs.ino: Use head LED functions. Should set each "
+  mip.console.println(F("HeadLEDs.ino: Use head LED functions. Should set each "
                     "head LED to different state."));
   mip.headLEDs.write(MIP_HEAD_LED_OFF, MIP_HEAD_LED_ON, MIP_HEAD_LED_BLINK_SLOW,
                      MIP_HEAD_LED_BLINK_FAST);
 
   MiPHeadLEDs headLEDs;
   mip.headLEDs.read(headLEDs);
-  Serial.println(F("Head LEDs"));
-  Serial.print(F("    led1: "));
+  mip.console.println(F("Head LEDs"));
+  mip.console.print(F("    led1: "));
   printLEDString(headLEDs.led1);
-  Serial.print(F("    led2: "));
+  mip.console.print(F("    led2: "));
   printLEDString(headLEDs.led2);
-  Serial.print(F("    led3: "));
+  mip.console.print(F("    led3: "));
   printLEDString(headLEDs.led3);
-  Serial.print(F("    led4: "));
+  mip.console.print(F("    led4: "));
   printLEDString(headLEDs.led4);
 
   delay(4000);
 
   // Turn all the LEDs back on now.
-  Serial.println(F(" Turning all eye LEDs back on now."));
+  mip.console.println(F(" Turning all eye LEDs back on now."));
   headLEDs.led1 = headLEDs.led2 = headLEDs.led3 = headLEDs.led4 =
     MIP_HEAD_LED_ON;
   mip.headLEDs.write(headLEDs);
@@ -85,26 +85,26 @@ void setup() {
   // Attempt to run through the same sequence of head LED changes using the
   // headLEDs.unverifiedWrite() functions which don't always get accepted by
   // MiP.
-  Serial.println(F(" Trying to set each head LED to a different state."));
+  mip.console.println(F(" Trying to set each head LED to a different state."));
   mip.headLEDs.unverifiedWrite(MIP_HEAD_LED_OFF, MIP_HEAD_LED_ON,
                                MIP_HEAD_LED_BLINK_SLOW,
                                MIP_HEAD_LED_BLINK_FAST);
   delay(4000);
 
-  Serial.println(F(" Trying to set all eye LEDs back on now."));
+  mip.console.println(F(" Trying to set all eye LEDs back on now."));
   headLEDs.led1 = headLEDs.led2 = headLEDs.led3 = headLEDs.led4 =
     MIP_HEAD_LED_ON;
   mip.headLEDs.unverifiedWrite(headLEDs);
 
-  Serial.println();
-  Serial.println(F("HeadLEDs.ino: Done."));
+  mip.console.println();
+  mip.console.println(F("HeadLEDs.ino: Done."));
 }
 
 /**
  * @brief Print a human-readable description of a head LED state.
  *
  * @details Helper function that maps a MiPHeadLED enum value to a readable
- * string and prints it to Serial. Handles the defined LED states:
+ * string and prints it to mip.console. Handles the defined LED states:
  *   - MIP_HEAD_LED_OFF
  *   - MIP_HEAD_LED_ON
  *   - MIP_HEAD_LED_BLINK_SLOW
@@ -117,19 +117,19 @@ void setup() {
 static void printLEDString(MiPHeadLED led) {
   switch (led) {
     case MIP_HEAD_LED_OFF:
-      Serial.println(F(" Off"));
+      mip.console.println(F(" Off"));
       break;
     case MIP_HEAD_LED_ON:
-      Serial.println(F(" On"));
+      mip.console.println(F(" On"));
       break;
     case MIP_HEAD_LED_BLINK_SLOW:
-      Serial.println(F(" Blink Slow"));
+      mip.console.println(F(" Blink Slow"));
       break;
     case MIP_HEAD_LED_BLINK_FAST:
-      Serial.println(F(" Blink Fast"));
+      mip.console.println(F(" Blink Fast"));
       break;
     default:
-      Serial.println();
+      mip.console.println();
       break;
   }
 }

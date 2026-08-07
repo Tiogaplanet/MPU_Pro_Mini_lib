@@ -37,12 +37,12 @@ MiP mip;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to Serial and setup
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to mip.console and setup
  * returns early. On success, the sketch demonstrates:
- *   - Playing a single sound with playSound().
- *   - Building a sound list using beginSoundList() and addEntryToSoundList().
- *   - Playing the sound list with playSoundList() and repeating it after a
+ *   - Playing a single sound with sound.play().
+ *   - Building a sound list using sound.beginList() and sound.addEntryToList().
+ *   - Playing the sound list with sound.playList() and repeating it after a
  * delay.
  *
  * The example uses delays to allow sounds and sound lists to complete before
@@ -50,12 +50,13 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
+  
   if (!connectResult) {
     Serial.println(F("PlaySound.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("PlaySound.ino: Play a few sounds."));
+  mip.console.println(F("PlaySound.ino: Play a few sounds."));
 
   // Play a single sound (drinking) at volume level 4.
   mip.sound.play(MIP_SOUND_ACTION_DRINKING, MIP_VOLUME_4);
@@ -75,8 +76,8 @@ void setup() {
   delay(10000);
   mip.sound.playList();
 
-  Serial.println();
-  Serial.println(F("PlaySound.ino: Done."));
+  mip.console.println();
+  mip.console.println(F("PlaySound.ino: Done."));
 }
 
 /**

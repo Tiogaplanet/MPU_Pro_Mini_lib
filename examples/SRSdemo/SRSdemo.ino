@@ -71,14 +71,15 @@ bool connectResult;
  * early. On success, a short banner is printed to indicate the demo is running.
  */
 void setup() {
-  // First need to initialize the Serial connection with the MiP.
+  // First need to initialize the mip.console connection with the MiP.
   connectResult = g_mip.begin();
+  
   if (!connectResult) {
     Serial.println(F("Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("Seattle Robotics Society Demo for April 21st, 2018."));
+  g_mip.console.println(F("Seattle Robotics Society Demo for April 21st, 2018."));
 }
 
 /**

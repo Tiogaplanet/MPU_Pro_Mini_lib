@@ -10,7 +10,7 @@
  *   - Re-establishing the connection with mip.begin()
  *   - Putting the MiP into a low-power sleep state with mip.sleep()
  *
- * The sketch prints status messages to Serial so you can observe the chest
+ * The sketch prints status messages to mip.console so you can observe the chest
  * LED behavior and the connection lifecycle. Note that after calling
  * mip.sleep() the MiP typically requires a power cycle before accepting new
  * connections.
@@ -60,13 +60,13 @@ void setup() {
     return;
   }
 
-  Serial.println(F("Sleep.ino: Shows begin(), end(), and sleep() functionality."));
-  Serial.println(F(" Chest LED should be green to indicate UART connection."));
+  mip.console.println(F("Sleep.ino: Shows begin(), end(), and sleep() functionality."));
+  mip.console.println(F(" Chest LED should be green to indicate UART connection."));
 
   // Allow time to observe the connected state.
   delay(5000);
 
-  Serial.println(F(" Disconnecting from MiP. Chest LED should revert to blue."));
+  mip.console.println(F(" Disconnecting from MiP. Chest LED should revert to blue."));
   mip.end();  // Release the UART connection; chest LED typically changes.
 
   // Wait while disconnected so the LED change is visible.
@@ -75,19 +75,19 @@ void setup() {
   // Attempt to reconnect to the MiP.
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F(" Sleep.ino: Failed reconnecting to MiP!"));
+    mip.console.println(F(" Sleep.ino: Failed reconnecting to MiP!"));
     return;
   }
-  Serial.println(F(" Attempted to reconnect to MiP. Chest LED should be green again."));
+  mip.console.println(F(" Attempted to reconnect to MiP. Chest LED should be green again."));
 
   // Allow time to observe the reconnected state.
   delay(5000);
 
-  Serial.println(F(" Putting MiP to sleep."));
-  Serial.println(F(" MiP requires a power cycle before accepting connections again."));
+  mip.console.println(F(" Putting MiP to sleep."));
+  mip.console.println(F(" MiP requires a power cycle before accepting connections again."));
   mip.sleep();  // Put MiP into low-power mode.
 
-  Serial.println(F("Sleep.ino: Done."));
+  mip.console.println(F("Sleep.ino: Done."));
 }
 
 /**

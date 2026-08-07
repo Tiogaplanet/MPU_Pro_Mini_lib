@@ -4,12 +4,12 @@
  *
  * @details
  * This sketch demonstrates how to store and retrieve a single byte of user
- * data in the MiP's EEPROM using the eeprom.write() and eeprom.read() APIs.
+ * data in MiP's EEPROM using the eeprom.write() and eeprom.read() APIs.
  * It writes a test value (secretPassword) to an EEPROM offset, then reads it
- * back and prints the original, scrambled, and recovered values to Serial.
+ * back and prints the original, scrambled, and recovered values to mip.console.
  *
  * The example shows how EEPROM data can be preserved across power cycles by
- * writing the value to the MiP device; to verify persistence, power-cycle the
+ * writing the value to the MiP device; to verify persistence, power-cycle
  * MiP (or comment out the write call and reload the sketch) and observe the
  * recovered value.
  *
@@ -31,7 +31,7 @@
  * @brief Global MiP instance used to communicate with the robot.
  *
  * @details Use this object to call MiP API functions such as begin(),
- * setUserData(), and getUserData().
+ * eeprom.write(), and eeprom.read().
  */
 MiP mip;
 
@@ -62,14 +62,14 @@ uint8_t recoveredPassword;
  * - Initializes communication with the MiP via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - Prints the original secretPassword, writes it to EEPROM using
- *   setUserData(eepromAddressOffset, secretPassword), then scrambles the
+ *   eeprom.write(eepromAddressOffset, secretPassword), then scrambles the
  *   in-memory secretPassword and reads the stored value back using
- *   getUserData(eepromAddressOffset). The recovered value is printed to
- *   Serial so the user can verify the write/read operation.
+ *   eeprom.read(eepromAddressOffset). The recovered value is printed to
+ *   mip.console so the user can verify the write/read operation.
  *
  * Note: To verify persistence across power cycles, comment out the call to
- * setUserData(), reflash or power-cycle the MiP, and observe that the
- * previously written value is still returned by getUserData().
+ * eeprom.write(), reflash or power-cycle the MiP, and observe that the
+ * previously written value is still returned by eeprom.read().
  */
 void setup() {
   bool connectResult = mip.begin();
@@ -78,11 +78,11 @@ void setup() {
     return;
   }
 
-  Serial.println(
+  mip.console.println(
     F("ReadWriteEEPROM.ino: Writes data to EEPROM and reads it back."));
 
-  Serial.print(F(" Original password: "));
-  // Fix use of Serial.printf later.  Serial.printf("0x%02X\n\r", secretPassword);
+  mip.console.print(F(" Original password: "));
+  // Fix use of mip.console.printf later.  mip.console.printf("0x%02X\n\r", secretPassword);
 
   /* Write the secret password to the MiP's user EEPROM at the configured
    * offset. Comment out this line to test persistence across power cycles.
@@ -93,15 +93,15 @@ void setup() {
    * comes from EEPROM rather than the local variable.
    */
   secretPassword = 0xFF;
-  Serial.print(F(" Scrambled password: "));
-  // Fix use of Serial.printf later.  Serial.printf("0x%02X\n\r", secretPassword);
+  mip.console.print(F(" Scrambled password: "));
+  // Fix use of mip.console.printf later.  mip.console.printf("0x%02X\n\r", secretPassword);
 
   /* Read the stored value back from EEPROM and print it. */
   recoveredPassword = mip.eeprom.read(eepromAddressOffset);
-  Serial.print(F(" Recovered password: "));
-  // Fix use of Serial.printf later.  Serial.printf("0x%02X\n\r", recoveredPassword);
+  mip.console.print(F(" Recovered password: "));
+  // Fix use of mip.console.printf later.  mip.console.printf("0x%02X\n\r", recoveredPassword);
 
-  Serial.println(F("ReadWriteEeprom.ino: Done."));
+  mip.console.println(F("ReadWriteEeprom.ino: Done."));
 }
 
 /**

@@ -145,26 +145,27 @@ bool MiP::didLastCallFail() {
 
 void MiP::printLastCallResult() {
   if (m_lastError != MIP_ERROR_NONE) {
-    MIP_DEBUG_ERROR_PRINT(F("MiP: API returned "));
+    MIP_DEBUG_ERROR_PRINT(*this, F("MiP: API returned "));
     switch (m_lastError) {
       case MIP_ERROR_TIMEOUT:
         MIP_DEBUG_ERROR_PRINTLN(
-            F("MIP_ERROR_TIMEOUT (Timed out waiting for response)"));
+            *this, F("MIP_ERROR_TIMEOUT (Timed out waiting for response)"));
         break;
       case MIP_ERROR_NO_EVENT:
         MIP_DEBUG_ERROR_PRINTLN(
-            F("MIP_ERROR_NO_EVENT (No event has arrived from MiP yet)"));
+            *this, F("MIP_ERROR_NO_EVENT (No event has arrived from MiP yet)"));
         break;
       case MIP_ERROR_BAD_RESPONSE:
         MIP_DEBUG_ERROR_PRINTLN(
-            F("MIP_ERROR_BAD_RESPONSE (Unexpected response from MiP)"));
+            *this, F("MIP_ERROR_BAD_RESPONSE (Unexpected response from MiP)"));
         break;
       case MIP_ERROR_MAX_RETRIES:
         MIP_DEBUG_ERROR_PRINTLN(
+            *this,
             F("MIP_ERROR_MAX_RETRIES (Exceeded maximum number of retries)"));
         break;
       default:
-        MIP_DEBUG_ERROR_PRINTLN(F("unknown error"));
+        MIP_DEBUG_ERROR_PRINTLN(*this, F("unknown error"));
         break;
     }
   }
@@ -320,7 +321,7 @@ void MiP::mipAssert(bool condition, uint32_t lineNumber, const char* fileName) {
              "MiP: Assert failed in file %s at line: %d\n",
              fileName,
              lineNumber);
-    MIP_DEBUG_ERROR_PRINT(buf);
+    MIP_DEBUG_ERROR_PRINT(*this, buf);
     while (true) {
       delay(100);
     }

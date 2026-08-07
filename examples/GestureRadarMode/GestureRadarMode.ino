@@ -5,7 +5,7 @@
  * @details This sketch shows how to enable and disable the MiP robot's radar
  * and gesture sensing modes and how to query their states. It performs a
  * sequence of mode changes in setup() while printing verification messages
- * to Serial:
+ * to mip.console:
  *   - radar.enable() and verify with radar.isEnabled()
  *   - radar.disable() and verify it is disabled
  *   - gesture.enable() and verify with gesture.isEnabled()
@@ -50,7 +50,7 @@ MiP mip;
  *     areGestureAndRadarModesDisabled() query functions.
  *
  * The function intentionally performs the checks in sequence so the user can
- * observe the robot's responses on Serial.
+ * observe the robot's responses on mip.console.
  */
 void setup() {
   bool connectResult = mip.begin();
@@ -59,52 +59,52 @@ void setup() {
     return;
   }
 
-  Serial.println(F("GestureRadarMode.ino: Switches between gesture, radar, and default modes."));
+  mip.console.println(F("GestureRadarMode.ino: Switches between gesture, radar, and default modes."));
 
-  Serial.println(F(" Calling mip.radar.enable()"));
+  mip.console.println(F(" Calling mip.radar.enable()"));
   mip.radar.enable();
-  Serial.print(F(" mip.isRadarModeEnabled() = "));
+  mip.console.print(F(" mip.isRadarModeEnabled() = "));
   if (mip.radar.isEnabled()) {
-    Serial.println(F("true - Pass"));
+    mip.console.println(F("true - Pass"));
   } else {
-    Serial.println(F("false - Failed"));
+    mip.console.println(F("false - Failed"));
   }
 
-  Serial.println(F(" Calling mip.radar.disable()"));
+  mip.console.println(F(" Calling mip.radar.disable()"));
   mip.radar.disable();
-  Serial.print(F(" mip.radar.isEnabled() = "));
+  mip.console.print(F(" mip.radar.isEnabled() = "));
   if (mip.radar.isEnabled()) {
-    Serial.println(F("true - Failed"));
+    mip.console.println(F("true - Failed"));
   } else {
-    Serial.println(F("false - Pass"));
+    mip.console.println(F("false - Pass"));
   }
 
-  Serial.println(F(" Calling mip.gesture.enable()"));
+  mip.console.println(F(" Calling mip.gesture.enable()"));
   mip.gesture.enable();
-  Serial.print(F(" mip.gesture.isEnabled() = "));
+  mip.console.print(F(" mip.gesture.isEnabled() = "));
   if (mip.gesture.isEnabled()) {
-    Serial.println(F("true - Pass"));
+    mip.console.println(F("true - Pass"));
   } else {
-    Serial.println(F("false - Failed"));
+    mip.console.println(F("false - Failed"));
   }
 
-  Serial.println(F(" Calling mip.gesture.disable()"));
+  mip.console.println(F(" Calling mip.gesture.disable()"));
   mip.gesture.disable();
-  Serial.print(F(" mip.gesture.isEnabled() = "));
+  mip.console.print(F(" mip.gesture.isEnabled() = "));
   if (mip.gesture.isEnabled()) {
-    Serial.println(F("true - Failed"));
+    mip.console.println(F("true - Failed"));
   } else {
-    Serial.println(F("false - Pass"));
+    mip.console.println(F("false - Pass"));
   }
-  Serial.print(F(" mip.gesture.areGestureAndRadarModesDisabled() = "));
+  mip.console.print(F(" mip.gesture.areGestureAndRadarModesDisabled() = "));
   if (mip.gesture.areGestureAndRadarModesDisabled()) {
-    Serial.println(F("true - Pass"));
+    mip.console.println(F("true - Pass"));
   } else {
-    Serial.println(F("false - Failed"));
+    mip.console.println(F("false - Failed"));
   }
 
-  Serial.println();
-  Serial.println(F("GestureRadarMode.ino: Done."));
+  mip.console.println();
+  mip.console.println(F("GestureRadarMode.ino: Done."));
 }
 
 /**

@@ -5,7 +5,7 @@
  * @details This sketch shows how to use the MiP library's driveForward() and
  * driveBackward() functions to move the robot a fixed speed for a specified
  * duration. The example drives forward for one second, waits, then drives
- * backward for one second. It prints status messages to Serial to indicate
+ * backward for one second. It prints status messages to mip.console to indicate
  * progress and completion.
  *
  * The example exercises these API calls:
@@ -50,7 +50,7 @@ void setup() {
     return;
   }
 
-  Serial.println(F("DriveForwardBackward.ino: Use motion.driveForward() and "
+  mip.console.println(F("DriveForwardBackward.ino: Use motion.driveForward() and "
                     "motion.driveBackward() functions. Drive ahead and back, 1 "
                     "second in each direction."));
 
@@ -66,8 +66,8 @@ void setup() {
    */
   delay(2000);
 
-  Serial.println();
-  Serial.println(F("DriveForwardBackward.ino: Done."));
+  mip.console.println();
+  mip.console.println(F("DriveForwardBackward.ino: Done."));
 }
 
 /**

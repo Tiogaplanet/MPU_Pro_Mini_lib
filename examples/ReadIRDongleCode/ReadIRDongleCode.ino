@@ -6,7 +6,7 @@
  * This sketch initializes communication with a MiP and continuously polls for
  * incoming IR dongle codes transmitted by another MiP. When an IR code event
  * is available, the sketch reads the 32-bit code using readIRDongleCode() and
- * prints the four constituent bytes in hexadecimal to Serial for inspection.
+ * prints the four constituent bytes in hexadecimal to mip.console for inspection.
  *
  * The example exercises these API calls:
  *   - begin()
@@ -31,12 +31,12 @@
  * @brief Global MiP instance used to communicate with the robot.
  *
  * @details Use this object to call MiP API functions such as begin(),
- * availableIRCodeEvents(), and readIRDongleCode().
+ * infrared.availableCodeEvents(), and infrared.readDongleCode().
  */
 MiP mip;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -49,7 +49,7 @@ bool connectResult;
  * @details
  * - Attempts to initialize the MiP connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
- * - On success, prints a short description to Serial indicating the sketch
+ * - On success, prints a short description to mip.console indicating the sketch
  *   is ready to receive IR dongle codes.
  */
 void setup() {
@@ -59,7 +59,7 @@ void setup() {
     return;
   }
 
-  Serial.println(F("ReadIRDongleCode.ino: Receive code from another MiP using IR."));
+  mip.console.println(F("ReadIRDongleCode.ino: Receive code from another MiP using IR."));
 }
 
 /**
@@ -69,7 +69,7 @@ void setup() {
  * - Polls for pending IR code events using infrared.availableCodeEvents().
  * - When an event is available, calls infrared.readDongleCode() to retrieve a 32-bit
  *   code value.
- * - Prints the code as four separate bytes in hexadecimal format to Serial.
+ * - Prints the code as four separate bytes in hexadecimal format to mip.console.
  *
  * The printed format breaks the 32-bit value into four bytes:
  *   - (receiveCode >> 28) & 0xFF
@@ -88,15 +88,15 @@ void loop() {
   if (mip.infrared.availableCodeEvents()) {
     receiveCode = mip.infrared.readDongleCode();
 
-    Serial.print(F(" Received "));
-    Serial.print(((receiveCode >> 28) & 0xFF), HEX);
-    Serial.print(F(" "));
-    Serial.print(((receiveCode >> 16) & 0xFF), HEX);
-    Serial.print(F(" "));
-    Serial.print(((receiveCode >> 8) & 0xFF), HEX);
-    Serial.print(F(" "));
-    Serial.print((receiveCode & 0xFF), HEX);
-    Serial.println();
+    mip.console.print(F(" Received "));
+    mip.console.print(((receiveCode >> 28) & 0xFF), HEX);
+    mip.console.print(F(" "));
+    mip.console.print(((receiveCode >> 16) & 0xFF), HEX);
+    mip.console.print(F(" "));
+    mip.console.print(((receiveCode >> 8) & 0xFF), HEX);
+    mip.console.print(F(" "));
+    mip.console.print((receiveCode & 0xFF), HEX);
+    mip.console.println();
   }
 }
 

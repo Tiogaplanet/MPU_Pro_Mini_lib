@@ -14,7 +14,7 @@
  *   - Command MiP to fall forward on the tray.
  *   - Attempt to get up again.
  *
- * The sketch prints status messages to Serial so the user can observe the
+ * The sketch prints status messages to mip.console so the user can observe the
  * sequence. The example exercises the following API calls:
  *   - motion.fallForward()
  *   - motion.getUp()
@@ -45,7 +45,7 @@ MiP mip;
  *   - If the connection fails, prints an error to Serial and returns early.
  *   - Commands MiP to get up from the kickstand then fall forward, wait 
  *     briefly, then attempt to get up from the tray.
- *   - Prints progress and completion messages to Serial.
+ *   - Prints progress and completion messages to mip.console.
  */
 void setup() {
   bool connectResult = mip.begin();
@@ -54,21 +54,21 @@ void setup() {
     return;
   }
 
-  Serial.println(F("GetUp.ino: Get up from the kickstand and tray."));
+  mip.console.println(F("GetUp.ino: Get up from the kickstand and tray."));
 
-  Serial.println(F(" Getting up from kickstand."));
+  mip.console.println(F(" Getting up from kickstand."));
   mip.motion.getUp(MIP_GETUP_FROM_BACK);
   delay(1000);
 
-  Serial.println(F(" Falling forward."));
+  mip.console.println(F(" Falling forward."));
   mip.motion.fallForward();
   delay(1000);
 
-  Serial.println(F(" Getting up again."));
+  mip.console.println(F(" Getting up again."));
   mip.motion.getUp(MIP_GETUP_FROM_FRONT);
   delay(3000);
 
-  Serial.println(F("GetUp.ino: Done."));
+  mip.console.println(F("GetUp.ino: Done."));
 }
 
 /**

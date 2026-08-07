@@ -4,7 +4,7 @@
  *
  * @details This sketch shows how to use the MiP library's gesture detection
  * APIs to enable gesture mode, poll for gesture events, and report the
- * detected gestures to Serial. The sketch waits for the robot to be upright
+ * detected gestures to mip.console. The sketch waits for the robot to be upright
  * before enabling gesture mode and then continuously reads available gesture
  * events using gesture.availableEvents() and gesture.readEvent().
  *
@@ -43,7 +43,7 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details Initializes communication with the MiP robot by calling mip.begin().
- * If the connection fails, an error message is printed to Serial and setup
+ * If the connection fails, an error message is printed to mip.console and setup
  * returns early. The function waits until the robot reports it is upright,
  * then enables gesture mode so the robot will begin reporting gesture events.
  */
@@ -54,10 +54,10 @@ void setup() {
     return;
   }
 
-  Serial.println(
+  mip.console.println(
     F("Gesture.ino: Detect gesture and inform user as they occur."));
 
-  Serial.println(F(" Waiting for MiP to be standing upright."));
+  mip.console.println(F(" Waiting for MiP to be standing upright."));
   while (!mip.position.isUpright()) {
     // Waiting for the robot to be upright before enabling gesture mode.
   }
@@ -70,7 +70,7 @@ void setup() {
  * @details Continuously polls for pending gesture events using
  * availableGestureEvents(). For each available event, readGestureEvent()
  * returns a MiPGesture value which is mapped to a human-readable message
- * printed to Serial. The switch statement covers all defined gesture
+ * printed to mip.console. The switch statement covers all defined gesture
  * values including a defensive case for MIP_GESTURE_INVALID.
  */
 void loop() {
@@ -79,35 +79,35 @@ void loop() {
 
   while (mip.gesture.availableEvents() > 0) {
     MiPGesture gesture = mip.gesture.readEvent();
-    Serial.print(F(" Detected "));
+    mip.console.print(F(" Detected "));
     switch (gesture) {
       case MIP_GESTURE_LEFT:
-        Serial.println(F("Left gesture!"));
+        mip.console.println(F("Left gesture!"));
         break;
       case MIP_GESTURE_RIGHT:
-        Serial.println(F("Right gesture!"));
+        mip.console.println(F("Right gesture!"));
         break;
       case MIP_GESTURE_CENTER_SWEEP_LEFT:
-        Serial.println(F("Center Sweep Left gesture!"));
+        mip.console.println(F("Center Sweep Left gesture!"));
         break;
       case MIP_GESTURE_CENTER_SWEEP_RIGHT:
-        Serial.println(F("Center Sweep Right gesture!"));
+        mip.console.println(F("Center Sweep Right gesture!"));
         break;
       case MIP_GESTURE_CENTER_HOLD:
-        Serial.println(F("Center Hold gesture!"));
+        mip.console.println(F("Center Hold gesture!"));
         break;
       case MIP_GESTURE_FORWARD:
-        Serial.println(F("Forward gesture!"));
+        mip.console.println(F("Forward gesture!"));
         break;
       case MIP_GESTURE_BACKWARD:
-        Serial.println(F("Backward gesture!"));
+        mip.console.println(F("Backward gesture!"));
         break;
       case MIP_GESTURE_INVALID:
         /**
        * @note MIP_GESTURE_INVALID should not normally be returned when
        * availableGestureEvents() reported > 0, but handle it defensively.
        */
-        Serial.println(F(" INVALID gesture!"));
+        mip.console.println(F(" INVALID gesture!"));
         break;
     }
   }

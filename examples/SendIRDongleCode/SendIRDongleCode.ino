@@ -6,7 +6,7 @@
  * This sketch initializes communication with a MiP and repeatedly transmits a
  * 16-bit IR dongle code using the sendIRDongleCode() API. The transmission
  * power can be adjusted via the MIP_IR_TX_POWER macro to experiment with
- * range and reliability. Each transmission is logged to Serial in a
+ * range and reliability. Each transmission is logged to mip.console in a
  * human-readable hexadecimal format.
  *
  * The example exercises these API calls:
@@ -67,7 +67,7 @@ void setup() {
     return;
   }
 
-  Serial.println(
+  mip.console.println(
       F("SendIRDongleCode.ino: Send code to another MiP using IR."));
 }
 
@@ -76,7 +76,7 @@ void setup() {
  *
  * @details
  * - Constructs a 16-bit dongle code (high byte followed by low byte).
- * - Prints the code to Serial in hexadecimal format for debugging.
+ * - Prints the code to mip.console in hexadecimal format for debugging.
  * - Calls sendIRDongleCode(dongleCode, MIP_IR_TX_POWER) to transmit the code.
  * - Waits one second between transmissions.
  *
@@ -96,7 +96,7 @@ void loop() {
 
   // Format and print the code being sent.
   sprintf(formattedOutput, " Sending 0x%04X", dongleCode);
-  Serial.println(formattedOutput);
+  mip.console.println(formattedOutput);
 
   // Transmit the 16-bit dongle code using the configured IR transmit power.
   mip.infrared.sendDongleCode(dongleCode, MIP_IR_TX_POWER);
