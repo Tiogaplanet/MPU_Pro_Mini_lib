@@ -1,9 +1,9 @@
 /**
  * @file DriveForwardBackward.ino
- * @brief Example sketch demonstrating MiP forward and backward drive commands.
+ * @brief Example sketch demonstrating MiP's forward and backward drive commands.
  *
  * @details This sketch shows how to use the MiP library's driveForward() and
- * driveBackward() functions to move the robot a fixed speed for a specified
+ * driveBackward() functions to move MiP a fixed speed for a specified
  * duration. The example drives forward for one second, waits, then drives
  * backward for one second. It prints status messages to mip.console to indicate
  * progress and completion.
@@ -23,7 +23,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * motion.driveForward(), and motion.driveBackward().
@@ -34,17 +34,18 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Called once after the board powers up or resets. This function:
- *  - Initializes communication with the MiP robot by calling mip.begin().
+ *  - Initializes communication with MiP by calling mip.begin().
  *  - If the connection fails, prints an error to Serial and returns early.
  *  - If successful, prints a description of the demonstration and issues
  *    a forward drive command for 1000 ms, waits 2000 ms, then issues a
  *    backward drive command for 1000 ms and waits another 2000 ms.
  *
- * The function demonstrates non-blocking command usage where the MiP device
+ * The function demonstrates non-blocking command usage where MiP
  * handles the timed motion while the sketch issues the commands.
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("DriveForwardBackward.ino: Failed connecting to MiP!"));
     return;
