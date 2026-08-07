@@ -40,7 +40,7 @@
 #include "MPU_Version.h"
 #include "MPU_Weight.h"
 
-// MiP Power Up - D1 mini library versioning
+// MiP Power Up - Pro Mini library versioning
 #define MPU_PRO_MINI_VERSION_MAJOR 2
 #define MPU_PRO_MINI_VERSION_MINOR 0
 #define MPU_PRO_MINI_VERSION_PATCH 0
@@ -122,10 +122,10 @@ class MiPStatus {
 };
 
 /**
- * @mainpage MiP Power Up - D1 mini library
+ * @mainpage MiP Power Up - Pro Mini library
  *
  * This library provides a complete interface to control the WowWee MiP robot
- * over UART from a WeMos D1 mini (or compatible ESP8266 board).
+ * over UART from an Arduino Pro Mini (or compatible ATmega328p board).
  */
 class MiP {
  public:
@@ -143,7 +143,7 @@ class MiP {
   static constexpr uint8_t MIP_CMD_GET_STATUS = 0x79;
 
   // --- Fixed Hardware Pin for Pro Mini UART Multiplexer ---
-  static constexpr uint8_t UART_SELECT_PIN = 2;  // Hardcoded to Pin 6!
+  static constexpr uint8_t UART_SELECT_PIN = 2;
 
   /**
    * @brief Integer error codes that can be encountered by the MiP library.
@@ -177,22 +177,21 @@ class MiP {
   /**
    * @brief Cleans up the connection to MiP and shuts down network services.
    *
-   * Restores default volume, sends disconnect command, and ends
-   * Serial/WiFi/OTA.
+   * Restores default volume, sends disconnect command, and ends Serial.
    */
   void end();
 
   /**
-   * @brief Puts the MiP robot to sleep.
+   * @brief Puts MiP to sleep.
    *
-   * The robot will need to be physically reset before another `begin()` call.
+   * MiP will need to be physically reset before another `begin()` call.
    */
   void sleep();
 
   /**
    * @brief Check whether the MiP library has completed initialization.
    *
-   * Returns true when the internal initialization flag (MRI_FLAG_INITIALIZED)
+   * Returns true when the internal initialization flag (MIP_FLAG_INITIALIZED)
    * is set, indicating that `begin()` completed successfully and the MiP
    * instance is ready for use. Returns false if initialization failed or
    * has not yet been performed.
@@ -251,7 +250,7 @@ class MiP {
 
   /**
    * @brief Prints a human-readable description of the last error to the debug
-   *        channel (Serial).
+   *        channel.
    */
   void printLastCallResult();
 
