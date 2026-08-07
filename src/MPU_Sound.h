@@ -164,7 +164,7 @@ class MiP_Sound {
 /**
    * @brief MiP protocol command bytes used by the sound subsystem.
    *
-   * These values are placed in the first byte of requests sent to the MiP
+   * These values are placed in the first byte of requests sent to MiP
    * (and appear in the corresponding responses).  See the official
    * [MiP BLE Protocol](https://github.com/WowWeeLabs/MiP-BLE-Protocol/blob/master/MiP-Protocol.md)
    * for the complete list.
@@ -196,7 +196,7 @@ class MiP_Sound {
    *                  previous).
    */
   void addEntryToList(MiPSoundIndex sound,
-                      uint16_t delay = 0,
+                      uint16_t delayTime = 0,
                       MiPVolume volume = MIP_VOLUME_DEFAULT);
 
   /**
@@ -217,7 +217,7 @@ class MiP_Sound {
   void play(MiPSoundIndex sound, MiPVolume volume = MIP_VOLUME_DEFAULT);
 
   /**
-   * @brief Sets the MiP speaker volume and verifies the change.
+   * @brief Sets MiP's speaker volume and verifies the change.
    *
    * Retries automatically on failure.
    *
