@@ -1,9 +1,9 @@
 /**
  * @file HeadLEDs.ino
- * @brief Example sketch demonstrating MiP head LED control and queries.
+ * @brief Example sketch demonstrating MiP's head LED control and queries.
  *
- * @details This sketch shows how to use the MiP library to set and read the
- * robot's head (eye) LEDs using both verified and unverified APIs. It:
+ * @details This sketch shows how to use the MiP library to set and read 
+ * MiP's head (eye) LEDs using both verified and unverified APIs. It:
  *   - Sets each head LED to a different state using headLEDs.write().
  *   - Reads back the current head LED states with headLEDs.read() and prints
  *     a human-readable description for each LED.
@@ -27,7 +27,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * headLEDs.write(), headLEDs.read(), and headLEDs.unverifiedWrite().
@@ -37,7 +37,7 @@ MiP mip;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
+ * @details Initializes communication with MiP by calling mip.begin().
  * If the connection fails, an error message is printed to mip.console and setup
  * returns early. On success, the sketch:
  *   - Sets the four head LEDs to different states (OFF, ON, BLINK_SLOW,
@@ -51,6 +51,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("HeadLEDs.ino: Failed connecting to MiP!"));
     return;
