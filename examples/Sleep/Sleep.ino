@@ -3,7 +3,7 @@
  * @brief Demonstrates connecting, disconnecting, reconnecting, and sleeping a MiP.
  *
  * @details
- * This example shows how to manage a MiP connection from an MPU: D1 mini using
+ * This example shows how to manage MiP's connection from an MPU-Pro Mini using
  * the MiP library. It demonstrates:
  *   - Establishing a UART connection with mip.begin()
  *   - Releasing the connection with mip.end()
@@ -12,7 +12,7 @@
  *
  * The sketch prints status messages to mip.console so you can observe the chest
  * LED behavior and the connection lifecycle. Note that after calling
- * mip.sleep() the MiP typically requires a power cycle before accepting new
+ * mip.sleep(), MiP typically requires a power cycle before accepting new
  * connections.
  *
  * The example exercises these API calls:
@@ -31,7 +31,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to control the robot.
+ * @brief Global MiP instance used to control MiP.
  *
  * @details Use this object to call MiP API functions such as begin(), end(),
  * and sleep(). Keeping the instance at file scope makes it available in both
@@ -43,18 +43,19 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details
- * - Attempts to initialize communication with the MiP using mip.begin().
+ * - Attempts to initialize communication with MiP using mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints explanatory messages and demonstrates:
  *     1. Leaving the connection open for a short period (chest LED should be green).
  *     2. Calling mip.end() to disconnect (chest LED should revert to blue).
  *     3. Reconnecting with mip.begin() to show chest LED returns to green.
- *     4. Calling mip.sleep() to put the MiP into a low-power state (requires power cycle to reconnect).
+ *     4. Calling mip.sleep() to put MiP into a low-power state (requires power cycle to reconnect).
  *
  * The delays are included so the user can observe LED and connection state changes.
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("Sleep.ino: Failed connecting to MiP!"));
     return;
@@ -99,4 +100,3 @@ void setup() {
  */
 void loop() {
 }
-
