@@ -63,10 +63,10 @@ void setup() {
   }
 
   mip.console.println(
-    F("SoftwareHardwareVersion.ino: \n\rUse version.readSoftware() and "
+    F("SoftwareHardwareVersion.ino: Use version.readSoftware() and "
       "version.readHardware() functions."));
 
-  mip.console.print(F(" MiP Power Up - D1 mini library version: "));
+  mip.console.print(F(" MiP Power Up - Pro Mini library version: "));
   mip.console.println(mip.version.readMPUString());
 
   /* Read and display software version information. */
