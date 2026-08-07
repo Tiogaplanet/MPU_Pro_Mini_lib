@@ -1,6 +1,6 @@
 /**
  * @file Radar.ino
- * @brief Example sketch demonstrating MiP radar distance sensing and reporting.
+ * @brief Example sketch demonstrating MiP's radar distance sensing and reporting.
  *
  * @details This sketch shows how to use the MiP library to enable radar mode,
  * read radar distance categories, and report changes to the user over mip.console.
@@ -24,7 +24,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * radar.enable(), position.isUpright(), and radar.read().
@@ -32,7 +32,7 @@
 MiP mip;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
  * @details Stored so other parts of the sketch could check connection state
  * if extended.
@@ -42,10 +42,10 @@ bool connectResult;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
+ * @details Initializes communication with MiP by calling mip.begin().
  * If the connection fails, an error message is printed to mip.console and setup
- * returns early. The function waits until the robot reports it is upright,
- * then enables radar mode so the robot will begin reporting radar distance
+ * returns early. The function waits until MiP reports it is upright,
+ * then enables radar mode so MiP will begin reporting radar distance
  * categories via radar.read().
  */
 void setup() {
@@ -58,7 +58,7 @@ void setup() {
 
   mip.console.println(F("Radar.ino: Display current radar readings to user."));
 
-  mip.console.println(F(" Waiting for robot to be standing upright."));
+  mip.console.println(F(" Waiting for MiP to be standing upright."));
   while (!mip.position.isUpright()) {
     // Busy-wait until MiP reports upright; required before enabling radar.
   }
@@ -70,7 +70,7 @@ void setup() {
 /**
  * @brief Arduino loop function.
  *
- * @details Continuously polls the MiP radar using radar.read(). When a valid
+ * @details Continuously polls MiP's radar using radar.read(). When a valid
  * radar reading is returned and it differs from the previous reading, the
  * sketch prints a human-readable description of the detected distance range
  * to mip.console. The switch statement maps MiPRadar enum values to strings:
