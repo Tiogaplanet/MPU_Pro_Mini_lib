@@ -1,10 +1,10 @@
 /**
  * @file FallDown.ino
- * @brief Example sketch demonstrating MiP fall forward and backward actions.
+ * @brief Example sketch demonstrating MiP's fall forward and backward actions.
  *
- * @details This sketch demonstrates how to use the MiP library to command the
- * robot to intentionally fall forward and backward using the motion.fallForward()
- * and motion.fallBackward() APIs. The sketch first waits for the robot to be
+ * @details This sketch demonstrates how to use the MiP library to command MiP
+ * to intentionally fall forward and backward using the motion.fallForward()
+ * and motion.fallBackward() APIs. The sketch first waits for MiP to be
  * standing upright (position.isUpright()) before issuing each fall command and prints
  * status messages to mip.console so the sequence can be observed.
  *
@@ -24,7 +24,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * position.isUpright(), motion.fallForward(), and motion.fallBackward().
@@ -34,13 +34,13 @@ MiP mip;
 /**
  * @brief Arduino setup function.
  *
- * @details Initializes communication with the MiP robot by calling mip.begin().
+ * @details Initializes communication with MiP by calling mip.begin().
  * If the connection fails, an error message is printed to mip.console and setup
  * returns early. On success, the function:
- *   - Waits until the robot reports it is upright using position.isUpright().
+ *   - Waits until MiP reports it is upright using position.isUpright().
  *   - Pauses briefly to ensure stability.
- *   - Commands the robot to fall forward with motion.fallForward().
- *   - Waits again for the robot to become upright, then commands a fall
+ *   - Commands MiP to fall forward with motion.fallForward().
+ *   - Waits again for MiP to be upright, then commands a fall
  *     backward with motion.fallBackward().
  *
  * The function prints progress and status messages to mip.console to make the
@@ -48,6 +48,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("FallDown.ino: Failed connecting to MiP!"));
     return;
