@@ -1,11 +1,11 @@
 /**
- * @file ReadIRDongleCode.ino
+ * @file ReadDongleCode.ino
  * @brief Example sketch demonstrating receiving IR dongle codes from another MiP.
  *
  * @details
- * This sketch initializes communication with a MiP and continuously polls for
+ * This sketch initializes communication with MiP and continuously polls for
  * incoming IR dongle codes transmitted by another MiP. When an IR code event
- * is available, the sketch reads the 32-bit code using readIRDongleCode() and
+ * is available, the sketch reads the 32-bit code using readDongleCode() and
  * prints the four constituent bytes in hexadecimal to mip.console for inspection.
  *
  * The example exercises these API calls:
@@ -28,7 +28,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * infrared.availableCodeEvents(), and infrared.readDongleCode().
@@ -47,7 +47,7 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details
- * - Attempts to initialize the MiP connection via mip.begin().
+ * - Attempts to initialize MiP's connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short description to mip.console indicating the sketch
  *   is ready to receive IR dongle codes.
@@ -55,11 +55,11 @@ bool connectResult;
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("ReadIRDongleCode.ino: Failed connecting to MiP!"));
+    Serial.println(F("ReadDongleCode.ino: Failed connecting to MiP!"));
     return;
   }
 
-  mip.console.println(F("ReadIRDongleCode.ino: Receive code from another MiP using IR."));
+  mip.console.println(F("ReadDongleCode.ino: Receive code from another MiP using IR."));
 }
 
 /**
