@@ -13,9 +13,6 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-// For debugging messages.
-#define MIP_INTERNAL_COMPILE
-
 #include "MPU_Battery.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
@@ -25,13 +22,13 @@ MiP_Battery::MiP_Battery(MiP& mip) : m_mip(mip) {}
 /**
  * @brief Reads the most recent cached value of MiP's battery voltage.
  *
- * This function processes any pending Out-Of-Band status events to keep the
+ * This function processes any pending out-of-band status events to keep the
  * cache up to date. It does not transmit a new request to MiP.
  *
  * @return Battery voltage, typically 4.0V (low) to 6.4V (fully charged).
  */
 float MiP_Battery::readVoltage() {
-  MIP_DEBUG_INFO_PRINTLN("MiP->Battery->readVoltage()");
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Battery->readVoltage()"));
   // Fetch bytes from the Serial receive buffer and process any event data
   // found within.
   m_mip.serial.processAllResponseData();
