@@ -2,14 +2,14 @@
  * @file GetUp.ino
  * @brief Example sketch demonstrating MiP's get-up behavior.
  *
- * @details This sketch shows how to use the MPU:D1 mini library to command MiP
+ * @details This sketch shows how to use the MiP library to command MiP
  * to get up from resting on the kickstand and from face down on the tray.
- * As stated in WowWee's documentation, "Mip will attempt to get up from front
- * [or back] if angle is correct." Give MiP some room for this test because it
- * does drive forward a bit after getting up from the kickstand.
+ * As stated in WowWee's documentation, "Mip [sic] will attempt to get up from
+ * front [or back] if angle is correct." Give MiP some room for this test 
+ * drives forward a bit after getting up from the kickstand.
  *
  * The sequence performed in setup() is:
- *   - Initialize communication with the MiP robot.
+ *   - Initialize communication with MiP.
  *   - Command MiP to get up from resting on the kickstand.
  *   - Command MiP to fall forward on the tray.
  *   - Attempt to get up again.
@@ -30,7 +30,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * fallForward(), and getUp().
@@ -41,7 +41,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Called once after the board powers up or resets. This function:
- *   - Initializes communication with the MiP robot via mip.begin().
+ *   - Initializes communication with MiP via mip.begin().
  *   - If the connection fails, prints an error to Serial and returns early.
  *   - Commands MiP to get up from the kickstand then fall forward, wait 
  *     briefly, then attempt to get up from the tray.
@@ -49,6 +49,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
     Serial.println(F("GetUp.ino: Failed connecting to MiP!"));
     return;
