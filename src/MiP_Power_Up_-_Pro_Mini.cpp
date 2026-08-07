@@ -315,12 +315,11 @@ void MiP::mipAssert(bool condition, uint32_t lineNumber, const char* fileName) {
   (void)lineNumber;
   (void)fileName;
   if (!condition) {
-    char buf[48];
-    snprintf(buf,
-             sizeof(buf),
-             "MiP: Assert failed in file %s at line: %d\n",
+    char buf[64];   // a bit larger is safer
+    snprintf(buf, sizeof(buf),
+             "MiP: Assert failed in file %s at line: %lu\n",
              fileName,
-             lineNumber);
+             static_cast<unsigned long>(lineNumber));  // or just %lu with the cast
     MIP_DEBUG_ERROR_PRINT(*this, buf);
     while (true) {
       delay(100);
