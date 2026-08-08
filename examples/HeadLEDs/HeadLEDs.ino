@@ -38,7 +38,7 @@ MiP mip;
  * @brief Arduino setup function.
  *
  * @details Initializes communication with MiP by calling mip.begin().
- * If the connection fails, an error message is printed to mip.console and setup
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. On success, the sketch:
  *   - Sets the four head LEDs to different states (OFF, ON, BLINK_SLOW,
  * BLINK_FAST).
@@ -77,7 +77,7 @@ void setup() {
   delay(4000);
 
   // Turn all the LEDs back on now.
-  mip.console.println(F(" Turning all eye LEDs back on now."));
+  mip.console.println(F(" Turning all eye LEDs back on."));
   headLEDs.led1 = headLEDs.led2 = headLEDs.led3 = headLEDs.led4 =
     MIP_HEAD_LED_ON;
   mip.headLEDs.write(headLEDs);
@@ -92,10 +92,10 @@ void setup() {
                                MIP_HEAD_LED_BLINK_FAST);
   delay(4000);
 
-  mip.console.println(F(" Trying to set all eye LEDs back on now."));
+  mip.console.print(F(" Set all eye LEDs back."));
   headLEDs.led1 = headLEDs.led2 = headLEDs.led3 = headLEDs.led4 =
     MIP_HEAD_LED_ON;
-  mip.headLEDs.unverifiedWrite(headLEDs);
+  mip.headLEDs.write(headLEDs);
 
   mip.console.println();
   mip.console.println(F("HeadLEDs.ino: Done."));
