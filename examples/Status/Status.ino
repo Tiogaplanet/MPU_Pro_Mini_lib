@@ -1,80 +1,140 @@
-/* Copyright (C) 2018  Adam Green (https://github.com/adamgreen)
+/**
+ * @file Status.ino
+ * @brief Example sketch that monitors and reports MiP's status changes.
+ *
+ * @details
+ * This sketch demonstrates how to query and report various status values from
+ * MiP. It connects to MiP, then continuously polls for changes to the battery
+ * voltage and the MiP's positional state. When a change is detected the new 
+ * value is printed to mip.console. The sketch is intended as a simple 
+ * diagnostic example to show how to use the status-related API calls.
+ *
+ * The example exercises these API calls:
+ *   - battery.readVoltage()
+ *   - position.read()
+ *   - position.isOnBack()
+ *   - position.isFaceDown()
+ *   - position.isUpright()
+ *   - position.isPickedUp()
+ *   - position.isHandStanding()
+ *   - position.isFaceDownOnTray()
+ *   - position.isOnBackWithKickstand()
+ *
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+#include <MiP_Power_Up_-_Pro_Mini.h>
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+/**
+ * @brief Global MiP instance used to communicate with MiP.
+ *
+ * @details Use this object to call the MiP status APIs such as
+ * battery.readVoltage() and position.read().
+ */
+MiP mip;
 
-       http://www.apache.org/licenses/LICENSE-2.0
+/**
+ * @brief Last reported battery voltage (volts).
+ *
+ * @details Stored so the sketch only prints battery updates when the value
+ * actually changes.
+ */
+static float lastBatteryLevel = 0.0f;
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-/* Example used in following API documentation:
-    readBatteryVoltage();
-    readPosition();
-    isOnBack();
-    isFaceDown();
-    isUpright();
-    isPickedUp();
-    isHandStanding();
-    isFaceDownOnTray();
-    isOnBackWithKickstand();
-*/
-#include <MPU_Pro_Mini.h>
+/**
+ * @brief Last reported position enum value.
+ *
+ * @details Initialized to an invalid value so the first position.read() will
+ * always be treated as a change and printed.
+ */
+static MiPPosition lastPosition = (MiPPosition)-1;
 
-MiP     mip;
+/**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ *
+ * @details Stored so other parts of the sketch could check connection state
+ * if extended.
+ */
+bool connectResult;
 
+/**
+ * @brief Arduino setup function.
+ *
+ * @details
+ * - initializes MiP's connection via mip.begin().
+ * - If the connection fails, prints an error to Serial and returns early.
+ * - On success, prints a short banner indicating the sketch will display
+ *   status changes.
+ */
 void setup() {
-  bool connectResult = mip.begin();
+  connectResult = mip.begin();
+
   if (!connectResult) {
-    Serial.println(F("Failed connecting to MiP!"));
+    Serial.println(F("Status.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("Status.ino - Display MiP status as it changes."));
+  mip.console.println(F("Status.ino: Display MiP's status as it changes."));
 }
 
+/**
+ * @brief Arduino loop function.
+ *
+ * @details
+ * - Polls MiP for the current battery voltage and position.
+ * - If the battery voltage differs from the last reported value, prints the
+ *   new voltage and updates lastBatteryLevel.
+ * - If the position differs from the last reported position, queries the
+ *   various position predicates (isOnBack(), isFaceDown(), isUpright(), etc.)
+ *   and prints each matching position description. Updates lastPosition to
+ *   avoid repeated prints for the same state.
+ *
+ * The loop is intentionally lightweight and prints only on changes to avoid
+ * spamming mip.console.
+ */
 void loop() {
-  static float       lastBatteryLevel = 0.0f;
-  static MiPPosition lastPosition = (MiPPosition) - 1;
+  if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
 
-  float              currentBatteryLevel = mip.readBatteryVoltage();
-  MiPPosition        currentPosition = mip.readPosition();
+  float currentBatteryLevel = mip.battery.readVoltage();
+  MiPPosition currentPosition = mip.position.read();
 
+  /* Report battery voltage when it changes. */
   if (currentBatteryLevel != lastBatteryLevel) {
-    Serial.print(F("Battery: "));
-      Serial.print(currentBatteryLevel);
-      Serial.println(F("V"));
+    mip.console.print(F(" Battery: "));
+    mip.console.print(currentBatteryLevel);
+    mip.console.println(F("V"));
     lastBatteryLevel = currentBatteryLevel;
   }
 
+  /* Report position changes by evaluating all position predicates. */
   if (currentPosition != lastPosition) {
-    if (mip.isOnBack()) {
-      Serial.println(F("Position: On Back"));
+    if (mip.position.isOnBack()) {
+      mip.console.println(F(" Position: On Back"));
     }
-    if (mip.isFaceDown()) {
-      Serial.println(F("Position: Face Down"));
+    if (mip.position.isFaceDown()) {
+      mip.console.println(F(" Position: Face Down"));
     }
-    if (mip.isUpright()) {
-      Serial.println(F("Position: Upright"));
+    if (mip.position.isUpright()) {
+      mip.console.println(F(" Position: Upright"));
     }
-    if (mip.isPickedUp()) {
-      Serial.println(F("Position: Picked Up"));
+    if (mip.position.isPickedUp()) {
+      mip.console.println(F(" Position: Picked Up"));
     }
-    if (mip.isHandStanding()) {
-      Serial.println(F("Position: Hand Stand"));
+    if (mip.position.isHandStanding()) {
+      mip.console.println(F(" Position: Hand Stand"));
     }
-    if (mip.isFaceDownOnTray()) {
-      Serial.println(F("Position: Face Down on Tray"));
+    if (mip.position.isFaceDownOnTray()) {
+      mip.console.println(F(" Position: Face Down on Tray"));
     }
-    if (mip.isOnBackWithKickstand()) {
-      Serial.println(F("Position: On Back With Kickstand"));
+    if (mip.position.isOnBackWithKickstand()) {
+      mip.console.println(F(" Position: On Back With Kickstand"));
     }
 
     lastPosition = currentPosition;
   }
 }
-

@@ -1,43 +1,82 @@
-/* Copyright (C) 2018  Adam Green (https://github.com/adamgreen)
+/**
+ * @file GetUp.ino
+ * @brief Example sketch demonstrating MiP's get-up behavior.
+ *
+ * @details This sketch shows how to use the MiP library to command MiP
+ * to get up from resting on the kickstand and from face down on the tray.
+ * As stated in WowWee's documentation, "Mip [sic] will attempt to get up from
+ * front [or back] if angle is correct." Give MiP some room for this test 
+ * drives forward a bit after getting up from the kickstand.
+ *
+ * The sequence performed in setup() is:
+ *   - Initialize communication with MiP.
+ *   - Command MiP to get up from resting on the kickstand.
+ *   - Command MiP to fall forward on the tray.
+ *   - Attempt to get up again.
+ *
+ * The sketch prints status messages to mip.console so the user can observe the
+ * sequence. The example exercises the following API calls:
+ *   - motion.fallForward()
+ *   - motion.getUp()
+ *
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+#include <MiP_Power_Up_-_Pro_Mini.h>
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+/**
+ * @brief Global MiP instance used to communicate with MiP.
+ *
+ * @details Use this object to call MiP API functions such as begin(),
+ * fallForward(), and getUp().
+ */
+MiP mip;
 
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-/* Example used in following API documentation:
-    getUp()
-*/
-#include <MPU_Pro_Mini.h>
-
-MiP     mip;
-
+/**
+ * @brief Arduino setup function.
+ *
+ * @details Called once after the board powers up or resets. This function:
+ *   - Initializes communication with MiP via mip.begin().
+ *   - If the connection fails, prints an error to Serial and returns early.
+ *   - Commands MiP to get up from the kickstand then fall forward, wait 
+ *     briefly, then attempt to get up from the tray.
+ *   - Prints progress and completion messages to mip.console.
+ */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
-    Serial.println(F("Failed connecting to MiP!"));
+    Serial.println(F("GetUp.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("GetUp.ino - Use getUp(). Attempt to get up from a front fall."));
+  mip.console.println(F("GetUp.ino: Get up from the kickstand and tray."));
 
-  mip.fallForward();
+  mip.console.println(F(" Getting up from kickstand."));
+  mip.motion.getUp(MIP_GETUP_FROM_BACK);
+  delay(1000);
+
+  mip.console.println(F(" Falling forward."));
+  mip.motion.fallForward();
+  delay(1000);
+
+  mip.console.println(F(" Getting up again."));
+  mip.motion.getUp(MIP_GETUP_FROM_FRONT);
   delay(3000);
 
-  mip.getUp(MIP_GETUP_FROM_FRONT);
-  delay(3000);
-
-  Serial.println();
-  Serial.println(F("Sample done."));
+  mip.console.println(F("GetUp.ino: Done."));
 }
 
-void loop() {
-}
-
+/**
+ * @brief Arduino loop function.
+ *
+ * @details This example performs all actions in setup() and does not require
+ * repeated work in loop(). The function is intentionally left empty so the
+ * demonstration runs only once during initialization.
+ */
+void loop() {}

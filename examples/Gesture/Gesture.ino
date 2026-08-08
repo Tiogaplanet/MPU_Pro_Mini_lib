@@ -1,72 +1,115 @@
-/* Copyright (C) 2018  Adam Green (https://github.com/adamgreen)
+/**
+ * @file Gesture.ino
+ * @brief Example sketch demonstrating MiP's gesture detection and reporting.
+ *
+ * @details This sketch shows how to use the MiP library's gesture detection
+ * APIs to enable gesture mode, poll for gesture events, and report the
+ * detected gestures to mip.console. The sketch waits for MiP to be upright
+ * before enabling gesture mode and then continuously reads available gesture
+ * events using gesture.availableEvents() and gesture.readEvent().
+ *
+ * The example exercises these API calls:
+ *   - gesture.availableEvents()
+ *   - gesture.readEvent()
+ *
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+#include <MiP_Power_Up_-_Pro_Mini.h>
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+/**
+ * @brief Global MiP instance used to communicate with MiP.
+ *
+ * @details Use this object to call MiP API functions such as begin(),
+ * position.isUpright(), gesture.enable(), gesture.availableEvents(), and
+ * gesture.readEvent().
+ */
+MiP mip;
 
-       http://www.apache.org/licenses/LICENSE-2.0
+/**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ *
+ * @details Stored so other parts of the sketch could check connection state
+ * if extended.
+ */
+bool connectResult;
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-/* Example used in following API documentation:
-    availableGestureEvents()
-    readGestureEvent()
-*/
-#include <MPU_Pro_Mini.h>
-
-MiP     mip;
-
+/**
+ * @brief Arduino setup function.
+ *
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
+ * returns early. The function waits until MiP reports it is upright,
+ * then enables gesture mode so the robot will begin reporting gesture events.
+ */
 void setup() {
-  bool connectResult = mip.begin();
+  connectResult = mip.begin();
+
   if (!connectResult) {
-    Serial.println(F("Failed connecting to MiP!"));
+    Serial.println(F("Gesture.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("Gesture.ino - Detect gesture and inform user as they occur."));
+  mip.console.println(
+    F("Gesture.ino: Detect gesture and inform user as they occur."));
 
-  Serial.println(F("Waiting for robot to be standing upright."));
-  while (!mip.isUpright()) {
-    // Waiting
+  mip.console.println(F(" Waiting for MiP to be standing upright."));
+  while (!mip.position.isUpright()) {
+    // Waiting for the robot to be upright before enabling gesture mode.
   }
-  mip.enableGestureMode();
+  mip.gesture.enable();
 }
 
+/**
+ * @brief Arduino loop function.
+ *
+ * @details Continuously polls for pending gesture events using
+ * gesture.availableEvents(). For each available event, gesture.readEvent()
+ * returns a MiPGesture value which is mapped to a human-readable message
+ * printed to mip.console. The switch statement covers all defined gesture
+ * values including a defensive case for MIP_GESTURE_INVALID.
+ */
 void loop() {
-  while (mip.availableGestureEvents() > 0) {
-    MiPGesture gesture = mip.readGestureEvent();
-    Serial.print(F("Detected "));
+  if (!connectResult)
+    return;  // If connecting to MiP failed in setup(), exit now.
+
+  while (mip.gesture.availableEvents() > 0) {
+    MiPGesture gesture = mip.gesture.readEvent();
+    mip.console.print(F(" Detected "));
     switch (gesture) {
       case MIP_GESTURE_LEFT:
-        Serial.println(F("Left gesture!"));
+        mip.console.println(F("Left gesture!"));
         break;
       case MIP_GESTURE_RIGHT:
-        Serial.println(F("Right gesture!"));
+        mip.console.println(F("Right gesture!"));
         break;
       case MIP_GESTURE_CENTER_SWEEP_LEFT:
-        Serial.println(F("Center Sweep Left gesture!"));
+        mip.console.println(F("Center Sweep Left gesture!"));
         break;
       case MIP_GESTURE_CENTER_SWEEP_RIGHT:
-        Serial.println(F("Center Sweep Right gesture!"));
+        mip.console.println(F("Center Sweep Right gesture!"));
         break;
       case MIP_GESTURE_CENTER_HOLD:
-        Serial.println(F("Center Hold gesture!"));
+        mip.console.println(F("Center Hold gesture!"));
         break;
       case MIP_GESTURE_FORWARD:
-        Serial.println(F("Forward gesture!"));
+        mip.console.println(F("Forward gesture!"));
         break;
       case MIP_GESTURE_BACKWARD:
-        Serial.println(F("Backward gesture!"));
+        mip.console.println(F("Backward gesture!"));
         break;
       case MIP_GESTURE_INVALID:
-        // This shouldn't really happen since mip.availableGestureEvents() returned > 0.
-        Serial.println(F("INVALID gesture!"));
+        /**
+       * @note MIP_GESTURE_INVALID should not normally be returned when
+       * availableGestureEvents() reported > 0, but handle it defensively.
+       */
+        mip.console.println(F(" INVALID gesture!"));
         break;
     }
   }
 }
-

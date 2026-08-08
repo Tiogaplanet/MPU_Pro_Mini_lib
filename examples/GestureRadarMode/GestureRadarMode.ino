@@ -1,85 +1,118 @@
-/* Copyright (C) 2018  Adam Green (https://github.com/adamgreen)
+/**
+ * @file GestureRadarMode.ino
+ * @brief Example sketch demonstrating switching between gesture and radar modes.
+ *
+ * @details This sketch shows how to enable and disable MiP's radar
+ * and gesture sensing modes and how to query their states. It performs a
+ * sequence of mode changes in setup() while printing verification messages
+ * to mip.console:
+ *   - radar.enable() and verify with radar.isEnabled()
+ *   - radar.disable() and verify it is disabled
+ *   - gesture.enable() and verify with gesture.isEnabled()
+ *   - gesture.disable() and verify both gesture and radar modes are disabled
+ *
+ * The example exercises these API calls:
+ *   - radar.enable()
+ *   - radar.disable()
+ *   - gesture.enable()
+ *   - gesture.disable()
+ *   - radar.isEnabled()
+ *   - gesture.isEnabled()
+ *   - areGestureAndRadarModesDisabled()
+ *
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+#include <MiP_Power_Up_-_Pro_Mini.h>
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+/**
+ * @brief Global MiP instance used to communicate with MiP.
+ *
+ * @details Use this object to call MiP API functions such as begin(),
+ * radar.enable(), radar.disable(), gesture.enable(), gesture.disable(), and 
+ * the corresponding query functions.
+ */
+MiP mip;
 
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-/* Example used in following API documentation:
-    enableRadarMode();
-    disableRadarMode();
-    enableGestureMode();
-    disableGestureMode();
-    isRadarModeEnabled();
-    isGestureModeEnabled();
-    isGestureAndRadarModeDisabled();
-*/
-#include <MPU_Pro_Mini.h>
-
-MiP     mip;
-
+/**
+ * @brief Arduino setup function.
+ *
+ * @details Called once after power-up or reset. This function:
+ *   - Initializes communication with MiP via mip.begin().
+ *   - If connection fails, prints an error to Serial and returns early.
+ *   - Demonstrates enabling/disabling radar and gesture modes and prints
+ *     pass/fail verification messages using the x.isEnabled() and
+ *     areGestureAndRadarModesDisabled() query functions.
+ *
+ * The function intentionally performs the checks in sequence so the user can
+ * observe MiP's responses on mip.console.
+ */
 void setup() {
   bool connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("Failed connecting to MiP!"));
+    Serial.println(F("GestureRadarMode.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("GestureRadarMode.ino - Switches between gesture, radar, and default modes."));
+  mip.console.println(F("GestureRadarMode.ino: Switches between gesture, radar, and default modes."));
 
-  Serial.println(F("Calling mip.enableRadarMode()"));
-  mip.enableRadarMode();
-  Serial.print(F("mip.isRadarModeEnabled() = "));
-  if (mip.isRadarModeEnabled()) {
-    Serial.println(F("true - Pass"));
+  mip.console.println(F(" Calling mip.radar.enable()"));
+  mip.radar.enable();
+  mip.console.print(F(" mip.radar.isEnabled() = "));
+  if (mip.radar.isEnabled()) {
+    mip.console.println(F("true - Pass"));
   } else {
-    Serial.println(F("false - Failed"));
+    mip.console.println(F("false - Failed"));
   }
 
-  Serial.println(F("Calling mip.disableRadarMode()"));
-  mip.disableRadarMode();
-  Serial.print(F("mip.isRadarModeEnabled() = "));
-  if (mip.isRadarModeEnabled()) {
-    Serial.println(F("true - Failed"));
+  mip.console.println(F(" Calling mip.radar.disable()"));
+  mip.radar.disable();
+  mip.console.print(F(" mip.radar.isEnabled() = "));
+  if (mip.radar.isEnabled()) {
+    mip.console.println(F("true - Failed"));
   } else {
-    Serial.println(F("false - Pass"));
+    mip.console.println(F("false - Pass"));
   }
 
-  Serial.println(F("Calling mip.enableGestureMode()"));
-  mip.enableGestureMode();
-  Serial.print(F("mip.isGestureModeEnabled() = "));
-  if (mip.isGestureModeEnabled()) {
-    Serial.println(F("true - Pass"));
+  mip.console.println(F(" Calling mip.gesture.enable()"));
+  mip.gesture.enable();
+  mip.console.print(F(" mip.gesture.isEnabled() = "));
+  if (mip.gesture.isEnabled()) {
+    mip.console.println(F("true - Pass"));
   } else {
-    Serial.println(F("false - Failed"));
+    mip.console.println(F("false - Failed"));
   }
 
-  Serial.println(F("Calling mip.disableGestureMode()"));
-  mip.disableGestureMode();
-  Serial.print(F("mip.isGestureModeEnabled() = "));
-  if (mip.isGestureModeEnabled()) {
-    Serial.println(F("true - Failed"));
+  mip.console.println(F(" Calling mip.gesture.disable()"));
+  mip.gesture.disable();
+  mip.console.print(F(" mip.gesture.isEnabled() = "));
+  if (mip.gesture.isEnabled()) {
+    mip.console.println(F("true - Failed"));
   } else {
-    Serial.println(F("false - Pass"));
+    mip.console.println(F("false - Pass"));
   }
-  Serial.print(F("mip.areGestureAndRadarModesDisabled() = "));
-  if (mip.areGestureAndRadarModesDisabled()) {
-    Serial.println(F("true - Pass"));
+  mip.console.print(F(" mip.gesture.areGestureAndRadarModesDisabled() = "));
+  if (mip.gesture.areGestureAndRadarModesDisabled()) {
+    mip.console.println(F("true - Pass"));
   } else {
-    Serial.println(F("false - Failed"));
+    mip.console.println(F("false - Failed"));
   }
 
-  Serial.println();
-  Serial.println(F("Sample done."));
+  mip.console.println();
+  mip.console.println(F("GestureRadarMode.ino: Done."));
 }
 
+/**
+ * @brief Arduino loop function.
+ *
+ * @details This example performs all actions in setup() and does not require
+ * repeated work in loop(). The function is intentionally left empty so the
+ * sketch completes its verification sequence and remains idle.
+ */
 void loop() {
 }
-

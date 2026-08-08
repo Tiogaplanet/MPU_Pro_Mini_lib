@@ -1,37 +1,76 @@
-/* Copyright (C) 2018  Adam Green (https://github.com/adamgreen)
+/**
+ * @file Shake.ino
+ * @brief Example sketch demonstrating MiP's shake detection.
+ *
+ * @details
+ * This simple example initializes communication with MiP and continuously
+ * polls for shake events. When MiP detects a shake, the sketch
+ * prints a notification to mip.console. The sketch demonstrates basic use of the
+ * MiP API for initialization and the shake-detection query:
+ *   - begin()
+ *   - shake.read()
+ *
+ * Typical usage:
+ *   - Load this sketch onto the MPU - Pro Mini connected to MiP.
+ *   - Open mip.console to observe "Shake detected!" messages when the robot is shaken.
+ *
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+#include <MiP_Power_Up_-_Pro_Mini.h>
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+/**
+ * @brief Global MiP instance used to communicate with the robot.
+ *
+ * @details Use this object to call MiP API functions such as begin() and
+ * shake.read(). Keeping the instance at file scope makes it available
+ * throughout setup() and loop().
+ */
+MiP mip;
 
-       http://www.apache.org/licenses/LICENSE-2.0
+/**
+ * @brief Tracks whether the initial connection to the MiP succeeded.
+ *
+ * @details Stored so other parts of the sketch could check connection state
+ * if extended.
+ */
+bool connectResult;
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-/* Example used in following API documentation:
-    hasBeenShaken()
-*/
-#include <MPU_Pro_Mini.h>
-
-MiP     mip;
-
+/**
+ * @brief Arduino setup function.
+ *
+ * @details initializes MiP's connection by calling mip.begin(). If the
+ * connection fails, an error message is printed to mip.console and the sketch
+ * returns early. On success, a short description is printed to mip.console to
+ * indicate the sketch is ready to detect shakes.
+ */
 void setup() {
-  bool connectResult = mip.begin();
+  connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("Failed connecting to MiP!"));
+    Serial.println(F("Shake.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("Shake.ino - Detect shakes."));
+  mip.console.println(F("Shake.ino: Detect shakes."));
 }
 
+/**
+ * @brief Arduino loop function.
+ *
+ * @details Continuously polls the MiP for shake events using hasBeenShaken().
+ * When a shake is detected, the sketch prints "Shake detected!" to mip.console.
+ * This loop is intentionally minimal to keep the example focused on the
+ * shake-detection API.
+ */
 void loop() {
-  if (mip.hasBeenShaken()) {
-    Serial.println(F("Shake detected!"));
+  if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
+
+  if (mip.shake.read()) {
+    mip.console.println(F(" Shake detected!"));
   }
 }
-

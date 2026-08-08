@@ -1,42 +1,79 @@
-/* Copyright (C) 2018  Adam Green (https://github.com/adamgreen)
+/**
+ * @file Stop.ino
+ * @brief Demonstrates interrupting motion with the MiP stop() API.
+ *
+ * @details
+ * This simple example shows how to start a long turn and then interrupt it
+ * using the motion.stop() function. The sketch:
+ *   - Connects to MiP using begin().
+ *   - Commands a 360-degree left turn with motion.turnLeft(360, 6).
+ *   - Waits briefly and then calls motion.stop() to interrupt the motion.
+ *   - Prints progress messages to mip.console for observation.
+ *
+ * The example exercises these API calls:
+ *   - begin()
+ *   - motion.turnLeft()
+ *   - motion.stop()
+ *
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+#include <MiP_Power_Up_-_Pro_Mini.h>
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+/**
+ * @brief Global MiP instance used to control the robot.
+ *
+ * @details Use this object to call MiP API functions such as begin(),
+ * turnLeft(), and stop(). Keeping the instance at file scope makes it
+ * available in both setup() and loop().
+ */
+MiP mip;
 
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-/* Example used in following API documentation:
-    stop()
-*/
-#include <MPU_Pro_Mini.h>
-
-MiP     mip;
-
+/**
+ * @brief Arduino setup function.
+ *
+ * @details
+ * - initializes MiP's connection via mip.begin().
+ * - If the connection fails, prints an error to Serial and returns early.
+ * - On success, demonstrates starting a 360-degree left turn and then
+ *   interrupting it with mip.stop() after a short delay.
+ *
+ * The printed messages help the user observe when the turn starts and when
+ * it is interrupted.
+ */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
-    Serial.println(F("Failed connecting to MiP!"));
+    Serial.println(F("Stop.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("Stop.ino - Use stop() function. Interrupt a 360 degree turn with stop()."));
+  mip.console.println(F("Stop.ino: Use stop() function. Interrupt a 360 degree turn with stop()."));
 
-  mip.turnLeft(360, 6);
+  // Start a 360-degree left turn at speed 6.
+  mip.motion.turnLeft(360, 6);
+
+  // Wait briefly to allow the turn to begin, then interrupt it.
   delay(1000);
-  mip.stop();
+  mip.motion.stop();
   delay(1000);
 
-  Serial.println();
-  Serial.println(F("Sample done."));
+  mip.console.println();
+  mip.console.println(F("Stop.ino: Done."));
 }
 
+/**
+ * @brief Arduino loop function.
+ *
+ * @details This example performs its demonstration in setup() and does not
+ * require repeated work in loop(). The function is intentionally left empty
+ * so the sketch completes once during initialization.
+ */
 void loop() {
 }
-

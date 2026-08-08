@@ -2,9 +2,9 @@ name: Arduino Library CI
 
 on:
   push:
-    branches: [ "master", "port-to-2.0.0-api" ]
+    branches: [ "port-to-2.0.0-api" ]
   pull_request:
-    branches: [ "master", "port-to-2.0.0-api" ]
+    branches: [ "port-to-2.0.0-api" ]
 
 jobs:
   build:

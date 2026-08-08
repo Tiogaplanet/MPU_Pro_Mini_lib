@@ -1,43 +1,82 @@
-/* Copyright (C) 2018  Adam Green (https://github.com/adamgreen)
+/**
+ * @file DistanceDrive.ino
+ * @brief Example sketch demonstrating MiP's distance-based drive commands.
+ *
+ * @details This sketch shows how to use the MiP library to queue and execute
+ * motion.distanceDrive() commands that move MiP forward,backward, and
+ * rotate it by specified degrees. The example queues a sequence of commands:
+ *   - Drive forward a short distance.
+ *   - Turn 360 degrees left.
+ *   - Turn 360 degrees right.
+ *   - Drive backward a short distance.
+ *
+ * Commands are queued with consecutive calls to distanceDrive() so MiP
+ * executes them in order. Timing and blocking are handled by MiP's
+ * firmware; the sketch simply issues the commands during setup().
+ *
+ * The example exercises these API calls:
+ *   - motion.distanceDrive()
+ *
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+#include <MiP_Power_Up_-_Pro_Mini.h>
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+/**
+ * @brief Global MiP instance used to communicate with MiP.
+ *
+ * @details Use this object to call MiP API functions such as begin() and
+ * distanceDrive().
+ */
+MiP mip;
 
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-/* Example used in following API documentation:
-    distanceDrive()
-*/
-#include <MPU_Pro_Mini.h>
-
-MiP     mip;
-
+/**
+ * @brief Arduino setup function.
+ *
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
+ * returns early. On success, the sketch prints a short description and then
+ * queues a series of distanceDrive() commands.
+ *
+ * The queued sequence:
+ *   1. Drive forward a short distance (30 units) without turning.
+ *   2. Turn left 360 degrees in place.
+ *   3. Turn right 360 degrees in place.
+ *   4. Drive backward a short distance (30 units) without turning.
+ */
 void setup() {
   bool connectResult = mip.begin();
+
   if (!connectResult) {
-    Serial.println(F("Failed connecting to MiP!"));
+    Serial.println(F("DistanceDrive.ino: Failed connecting to MiP!"));
     return;
   }
 
-  Serial.println(F("DistanceDrive.ino - Use distanceDrive function. Drive forward, turn 360 degrees in each direction and backward."));
+  mip.console.println(
+    F("DistanceDrive.ino: Use distanceDrive function. Drive forward, turn "
+      "360 degrees in each direction and backward."));
 
   // Queue up multiple commands to run in sequence.
-  mip.distanceDrive(MIP_DRIVE_FORWARD, 30, MIP_TURN_RIGHT, 0);
-  mip.distanceDrive(MIP_DRIVE_FORWARD, 0, MIP_TURN_LEFT, 360);
-  mip.distanceDrive(MIP_DRIVE_FORWARD, 0, MIP_TURN_RIGHT, 360);
-  mip.distanceDrive(MIP_DRIVE_BACKWARD, 30, MIP_TURN_RIGHT, 0);
+  mip.motion.distanceDrive(MIP_DRIVE_FORWARD, 30, MIP_TURN_RIGHT, 0);
+  mip.motion.distanceDrive(MIP_DRIVE_FORWARD, 0, MIP_TURN_LEFT, 360);
+  mip.motion.distanceDrive(MIP_DRIVE_FORWARD, 0, MIP_TURN_RIGHT, 360);
+  mip.motion.distanceDrive(MIP_DRIVE_BACKWARD, 30, MIP_TURN_RIGHT, 0);
 
-  Serial.println();
-  Serial.println(F("Sample done."));
+  mip.console.println();
+  mip.console.println(F("DistanceDrive.ino: Done."));
 }
 
-void loop() {
-}
-
+/**
+ * @brief Arduino loop function.
+ *
+ * @details This example performs all actions in setup() and does not require
+ * repeated work in loop(). The function is intentionally left empty so the
+ * queued distanceDrive() commands can execute on the robot without further
+ * intervention from the sketch.
+ */
+void loop() {}
