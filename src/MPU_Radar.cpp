@@ -67,7 +67,7 @@ void MiP_Radar::verifiedSet(MiPRadarMode desiredMode) {
 
   // Always mark cached RADAR data as invalid when changing modes.
 
-  m_mip.m_flags &= ~m_mip.MIP_FLAG_RADAR_VALID;
+  m_mip.m_flags &= ~MiP::MIP_FLAG_RADAR_VALID;
   for (uint8_t retry = 0; retry < MiP_Serial::MIP_MAX_RETRIES; retry++) {
     rawSet(desiredMode);
 

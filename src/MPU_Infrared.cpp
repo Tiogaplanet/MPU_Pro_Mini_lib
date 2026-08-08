@@ -71,16 +71,16 @@ uint8_t MiP_Infrared::availableDetectedMiPEvents() {
 }
 
 void MiP_Infrared::enableRemoteControl() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->enableIRRemoteControl()"));
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->enableRemoteControl()"));
   verifiedRemoteControl(MIP_IR_REMOTE_CONTROL_ENABLE);
 }
 void MiP_Infrared::disableRemoteControl() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->disableIRRemoteControl()"));
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->disableRemoteControl()"));
   verifiedRemoteControl(MIP_IR_REMOTE_CONTROL_DISABLE);
 }
 
 bool MiP_Infrared::isRemoteControlEnabled() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->isIRRemoteControlEnabled()"));
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->isRemoteControlEnabled()"));
   const uint8_t remoteControlEnabled[1] = {MIP_CMD_GET_IR_REMOTE_CONTROL};
   uint8_t response[1 + 1];
   size_t responseLength;
@@ -103,7 +103,7 @@ bool MiP_Infrared::isRemoteControlEnabled() {
 }
 
 void MiP_Infrared::sendDongleCode(uint16_t sendCode, uint8_t transmitPower) {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->sendIRDongleCode()"));
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->sendDongleCode()"));
   m_mip.MIP_ASSERT(transmitPower >= 1 && transmitPower <=120);
   
   uint8_t command[1 + 6] = {MIP_CMD_SEND_IR_DONGLE_CODE,
@@ -121,7 +121,7 @@ void MiP_Infrared::sendDongleCode(uint16_t sendCode, uint8_t transmitPower) {
 }
 
 uint32_t MiP_Infrared::readDongleCode() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->readIRDongleCode()"));
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->readDongleCode()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -135,7 +135,7 @@ uint32_t MiP_Infrared::readDongleCode() {
 }
 
 uint8_t MiP_Infrared::availableCodeEvents() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->availableIRCodeEvents()"));
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->availableCodeEvents()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -163,7 +163,7 @@ void MiP_Infrared::processEvent(uint8_t command,
     default:
       // Invalid notification command bytes were already handled in the previous
       // switch so should never get here.
-      m_mip.MIP_ASSERT(false);
+      MIP_DEBUG_WARN_PRINTLN(m_mip, F("MiP: Unknown IR event."));
       break;
   }
 }

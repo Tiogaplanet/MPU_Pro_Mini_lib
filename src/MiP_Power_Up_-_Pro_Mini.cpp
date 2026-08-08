@@ -313,11 +313,11 @@ int8_t MiP::parseStatus(MiPStatus& status,
 
 void MiP::mipAssert(bool condition, uint32_t lineNumber, const char* fileName) {
   if (!condition) {
-    char buf[64];  // a bit larger is safer
+    char buf[128];  // a bit larger is safer
     snprintf(
         buf,
         sizeof(buf),
-        "MiP: Assert failed in file %s at line: %lu\n",
+        "MiP: Assert failed in file %s at line: %lu\r\n",
         fileName,
         static_cast<unsigned long>(lineNumber));  // or just %lu with the cast
     MIP_DEBUG_ERROR_PRINT(*this, buf);

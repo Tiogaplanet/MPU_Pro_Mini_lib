@@ -54,7 +54,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
-  
+
   if (!connectResult) {
     Serial.println(
       F("SoftwareHardwareVersion.ino: Failed connecting to MiP!"));

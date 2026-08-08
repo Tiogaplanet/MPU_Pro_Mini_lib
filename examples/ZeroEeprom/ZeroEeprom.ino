@@ -67,7 +67,7 @@ uint8_t eepromContents;
  */
 void setup() {
   bool connectResult = mip.begin();
-  
+
   if (!connectResult) {
     Serial.println(F("ZeroEEPROM.ino: Failed connecting to MiP!"));
     return;
@@ -107,4 +107,3 @@ void setup() {
  * sketch completes once and remains idle.
  */
 void loop() {}
-

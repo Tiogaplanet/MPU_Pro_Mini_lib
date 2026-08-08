@@ -74,4 +74,3 @@ void loop() {
     mip.console.println(F(" Shake detected!"));
   }
 }
-

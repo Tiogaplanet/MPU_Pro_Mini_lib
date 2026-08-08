@@ -82,7 +82,7 @@ void setup() {
  */
 void loop() {
   if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
-	  
+
   uint32_t receiveCode;
 
   if (mip.infrared.availableCodeEvents()) {
@@ -99,4 +99,3 @@ void loop() {
     mip.console.println();
   }
 }
-

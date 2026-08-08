@@ -259,4 +259,3 @@ void randomEvasion() {
   (random(0, 2) == 0) ? mip.motion.turnLeft(90, 12) : mip.motion.turnRight(90, 12);
   delay(500);
 }
-

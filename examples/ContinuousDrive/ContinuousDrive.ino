@@ -72,7 +72,7 @@ void setup() {
  */
 void loop() {
   if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
-  
+
   /**
    * @brief States for the continuous drive demonstration.
    *
@@ -128,4 +128,3 @@ void loop() {
       break;
   }
 }
-

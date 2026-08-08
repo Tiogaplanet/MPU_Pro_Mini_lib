@@ -50,7 +50,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
-  
+
   if (!connectResult) {
     Serial.println(F("PlaySound.ino: Failed connecting to MiP!"));
     return;
@@ -88,4 +88,3 @@ void setup() {
  * demonstration runs only once during initialization.
  */
 void loop() {}
-

@@ -46,14 +46,14 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
-  
+
   if (!connectResult) {
     Serial.println(F("RawSendReceive.ino: Failed connecting to MiP!"));
     return;
   }
 
   mip.console.println(F("RawSendReceive.ino: Use raw*() functions. Should set "
-                    "chest LED to purple and display MiP firmware revision."));
+                        "chest LED to purple and display MiP firmware revision."));
 
   /* Send 4-byte MiP command to set Chest LED to Purple.
    * The command bytes are device-specific; here we send the raw packet
@@ -104,4 +104,3 @@ void setup() {
  * demonstration runs once during initialization and then remains idle.
  */
 void loop() {}
-

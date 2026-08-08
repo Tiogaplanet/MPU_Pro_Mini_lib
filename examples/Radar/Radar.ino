@@ -50,7 +50,7 @@ bool connectResult;
  */
 void setup() {
   connectResult = mip.begin();
-  
+
   if (!connectResult) {
     Serial.println(F("Radar.ino: Failed connecting to MiP!"));
     return;
@@ -85,7 +85,7 @@ void loop() {
   if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
 
   static MiPRadar lastRadar = MIP_RADAR_INVALID;  // Remember last reported radar state.
-  MiPRadar currentRadar = mip.radar.read();        // Read current radar category.
+  MiPRadar currentRadar = mip.radar.read();       // Read current radar category.
 
   // Only act when a valid reading is available and it changed since last time.
   if (currentRadar != MIP_RADAR_INVALID && lastRadar != currentRadar) {
@@ -108,4 +108,3 @@ void loop() {
     lastRadar = currentRadar;
   }
 }
-

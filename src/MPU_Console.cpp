@@ -40,7 +40,7 @@ void MiP_Console::initIfNeeded() {
  * @param baud Baud rate parameter.  Should be 115200 or 9600.
  */
 void MiP_Console::begin(unsigned long baud) {
-  Serial.begin(baud);
+  Serial.begin(baud, SERIAL_8N1);
 }
 
 /**
@@ -57,7 +57,7 @@ void MiP_Console::begin(unsigned long baud, uint8_t mode) {
 
   m_isInit = true;
   // Fix the HardwareSerial baud rate to 115200 8N1 as required by MiP.
-  Serial.begin(baud, SERIAL_8N1);
+  Serial.begin(115200, SERIAL_8N1);
 }
 
 /**

@@ -79,7 +79,7 @@ void setup() {
     return;
   }
 
-  mip.console.println(F("Status.ino: Display MiP status as it changes."));
+  mip.console.println(F("Status.ino: Display MiP's status as it changes."));
 }
 
 /**
@@ -138,4 +138,3 @@ void loop() {
     lastPosition = currentPosition;
   }
 }
-

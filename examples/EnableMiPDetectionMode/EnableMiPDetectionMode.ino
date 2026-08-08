@@ -83,7 +83,7 @@ void setup() {
   }
 
   mip.console.println(F("EnableMiPDetectionMode.ino: Enable MiP to be discovered "
-                    "by another MiP using IR."));
+                        "by another MiP using IR."));
 
   /* Ensure detection mode is off and verify. */
   mip.infrared.disableMiPDetectionMode();
@@ -121,4 +121,3 @@ void loop() {
     mip.console.println(mip.infrared.readDetectedMiP(), HEX);
   }
 }
-

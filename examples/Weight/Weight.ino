@@ -1,7 +1,6 @@
 /**
  * @file Weight.ino
  * @brief Example sketch that reads and reports MiP's weight sensor.
-
  *
  * @details
  * This sketch demonstrates how to query MiP's weight sensor and print
@@ -29,7 +28,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin() and
  * weight.read(). Keeping the instance at file scope makes it available in
@@ -66,7 +65,7 @@ bool connectResult;
  */
 void setup() {
   connectResult = mip.begin();
-  
+
   if (!connectResult) {
     Serial.println(F("Weight.ino: Failed connecting to MiP!"));
     return;
@@ -99,4 +98,3 @@ void loop() {
     lastWeight = currentWeight;
   }
 }
-

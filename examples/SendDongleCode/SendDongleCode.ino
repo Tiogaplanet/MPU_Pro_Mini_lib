@@ -68,7 +68,7 @@ void setup() {
   }
 
   mip.console.println(
-      F("SendDongleCode.ino: Send code to another MiP using IR."));
+    F("SendDongleCode.ino: Send code to another MiP using IR."));
 }
 
 /**
@@ -84,7 +84,7 @@ void setup() {
  */
 void loop() {
   if (!connectResult)
-    return; // If connecting to MiP failed in setup(), exit now.
+    return;  // If connecting to MiP failed in setup(), exit now.
 
   uint16_t dongleCode;
   char formattedOutput[16];

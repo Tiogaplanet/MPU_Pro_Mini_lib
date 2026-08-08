@@ -110,15 +110,15 @@ void MiP_Motion::driveBackward(uint8_t speed, uint16_t time) {
 }
 
 void MiP_Motion::turnLeft(uint16_t degrees, uint8_t speed) {
-  // The turn command is in units of 5 degrees.
-  uint8_t angle = degrees / 5;
-  uint8_t command[1 + 2];
-
   m_mip.MIP_ASSERT(degrees <= 255 * 5);
   m_mip.MIP_ASSERT(speed <= 24);
 
+  if (degrees > 255 * 5)
+    degrees = 255 * 5;
+
+  uint8_t command[1 + 2];
   command[0] = MIP_CMD_TURN_LEFT;
-  command[1] = angle;
+  command[1] = degrees;
   command[2] = speed;
 
   // Send this command blindly with no error checking since there is no way to
@@ -128,15 +128,15 @@ void MiP_Motion::turnLeft(uint16_t degrees, uint8_t speed) {
 }
 
 void MiP_Motion::turnRight(uint16_t degrees, uint8_t speed) {
-  // The turn command is in units of 5 degrees.
-  uint8_t angle = degrees / 5;
-  uint8_t command[1 + 2];
-
   m_mip.MIP_ASSERT(degrees <= 255 * 5);
   m_mip.MIP_ASSERT(speed <= 24);
 
+  if (degrees > 255 * 5)
+    degrees = 255 * 5;
+
+  uint8_t command[1 + 2];
   command[0] = MIP_CMD_TURN_RIGHT;
-  command[1] = angle;
+  command[1] = degrees;
   command[2] = speed;
 
   // Send this command blindly with no error checking since there is no way to

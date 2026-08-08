@@ -73,7 +73,7 @@ bool connectResult;
 void setup() {
   // First need to initialize the mip.console connection with MiP.
   connectResult = g_mip.begin();
-  
+
   if (!connectResult) {
     Serial.println(F("Failed connecting to MiP!"));
     return;
@@ -235,4 +235,3 @@ static void animateEyes(int8_t direction) {
   }
   g_mip.headLEDs.write(g_headLEDs);
 }
-

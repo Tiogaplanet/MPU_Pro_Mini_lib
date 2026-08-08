@@ -112,4 +112,3 @@ void setup() {
  * the sketch completes once and remains idle.
  */
 void loop() {}
-

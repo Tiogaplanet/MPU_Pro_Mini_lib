@@ -63,7 +63,7 @@ void setup() {
   }
 
   mip.console.println(F("TurnLeftRight.ino: Use turnLeft & turnRight() functions. "
-                    "Turn 180 degrees to left and then 180 degrees to right."));
+                        "Turn 180 degrees to left and then 180 degrees to right."));
 
   for (uint8_t i = 0; i < 3; i++) {
     // Turn 180 degrees left at speed 12.
@@ -87,4 +87,3 @@ void setup() {
  * so the sketch completes once during initialization.
  */
 void loop() {}
-

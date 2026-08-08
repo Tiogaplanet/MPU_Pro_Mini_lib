@@ -75,7 +75,7 @@ bool MiP_Gesture::areGestureAndRadarModesDisabled() {
 // mode and then sends a request to get the new state. If this request fails or
 // the new state isn't as expected, it will retry the command.
 void MiP_Gesture::verifiedSet(MiPGestureMode desiredMode) {
-  int8_t result = MiP::MIP_FLAG_RADAR_VALID;
+  int8_t result = MiP::MIP_ERROR_NONE;
 
   // Always mark cached RADAR data as invalid when changing modes.
   m_mip.m_flags &= ~MiP::MIP_FLAG_RADAR_VALID;

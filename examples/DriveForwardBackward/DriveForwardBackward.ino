@@ -52,8 +52,8 @@ void setup() {
   }
 
   mip.console.println(F("DriveForwardBackward.ino: Use motion.driveForward() and "
-                    "motion.driveBackward() functions. Drive ahead and back, 1 "
-                    "second in each direction."));
+                        "motion.driveBackward() functions. Drive ahead and back, 1 "
+                        "second in each direction."));
 
   /* Drive forward at speed 15 for 1000 milliseconds. */
   mip.motion.driveForward(15, 1000);
@@ -79,4 +79,3 @@ void setup() {
  * sketch does not issue additional commands after the demonstration completes.
  */
 void loop() {}
-

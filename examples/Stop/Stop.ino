@@ -48,7 +48,7 @@ MiP mip;
  */
 void setup() {
   bool connectResult = mip.begin();
-  
+
   if (!connectResult) {
     Serial.println(F("Stop.ino: Failed connecting to MiP!"));
     return;
@@ -77,4 +77,3 @@ void setup() {
  */
 void loop() {
 }
-
