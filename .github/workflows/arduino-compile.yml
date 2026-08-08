@@ -1,0 +1,37 @@
+name: Arduino Library CI
+
+on:
+  push:
+    branches: [ "master", "port-to-2.0.0-api" ]
+  pull_request:
+    branches: [ "master", "port-to-2.0.0-api" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+
+      # Required: install the AVR core so the FQBN works
+      - name: Install Arduino AVR core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
+
+      - name: Install Local Library
+        run: |
+          mkdir -p $HOME/Arduino/libraries
+          ln -s $GITHUB_WORKSPACE $HOME/Arduino/libraries/MPU_Pro_Mini_lib
+
+      - name: Compile all examples
+        run: |
+          for example in $HOME/Arduino/libraries/MPU_Pro_Mini_lib/examples/*; do
+            if [ -d "$example" ]; then
+              arduino-cli compile --warnings none --fqbn arduino:avr:pro:cpu=16MHzatmega328 "$example"
+            fi
+          done
