@@ -121,20 +121,24 @@ void MiP_Infrared::sendDongleCode(uint32_t code,
   if (length > 4)
     length = 4;
 
-  uint8_t command[1 + 4 + 2];
-  size_t idx = 0;
-
-  command[idx++] = MIP_CMD_SEND_IR_DONGLE_CODE;
-
-  // Pack bytes big-endian based on code length
-  for (int8_t i = length - 1; i >= 0; i--) {
-    command[idx++] = static_cast<uint8_t>((code >> (i * 8)) & 0xFF);
+  // Mask to the requested width (right-aligned in the 32-bit field).
+  if (length < 4) {
+    code &= (1UL << (length * 8)) - 1UL;
   }
 
-  command[idx++] = 0x10;           // Transmit timing header
-  command[idx++] = transmitPower;  // Transmit power (1-120)
+  uint8_t command[1 + 4 + 1 + 1];
+  command[0] = MIP_CMD_SEND_IR_DONGLE_CODE;
 
-  m_mip.serial.rawSend(command, idx);
+  // Always 4 data bytes, MSB first; unused high bytes are 0.
+  command[1] = (length >= 4) ? (uint8_t)((code >> 24) & 0xFF) : 0;
+  command[2] = (length >= 3) ? (uint8_t)((code >> 16) & 0xFF) : 0;
+  command[3] = (length >= 2) ? (uint8_t)((code >> 8) & 0xFF) : 0;
+  command[4] = (uint8_t)(code & 0xFF);
+
+  command[5] = (uint8_t)(length * 8);  // 16, 24, or 32 bits — not fixed 0x10
+  command[6] = transmitPower;
+
+  m_mip.serial.rawSend(command, sizeof(command));
   m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
