@@ -43,7 +43,8 @@ void MiP_Infrared::disableMiPDetectionMode() {
 }
 
 bool MiP_Infrared::isMiPDetectionModeEnabled() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->isMiPDetectionModeEnabled()"));
+  MIP_DEBUG_INFO_PRINTLN(m_mip,
+                         F("MiP->Infrared->isMiPDetectionModeEnabled()"));
   return m_irId > MIP_IR_DETECTION_MODE_DISABLE;
 }
 
@@ -62,7 +63,8 @@ uint8_t MiP_Infrared::readDetectedMiP() {
 }
 
 uint8_t MiP_Infrared::availableDetectedMiPEvents() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->availableDetectedMiPEvents()"));
+  MIP_DEBUG_INFO_PRINTLN(m_mip,
+                         F("MiP->Infrared->availableDetectedMiPEvents()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -102,36 +104,52 @@ bool MiP_Infrared::isRemoteControlEnabled() {
   return response[1] == MIP_IR_REMOTE_CONTROL_ENABLE;
 }
 
-void MiP_Infrared::sendDongleCode(uint16_t sendCode, uint8_t transmitPower) {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->sendDongleCode()"));
-  m_mip.MIP_ASSERT(transmitPower >= 1 && transmitPower <=120);
-  
-  uint8_t command[1 + 6] = {MIP_CMD_SEND_IR_DONGLE_CODE,
-                            0x00,
-                            0x00,
-                            (uint8_t)((sendCode >> 8) & 0xFF),
-                            (uint8_t)(sendCode & 0xFF),
-                            0x10,
-                            transmitPower};
+void MiP_Infrared::sendDongleCode(const MiPIRDongleCode& irCode,
+                                  uint8_t transmitPower) {
+  sendDongleCode(irCode.code, irCode.length, transmitPower);
+}
 
-  // Send this command blindly with no error checking since there is no robust
-  // way to determine if it has failed.
-  m_mip.serial.rawSend(command, sizeof(command));
+void MiP_Infrared::sendDongleCode(uint32_t code,
+                                  uint8_t length,
+                                  uint8_t transmitPower) {
+  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->sendDongleCode()"));
+  m_mip.MIP_ASSERT(transmitPower >= 1 && transmitPower <= 120);
+  m_mip.MIP_ASSERT(length >= 2 && length <= 4);
+
+  if (length < 2)
+    length = 2;
+  if (length > 4)
+    length = 4;
+
+  uint8_t command[1 + 4 + 2];
+  size_t idx = 0;
+
+  command[idx++] = MIP_CMD_SEND_IR_DONGLE_CODE;
+
+  // Pack bytes big-endian based on code length
+  for (int8_t i = length - 1; i >= 0; i--) {
+    command[idx++] = static_cast<uint8_t>((code >> (i * 8)) & 0xFF);
+  }
+
+  command[idx++] = 0x10;           // Transmit timing header
+  command[idx++] = transmitPower;  // Transmit power (1-120)
+
+  m_mip.serial.rawSend(command, idx);
   m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
-uint32_t MiP_Infrared::readDongleCode() {
+MiPIRDongleCode MiP_Infrared::readDongleCode() {
   MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Infrared->readDongleCode()"));
-  // Fetch bytes from the Serial receive buffer and process any event data found
-  // within.
   m_mip.serial.processAllResponseData();
-  uint32_t irCodeEvent = 0xFFFFFFFF;
-  if (!m_irCodeEvents.pop(irCodeEvent)) {
+
+  MiPIRDongleCode irEvent;
+  if (!m_irCodeEvents.pop(irEvent)) {
     m_mip.m_lastError = MiP::MIP_ERROR_NO_EVENT;
-    return irCodeEvent;
+    return MiPIRDongleCode(0xFFFFFFFF, 0);
   }
+
   m_mip.m_lastError = MiP::MIP_ERROR_NONE;
-  return irCodeEvent;
+  return irEvent;
 }
 
 uint8_t MiP_Infrared::availableCodeEvents() {
@@ -146,24 +164,27 @@ uint8_t MiP_Infrared::availableCodeEvents() {
 void MiP_Infrared::processEvent(uint8_t command,
                                 const uint8_t* payload,
                                 size_t length) {
-  // Have 32 bits ready in case of an IR event.
-  uint32_t irCode = 0;
-
   switch (command) {
     case MIP_CMD_GET_DETECTED_MIP:
-      m_detectedMiPEvents.push(payload[1]);
-      break;
-    case MIP_CMD_RECEIVE_IR_DONGLE_CODE:
-      for (size_t i = 0; i < length; i++) {
-        irCode <<= 8;
-        irCode |= payload[i + 1];
+      if (length >= 2) {
+        m_detectedMiPEvents.push(payload[1]);
       }
-      m_irCodeEvents.push(irCode);
       break;
+
+    case MIP_CMD_RECEIVE_IR_DONGLE_CODE: {
+      uint8_t codeLen = static_cast<uint8_t>(length - 1);
+      if (codeLen >= 2 && codeLen <= 4) {
+        uint32_t parsedCode = 0;
+        for (size_t i = 1; i < length; i++) {
+          parsedCode = (parsedCode << 8) | payload[i];
+        }
+        m_irCodeEvents.push(MiPIRDongleCode(parsedCode, codeLen));
+      }
+      break;
+    }
+
     default:
-      // Invalid notification command bytes were already handled in the previous
-      // switch so should never get here.
-      MIP_DEBUG_WARN_PRINTLN(m_mip, F("MiP: Unknown IR event."));
+      MIP_DEBUG_WARN_PRINTLN(m_mip, F("MiP: Unknown IR event"));
       break;
   }
 }
