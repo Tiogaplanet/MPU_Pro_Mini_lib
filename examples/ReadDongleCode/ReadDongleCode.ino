@@ -27,9 +27,6 @@ MiP mip;
 bool connectResult;
 
 void setup() {
-  Serial.begin(115200);
-  delay(100);
-
   connectResult = mip.begin();
   if (!connectResult) {
     Serial.println(F("ReadDongleCode.ino: Failed connecting to MiP!"));
