@@ -1,17 +1,18 @@
 /**
  * @file FallDown.ino
- * @brief Example sketch demonstrating MiP's fall forward and backward actions.
+ * @brief Example sketch demonstrating MiP fall forward and backward actions.
  *
- * @details This sketch demonstrates how to use the MiP library to command MiP
- * to intentionally fall forward and backward using the motion.fallForward()
+ * @details This sketch demonstrates how to use the MiP library to command
+ * MiP to intentionally fall forward and backward using the motion.fallForward()
  * and motion.fallBackward() APIs. The sketch first waits for MiP to be
- * standing upright (position.isUpright()) before issuing each fall command and prints
- * status messages to mip.console so the sequence can be observed.
+ * standing upright (position.isUpright()) before issuing each fall command and
+ * prints status messages to mip.console so the sequence can be observed.
  *
  * The example exercises these API calls:
- *   - motion.fallForward()
- *   - motion.fallBackward()
- *   - position.isUpright()
+ *   - mip.begin()
+ *   - mip.position.isUpright()
+ *   - mip.motion.fallForward()
+ *   - mip.motion.fallBackward()
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -32,23 +33,27 @@
 MiP mip;
 
 /**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ */
+bool connectResult;
+
+/**
  * @brief Arduino setup function.
  *
  * @details Initializes communication with MiP by calling mip.begin().
- * If the connection fails, an error message is printed to mip.console and setup
+ * If the connection fails, an error message is printed to Serial and setup
  * returns early. On success, the function:
- *   - Waits until MiP reports it is upright using position.isUpright().
+ *   - Waits until MiP reports being upright using position.isUpright().
  *   - Pauses briefly to ensure stability.
  *   - Commands MiP to fall forward with motion.fallForward().
- *   - Waits again for MiP to be upright, then commands a fall
+ *   - Waits again for MiP to be standing upright, then commands a fall
  *     backward with motion.fallBackward().
  *
  * The function prints progress and status messages to mip.console to make the
  * demonstration easy to follow.
  */
 void setup() {
-  bool connectResult = mip.begin();
-
+  connectResult = mip.begin();
   if (!connectResult) {
     Serial.println(F("FallDown.ino: Failed connecting to MiP!"));
     return;
@@ -58,7 +63,8 @@ void setup() {
 
   mip.console.println(F(" Waiting for MiP to be standing upright."));
   while (!mip.position.isUpright()) {
-    // Waiting for the robot to report upright state.
+    // Yield CPU time to prevent ESP8266 watchdog resets while waiting
+    delay(100);
   }
   delay(1000);
 
@@ -66,9 +72,10 @@ void setup() {
   mip.motion.fallForward();
 
   delay(1000);
-  mip.console.println(F(" Waiting for robot to be standing upright again."));
+  mip.console.println(F(" Waiting for MiP to be standing upright again."));
   while (!mip.position.isUpright()) {
-    // Waiting for the robot to report upright state after falling.
+    // Yield CPU time to prevent ESP8266 watchdog resets while waiting
+    delay(100);
   }
   delay(1000);
 
@@ -83,8 +90,9 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details This example performs all actions in setup() and does not require
- * repeated work in loop(). The function is intentionally left empty so the
- * demonstration runs only once during initialization.
+ * repeated work in loop().
  */
 void loop() {
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 }
