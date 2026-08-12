@@ -9,8 +9,11 @@
  * events using gesture.availableEvents() and gesture.readEvent().
  *
  * The example exercises these API calls:
- *   - gesture.availableEvents()
- *   - gesture.readEvent()
+ *   - mip.begin()
+ *   - mip.position.isUpright()
+ *   - mip.gesture.enable()
+ *   - mip.gesture.availableEvents()
+ *   - mip.gesture.readEvent()
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -33,9 +36,6 @@ MiP mip;
 
 /**
  * @brief Tracks whether the initial connection to MiP succeeded.
- *
- * @details Stored so other parts of the sketch could check connection state
- * if extended.
  */
 bool connectResult;
 
@@ -44,24 +44,24 @@ bool connectResult;
  *
  * @details Initializes communication with MiP by calling mip.begin().
  * If the connection fails, an error message is printed to Serial and setup
- * returns early. The function waits until MiP reports it is upright,
- * then enables gesture mode so the robot will begin reporting gesture events.
+ * returns early. The function waits until MiP reports standing upright,
+ * then enables gesture mode so MiP will begin reporting gesture events.
  */
 void setup() {
   connectResult = mip.begin();
-
   if (!connectResult) {
     Serial.println(F("Gesture.ino: Failed connecting to MiP!"));
     return;
   }
 
-  mip.console.println(
-    F("Gesture.ino: Detect gesture and inform user as they occur."));
+  mip.console.println(F("Gesture.ino: Detect gesture and inform user as they occur."));
 
   mip.console.println(F(" Waiting for MiP to be standing upright."));
   while (!mip.position.isUpright()) {
-    // Waiting for the robot to be upright before enabling gesture mode.
+    // Yield CPU time to prevent ESP8266 watchdog resets while waiting
+    delay(100);
   }
+
   mip.gesture.enable();
 }
 
@@ -75,19 +75,15 @@ void setup() {
  * values including a defensive case for MIP_GESTURE_INVALID.
  */
 void loop() {
-  if (!connectResult)
-    return;  // If connecting to MiP failed in setup(), exit now.
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 
   while (mip.gesture.availableEvents() > 0) {
     MiPGesture gesture = mip.gesture.readEvent();
     mip.console.print(F(" Detected "));
     switch (gesture) {
-      case MIP_GESTURE_LEFT:
-        mip.console.println(F("Left gesture!"));
-        break;
-      case MIP_GESTURE_RIGHT:
-        mip.console.println(F("Right gesture!"));
-        break;
+      case MIP_GESTURE_LEFT: mip.console.println(F("Left gesture!")); break;
+      case MIP_GESTURE_RIGHT: mip.console.println(F("Right gesture!")); break;
       case MIP_GESTURE_CENTER_SWEEP_LEFT:
         mip.console.println(F("Center Sweep Left gesture!"));
         break;
@@ -97,19 +93,18 @@ void loop() {
       case MIP_GESTURE_CENTER_HOLD:
         mip.console.println(F("Center Hold gesture!"));
         break;
-      case MIP_GESTURE_FORWARD:
-        mip.console.println(F("Forward gesture!"));
-        break;
-      case MIP_GESTURE_BACKWARD:
-        mip.console.println(F("Backward gesture!"));
-        break;
+      case MIP_GESTURE_FORWARD: mip.console.println(F("Forward gesture!")); break;
+      case MIP_GESTURE_BACKWARD: mip.console.println(F("Backward gesture!")); break;
       case MIP_GESTURE_INVALID:
         /**
-       * @note MIP_GESTURE_INVALID should not normally be returned when
-       * availableGestureEvents() reported > 0, but handle it defensively.
-       */
+         * @note MIP_GESTURE_INVALID should not normally be returned when
+         * gesture.availableEvents() reported > 0, but handle it defensively.
+         */
         mip.console.println(F(" INVALID gesture!"));
         break;
     }
   }
+
+  // Yield control briefly to prevent watchdog reset triggers
+  delay(10);
 }
