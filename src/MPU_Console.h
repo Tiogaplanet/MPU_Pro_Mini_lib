@@ -30,12 +30,6 @@ class MiP;
  */
 class MiP_Console : public Stream {
  public:
-  /**
-   * @brief Constructs the Console manager.
-   * @param mip Reference to the main MiP instance for multiplexer control.
-   */
-  explicit MiP_Console(MiP& mip);
-
   // --- Stream Interface Overrides ---
   virtual int available() override;
   virtual int read() override;
@@ -62,12 +56,20 @@ class MiP_Console : public Stream {
 
  private:
   /**
+   * @brief Constructs the Console manager.
+   * @param mip Reference to the main MiP instance for multiplexer control.
+   */
+  explicit MiP_Console(MiP& mip);
+
+  /**
    * @brief Lazy-initialization helper to ensure HardwareSerial is started.
    */
   void initIfNeeded();
 
   MiP& m_mip;     ///< Reference to the main orchestrator class
   bool m_isInit;  ///< Flag tracking HardwareSerial initialization status
+
+  friend class MiP;
 };
 
 #endif  // MPU_CONSOLE_H
