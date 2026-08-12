@@ -1,9 +1,9 @@
 /**
  * @file Clap.ino
- * @brief Example sketch demonstrating MiP's clap event APIs.
- * @details
- * This Arduino sketch demonstrates how to use the MiP library's clap-related
- * functions to enable and disable clap event reporting, configure the clap
+ * @brief Example sketch demonstrating MiP clap event APIs.
+ *
+ * @details This Arduino sketch demonstrates how to use MiP's clap-related
+ * functions to enable and disable clap event reporting, configure clap
  * detection delay, and read detected clap events. The sketch performs the
  * following sequence in setup():
  *   - Initializes communication with MiP.
@@ -12,7 +12,7 @@
  *   - Writes a clap delay value using clap.writeDelay() and reads it back with
  *     clap.readDelay().
  *   - Enables clap events and verifies the enabled state.
- * After initialization, the loop() continuously checks for available clap
+ * After initialization, loop() continuously checks for available clap
  * events using clap.availableEvents() and reads each event with
  * clap.readEvent(), printing the number of detected claps to mip.console.
  *
@@ -20,13 +20,13 @@
  *   - clap.enableEvents()
  *   - clap.disableEvents()
  *   - clap.areEventsEnabled()
- *   - clap.writeDelay(uint16_t delay)
+ *   - clap.writeDelay(uint16_t delayTime)
  *   - clap.readDelay()
  *   - clap.availableEvents()
  *   - clap.readEvent()
  *
  * This sketch prints status and results to mip.console and is intended for use
- * with the MiP Power Up - Pro Mini library and a WowWee MiP.
+ * with the MiP Power Up - D1 mini library and MiP.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -40,7 +40,7 @@
 
 /**
  * @brief Global MiP instance used to communicate with MiP.
- * @details
+ *
  * This object is used throughout the sketch to call MiP API functions such as
  * begin(), clap.enableEvents(), clap.disableEvents(), clap.writeDelay(),
  * clap.readDelay(), clap.availableEvents(), and clap.readEvent().
@@ -49,16 +49,13 @@ MiP mip;
 
 /**
  * @brief Tracks whether the initial connection to MiP succeeded.
- *
- * @details Stored so other parts of the sketch could check connection state
- * if extended.
  */
 bool connectResult;
 
 /**
  * @brief Arduino setup function.
- * @details
- * Called once after the board powers up or resets. This function:
+ *
+ * @details Called once after the board powers up or resets. This function:
  *  - Attempts to initialize communication with MiP via mip.begin().
  *  - If connection fails, prints an error to Serial and returns early.
  *  - Demonstrates disabling clap events and verifies the disabled state.
@@ -70,7 +67,6 @@ bool connectResult;
  */
 void setup() {
   connectResult = mip.begin();
-
   if (!connectResult) {
     Serial.println(F("Clap.ino: Failed connecting to MiP!"));
     return;
@@ -78,6 +74,7 @@ void setup() {
 
   mip.console.println(F("Clap.ino: Use clap related functions."));
 
+  // 1. Test disabling clap events and verifying disabled state
   mip.console.println(F(" Calling clap.disableEvents()"));
   mip.clap.disableEvents();
   bool isEnabled = mip.clap.areEventsEnabled();
@@ -88,12 +85,15 @@ void setup() {
     mip.console.println(F("false - pass"));
   }
 
+  // 2. Test configuring and reading back inter-clap delay
   mip.console.println(F(" Calling clap.writeDelay(501)"));
   mip.clap.writeDelay(501);
-  uint16_t delay = mip.clap.readDelay();
+  uint16_t clapDelayMs = mip.clap.readDelay();
   mip.console.print(F(" clap.readDelay() returns "));
-  mip.console.println(delay);
+  mip.console.print(clapDelayMs);
+  mip.console.println(F(" ms"));
 
+  // 3. Test enabling clap events and verifying enabled state
   mip.console.println(F(" Calling clap.enableEvents()"));
   mip.clap.enableEvents();
   isEnabled = mip.clap.areEventsEnabled();
@@ -110,23 +110,24 @@ void setup() {
 
 /**
  * @brief Arduino loop function.
- * @details
- * Called repeatedly after setup() completes. This implementation polls
- * MiP for pending clap events. While clap.availableEvents() reports
- * one or more events, clap.readEvent() is called to retrieve the clap count
- * for each event and the result is printed to mip.console.
  *
- * The loop is non-blocking except for the time taken to process available
- * events; it returns quickly when no events are pending.
+ * @details Called repeatedly after setup() completes. This implementation
+ * polls MiP for pending clap events. While clap.availableEvents() reports one
+ * or more events, clap.readEvent() is called to retrieve the clap count for
+ * each event and the result is printed to mip.console.
  */
 void loop() {
-  if (!connectResult)
-    return;  // If connecting to MiP failed in setup(), exit now.
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 
+  // Poll for available clap events
   while (mip.clap.availableEvents() > 0) {
     uint8_t clapCount = mip.clap.readEvent();
     mip.console.print(F(" Detected "));
     mip.console.print(clapCount);
-    mip.console.println(F(" claps"));
+    mip.console.println(F(" clap(s)"));
   }
+
+  // Yield control briefly to prevent watchdog reset triggers
+  delay(10);
 }
