@@ -19,60 +19,77 @@
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
 /**
+ * @brief Internal RAII scope guard to handle UART multiplexer switching and flushing.
+ */
+namespace {
+struct UartScopeGuard {
+  MiP& mip;
+  bool needToRestore;
+
+  explicit UartScopeGuard(MiP& mipRef)
+      : mip(mipRef), needToRestore(mipRef.isSerialGoingToMiP()) {
+    mip.switchSerialToPC();
+  }
+
+  ~UartScopeGuard() {
+    Serial.flush();
+    if (needToRestore) {
+      mip.switchSerialToMiP();
+    }
+  }
+};
+}  // namespace
+
+/**
  * @brief Constructs the MiP_Console component.
- * @param mip Reference to the main MiP object for access to UART multiplexer
- * controls.
+ * @param mip Reference to the main MiP object for access to UART multiplexer controls.
  */
 MiP_Console::MiP_Console(MiP& mip) : m_mip(mip), m_isInit(false) {}
 
 /**
- * @brief Internal helper to lazily initialize the HardwareSerial port if
- * begin() wasn't called.
+ * @brief Internal helper to lazily initialize the HardwareSerial port if begin() wasn't called.
  */
 void MiP_Console::initIfNeeded() {
   if (!m_isInit) {
-    Serial.begin(115200);
+    Serial.begin(kDefaultBaudRate, kDefaultConfig);
+    m_isInit = true;
   }
 }
 
 /**
- * @brief Initializes the HardwareSerial port at the specified baud.
- * @param baud Baud rate parameter.  Should be 115200 or 9600.
+ * @brief Initializes the HardwareSerial port at the specified baud rate.
+ * @param baud Baud rate parameter (defaults to 115200).
  */
 void MiP_Console::begin(unsigned long baud) {
-  Serial.begin(baud, SERIAL_8N1);
+  begin(baud, kDefaultConfig);
 }
 
 /**
- * @brief Initializes the HardwareSerial port at the specified baud and 8N1 (required by
- * MiP).
- * @param baud Baud rate parameter.  Should be 115200 or 9600.
- * @param mode Serial protocol mode (fixed internally to SERIAL_8N1).
+ * @brief Initializes the HardwareSerial port with specified baud rate and config.
+ * @param baud Baud rate parameter.
+ * @param config Serial protocol mode (e.g., SERIAL_8N1).
  */
-void MiP_Console::begin(unsigned long baud, uint8_t mode) {
-  (void)baud;
-  (void)mode;
-  if (m_isInit)
+void MiP_Console::begin(unsigned long baud, uint16_t config) {
+  if (m_isInit) {
     return;
-
+  }
+  Serial.begin(baud, config);
   m_isInit = true;
-  // Fix the HardwareSerial baud rate to 115200 8N1 as required by MiP.
-  Serial.begin(115200, SERIAL_8N1);
 }
 
 /**
  * @brief Shuts down the HardwareSerial interface.
  */
 void MiP_Console::end() {
-  if (!m_isInit)
+  if (!m_isInit) {
     return;
+  }
   Serial.end();
   m_isInit = false;
 }
 
 /**
- * @brief Returns the number of bytes available to read from the PC Serial
- * Monitor.
+ * @brief Returns the number of bytes available to read from the PC Serial Monitor.
  */
 int MiP_Console::available() {
   initIfNeeded();
@@ -88,8 +105,7 @@ int MiP_Console::read() {
 }
 
 /**
- * @brief Peeks at the next incoming byte from the PC Serial Monitor without
- * removing it.
+ * @brief Peeks at the next incoming byte from the PC Serial Monitor without removing it.
  */
 int MiP_Console::peek() {
   initIfNeeded();
@@ -114,32 +130,11 @@ void MiP_Console::flush() {
 
 /**
  * @brief Writes a single byte to the PC Serial Monitor.
- *
- * Automatically toggles the hardware UART multiplexer to the PC before writing
- * and restores it back to the MiP robot if it was previously active.
- *
  * @param byte The byte to send.
  * @return size_t Number of bytes written (1 on success).
  */
 size_t MiP_Console::write(uint8_t byte) {
-  initIfNeeded();
-
-  // 1. Query main MiP object: Is the UART currently routed to the MiP robot?
-  bool needToRestore = m_mip.isSerialGoingToMiP();
-
-  // 2. Temporarily switch multiplexer to PC
-  m_mip.switchSerialToPC();
-
-  // 3. Perform physical write to HardwareSerial TX pin
-  size_t result = Serial.write(byte);
-  Serial.flush();  // <-- critical
-
-  // 4. Restore multiplexer back to MiP if it was active before this print call
-  if (needToRestore) {
-    m_mip.switchSerialToMiP();
-  }
-
-  return result;
+  return write(&byte, 1);
 }
 
 /**
@@ -153,25 +148,14 @@ size_t MiP_Console::write(uint8_t byte) {
  * @return size_t Number of bytes successfully written.
  */
 size_t MiP_Console::write(const uint8_t* pBuffer, size_t size) {
-  if (pBuffer == nullptr || size == 0)
+  if (pBuffer == nullptr || size == 0) {
     return 0;
+  }
 
   initIfNeeded();
 
-  // 1. Query main MiP object: Is the UART currently routed to the MiP robot?
-  bool needToRestore = m_mip.isSerialGoingToMiP();
+  // RAII guard switches to PC on construct and restores back to MiP on destruct
+  UartScopeGuard guard(m_mip);
 
-  // 2. Temporarily switch multiplexer to PC
-  m_mip.switchSerialToPC();
-
-  // 3. Perform physical write to HardwareSerial TX pin
-  size_t result = Serial.write(pBuffer, size);
-  Serial.flush();  // <-- critical
-
-  // 4. Restore multiplexer back to MiP if it was active before this print call
-  if (needToRestore) {
-    m_mip.switchSerialToMiP();
-  }
-
-  return result;
+  return Serial.write(pBuffer, size);
 }
