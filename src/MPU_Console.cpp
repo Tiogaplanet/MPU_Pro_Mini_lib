@@ -5,7 +5,7 @@
  * @details This component handles sending text and debug messages to the PC /
  * FTDI Serial Monitor over the Arduino Pro Mini's single hardware UART. It
  * automatically toggles the hardware UART multiplexer to PC before writing
- * and restores it back to the MiP robot afterward.
+ * and restores it back to MiP afterward.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -17,28 +17,6 @@
  */
 #include "MPU_Console.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
-
-/**
- * @brief Internal RAII scope guard to handle UART multiplexer switching and flushing.
- */
-namespace {
-struct UartScopeGuard {
-  MiP& mip;
-  bool needToRestore;
-
-  explicit UartScopeGuard(MiP& mipRef)
-      : mip(mipRef), needToRestore(mipRef.isSerialGoingToMiP()) {
-    mip.switchSerialToPC();
-  }
-
-  ~UartScopeGuard() {
-    Serial.flush();
-    if (needToRestore) {
-      mip.switchSerialToMiP();
-    }
-  }
-};
-}  // namespace
 
 /**
  * @brief Constructs the MiP_Console component.
@@ -53,6 +31,27 @@ void MiP_Console::initIfNeeded() {
   if (!m_isInit) {
     Serial.begin(kDefaultBaudRate, kDefaultConfig);
     m_isInit = true;
+  }
+}
+
+/**
+ * @brief Switches the multiplexer to PC and returns whether MiP was active beforehand.
+ * @return true if communication was active with MiP prior to switching.
+ */
+bool MiP_Console::prepareForPcWrite() {
+  bool needToRestore = m_mip.isSerialGoingToMiP();
+  m_mip.switchSerialToPC();
+  return needToRestore;
+}
+
+/**
+ * @brief Flushes the Serial output buffer and restores the multiplexer to MiP if required.
+ * @param needToRestore Whether communication was active with MiP prior to writing.
+ */
+void MiP_Console::restoreAfterPcWrite(bool needToRestore) {
+  Serial.flush();
+  if (needToRestore) {
+    m_mip.switchSerialToMiP();
   }
 }
 
@@ -141,7 +140,7 @@ size_t MiP_Console::write(uint8_t byte) {
  * @brief Writes a buffer of bytes to the PC Serial Monitor.
  *
  * Automatically toggles the hardware UART multiplexer to the PC before writing
- * and restores it back to the MiP robot if it was previously active.
+ * and restores it back to MiP if it was previously active.
  *
  * @param pBuffer Pointer to the data array.
  * @param size    Number of bytes to write.
@@ -154,8 +153,9 @@ size_t MiP_Console::write(const uint8_t* pBuffer, size_t size) {
 
   initIfNeeded();
 
-  // RAII guard switches to PC on construct and restores back to MiP on destruct
-  UartScopeGuard guard(m_mip);
+  bool needToRestore = prepareForPcWrite();
+  size_t result = Serial.write(pBuffer, size);
+  restoreAfterPcWrite(needToRestore);
 
-  return Serial.write(pBuffer, size);
+  return result;
 }
