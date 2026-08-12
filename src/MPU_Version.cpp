@@ -62,11 +62,11 @@ void MiP_Version::readSoftware(MiPSoftwareVersion& software) {
 }
 
 const char* MiP_Version::readMPUString() const {
-  return MPU_D1_MINI_VERSION;
+  return MPU_PRO_MINI_VERSION;
 }
 
 uint32_t MiP_Version::readMPUNumber() const {
-  return MPU_D1_MINI_VERSION_NUMBER;
+  return MPU_PRO_MINI_VERSION_NUMBER;
 }
 
 // ==========================================================================
