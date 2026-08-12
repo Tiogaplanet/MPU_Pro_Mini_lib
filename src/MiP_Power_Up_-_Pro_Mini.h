@@ -47,8 +47,8 @@
 #define MPU_PRO_MINI_VERSION "2.0.0"
 
 // Combined numerical value for preprocessor version checks (2.0.0 -> 20000)
-#define MPU_D1_MINI_VERSION_NUMBER \
-  (MPU_D1_MINI_VERSION_MAJOR * 10000 + MPU_D1_MINI_VERSION_MINOR * 100 + MPU_D1_MINI_VERSION_PATCH)
+#define MPU_PRO_MINI_VERSION_NUMBER \
+  (MPU_PRO_MINI_VERSION_MAJOR * 10000 + MPU_PRO_MINI_VERSION_MINOR * 100 + MPU_PRO_MINI_VERSION_PATCH)
 
 // Setup some debug levels for reporting library status via mip.console.
 #define MIP_DEBUG_NONE 0
