@@ -265,14 +265,7 @@ void MiP_Serial::copyHexTextToBinary(uint8_t* pDest,
 }
 
 constexpr uint8_t MiP_Serial::parseHexDigit(uint8_t digit) {
-  if (digit >= '0' && digit <= '9') {
-    return digit - '0';
-  }
-  if (digit >= 'a' && digit <= 'f') {
-    return digit - 'a' + 10;
-  }
-  if (digit >= 'A' && digit <= 'F') {
-    return digit - 'A' + 10;
-  }
-  return 0;
+  return (digit >= '0' && digit <= '9') ? static_cast<uint8_t>(digit - '0') :
+         (digit >= 'a' && digit <= 'f') ? static_cast<uint8_t>(digit - 'a' + 10) :
+         (digit >= 'A' && digit <= 'F') ? static_cast<uint8_t>(digit - 'A' + 10) : 0;
 }
