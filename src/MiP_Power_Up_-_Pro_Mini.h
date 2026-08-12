@@ -383,6 +383,7 @@ protected:
     MIP_FLAG_INITIALIZED = (1 << 3)
   };
 
+  MiP& m_mip;  ///< A self-reference to m_mip to enable the main MiP class to access itself in mip.console to streamline debug macro usage.
   uint32_t m_baudRate;
   uint8_t m_flags;
   int8_t m_lastError;
