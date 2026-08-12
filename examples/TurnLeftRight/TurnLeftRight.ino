@@ -3,37 +3,34 @@
  * @brief Example sketch demonstrating turning MiP left and right.
  *
  * @details
- * This sketch connects to MiP and alternately commands it to turn
- * 180 degrees left and then 180 degrees right three times. It demonstrates
- * how to use the MiP motion APIs to perform rotational movements and how to
- * interrupt or sequence motions using simple delays.
+ * This sketch connects to MiP and alternately commands turning 180 degrees left
+ * and then 180 degrees right three times. It demonstrates how to use the MiP
+ * motion APIs to perform rotational movements and how to sequence motions
+ * using simple delays.
  *
  * The example exercises these API calls:
- *   - begin()
- *   - motion.turnLeft()
- *   - motion.turnRight()
+ *   - mip.begin()
+ *   - mip.motion.turnLeft()
+ *   - mip.motion.turnRight()
  *
  * Usage notes:
  *   - Ensure MiP is powered and able to turn in the available space.
  *   - Adjust turn angles and speeds passed to turnLeft/turnRight to change
  *     behavior and responsiveness.
  *
- * @copyright Copyright (C) 2018-2026 Adam Green (https://github.com/adamgreen)
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * @author Adam Green (Original Author)
+ * @author Samuel Trassare (Maintainer)
+ * @copyright Copyright (C) 2018-2026 Samuel Trassare
+ * (https://github.com/Tiogaplanet) Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  */
 
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to control the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * motion.turnLeft(), and motion.turnRight(). Keeping the instance at file scope
@@ -42,28 +39,33 @@
 MiP mip;
 
 /**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ */
+bool connectResult;
+
+/**
  * @brief Arduino setup function.
  *
  * @details
- * - initializes MiP's connection via mip.begin().
+ * - Initializes the MiP connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short description and then performs three cycles of:
- *     1) turnLeft(180, 12)
+ *     1) motion.turnLeft(180, 12)
  *     2) delay(2000)
- *     3) turnRight(180, 12)
+ *     3) motion.turnRight(180, 12)
  *     4) delay(2000)
  *
  * The second parameter to turnLeft/turnRight controls speed; adjust as needed.
  */
 void setup() {
-  bool connectResult = mip.begin();
+  connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("TurnLeftRight.ino: Failed connecting to MiP!"));
+    Serial.println(F("TurnLeftRight.ino: Failed connecting to MiP."));
     return;
   }
 
   mip.console.println(F("TurnLeftRight.ino: Use turnLeft & turnRight() functions. "
-                        "Turn 180 degrees to left and then 180 degrees to right."));
+                    "Turn 180 degrees to left and then 180 degrees to right."));
 
   for (uint8_t i = 0; i < 3; i++) {
     // Turn 180 degrees left at speed 12.
@@ -83,7 +85,9 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details This example performs its demonstration in setup() and does not
- * require repeated work in loop(). The function is intentionally left empty
- * so the sketch completes once during initialization.
+ * require repeated work in loop().
  */
-void loop() {}
+void loop() {
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
+}
