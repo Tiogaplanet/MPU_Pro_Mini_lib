@@ -264,6 +264,7 @@ public:
                           ///< MPU_ChestLED.h).
   MiP_Clap clap;  ///< Interface for clap detection and delay configuration (see
                   ///< MPU_Clap.h).
+  MiP_Console console;    ///< Interface for console output to PC (see MPU_Console.h).
   MiP_EEPROM eeprom;      ///< Interface for reading/writing non-volatile EEPROM
                           ///< (see MPU_EEPROM.h).
   MiP_Gesture gesture;    ///< Interface for gesture detection mode and events
@@ -291,8 +292,6 @@ public:
                         ///< (see MPU_Version.h).
   MiP_Weight weight;    ///< Interface for payload weight sensor queries (see
                         ///< MPU_Weight.h).
-  MiP_WiFi wifi;  ///< Interface for WiFi, OTA, and network management (see
-                  ///< MPU_WiFi.h).
 
 protected:
   static constexpr uint8_t MIP_CMD_DISCONNECT_APP = 0xFE;  ///< Disconnect
