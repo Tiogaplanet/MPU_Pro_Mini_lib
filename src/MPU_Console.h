@@ -43,18 +43,22 @@ class MiP_Console : public Stream {
   virtual void flush() override;
 
   // --- HardwareSerial Compatibility Methods ---
-  void begin(unsigned long baud = 115200);
-  void begin(unsigned long baud, uint8_t mode);
+  void begin(unsigned long baud = kDefaultBaudRate);
+  void begin(unsigned long baud, uint16_t config);
   void end();
 
   /**
    * @brief Boolean evaluation operator for Arduino stream checking.
    */
-  operator bool() {
+  explicit operator bool() const {
     return true;
   }
 
  private:
+  // Constants
+  static constexpr unsigned long kDefaultBaudRate = 115200;
+  static constexpr uint16_t kDefaultConfig = SERIAL_8N1;
+
   /**
    * @brief Constructs the Console manager.
    * @param mip Reference to the main MiP instance for multiplexer control.
