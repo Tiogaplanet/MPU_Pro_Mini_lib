@@ -1,22 +1,11 @@
-#######################################
-# Syntax Coloring Map for
-# MiP Power Up - Pro Mini (v2.0.0)
-#######################################
+################################-------################################
+# Syntax Coloring Map For MiP Power Up - Pro Mini (MPU) Library
+################################-------################################
 
-#######################################
-# Datatypes / Classes (KEYWORD1)
-#######################################
-
+################################-------################################
+# Datatypes and Subsystem Classes (KEYWORD1)
+################################-------################################
 MiP	KEYWORD1
-MiPStatus	KEYWORD1
-MiPChestLED	KEYWORD1
-MiPHeadLEDs	KEYWORD1
-MiPClapSettings	KEYWORD1
-MiPSoftwareVersion	KEYWORD1
-MiPHardwareInfo	KEYWORD1
-CircularQueue	KEYWORD1
-
-# Subsystem classes
 MiP_Battery	KEYWORD1
 MiP_ChestLED	KEYWORD1
 MiP_Clap	KEYWORD1
@@ -36,217 +25,198 @@ MiP_Sound	KEYWORD1
 MiP_Version	KEYWORD1
 MiP_Weight	KEYWORD1
 
-# Enums
-MiPGestureMode	KEYWORD1
-MiPRadarMode	KEYWORD1
-MiPRadar	KEYWORD1
-MiPGesture	KEYWORD1
-MiPHeadLED	KEYWORD1
-MiPDriveDirection	KEYWORD1
-MiPTurnDirection	KEYWORD1
-MiPFallDirection	KEYWORD1
-MiPPosition	KEYWORD1
-MiPGetUp	KEYWORD1
-MiPSoundIndex	KEYWORD1
-MiPVolume	KEYWORD1
+MiPChestLED	KEYWORD1
 MiPClapEnabled	KEYWORD1
+MiPClapSettings	KEYWORD1
+MiPDriveDirection	KEYWORD1
+MiPFallDirection	KEYWORD1
 MiPGameMode	KEYWORD1
+MiPGesture	KEYWORD1
+MiPGestureMode	KEYWORD1
+MiPGetUp	KEYWORD1
+MiPHardwareInfo	KEYWORD1
+MiPHeadLED	KEYWORD1
+MiPHeadLEDs	KEYWORD1
+MiPIRDongleCode	KEYWORD1
+MiPPosition	KEYWORD1
+MiPRadar	KEYWORD1
+MiPRadarMode	KEYWORD1
+MiPSoftwareVersion	KEYWORD1
+MiPSoundIndex	KEYWORD1
+MiPStatus	KEYWORD1
+MiPTurnDirection	KEYWORD1
+MiPVolume	KEYWORD1
 
-#######################################
+################################-------################################
 # Methods and Functions (KEYWORD2)
-#######################################
-
-# Core MiP lifecycle / status
-begin	KEYWORD2
-end	KEYWORD2
-sleep	KEYWORD2
-isInitialized	KEYWORD2
-isSerialGoingToMiP	KEYWORD2
-lastCallResult	KEYWORD2
-didLastCallFail	KEYWORD2
-printLastCallResult	KEYWORD2
-dispatchEvent	KEYWORD2
-
-# Public subsystem members (mip.battery, mip.motion, ...)
-battery	KEYWORD2
-chestLED	KEYWORD2
-clap	KEYWORD2
-console	KEYWORD2
-eeprom	KEYWORD2
-gesture	KEYWORD2
-headLEDs	KEYWORD2
-infrared	KEYWORD2
-mode	KEYWORD2
-motion	KEYWORD2
-odometer	KEYWORD2
-position	KEYWORD2
-radar	KEYWORD2
-serial	KEYWORD2
-shake	KEYWORD2
-sound	KEYWORD2
-version	KEYWORD2
-weight	KEYWORD2
-
-# Battery (mip.battery.*)
-readVoltage	KEYWORD2
-
-# Chest LED (mip.chestLED.*)
-read	KEYWORD2
-write	KEYWORD2
-unverifiedWrite	KEYWORD2
-clear	KEYWORD2
-
-# Clap (mip.clap.*)
-enableEvents	KEYWORD2
-disableEvents	KEYWORD2
+################################-------################################
+addEntryToList	KEYWORD2
+addEvent	KEYWORD2
+add	KEYWORD2
+addResponse	KEYWORD2
+addOob	KEYWORD2
 areEventsEnabled	KEYWORD2
-availableEvents	KEYWORD2
-readEvent	KEYWORD2
-readDelay	KEYWORD2
-writeDelay	KEYWORD2
-
-# Console (mip.console.*) — Stream/Print interface
-print	KEYWORD2
-println	KEYWORD2
-printf	KEYWORD2
-available	KEYWORD2
-availableForWrite	KEYWORD2
-peek	KEYWORD2
-flush	KEYWORD2
-
-# EEPROM (mip.eeprom.*)
-# read / write already listed
-
-# Gesture (mip.gesture.*)
-enable	KEYWORD2
-disable	KEYWORD2
-isEnabled	KEYWORD2
 areGestureAndRadarModesDisabled	KEYWORD2
-
-# Head LEDs (mip.headLEDs.*)
-# read / write / unverifiedWrite / clear already listed
-
-# Infrared (mip.infrared.*)
-enableMiPDetectionMode	KEYWORD2
-disableMiPDetectionMode	KEYWORD2
-isMiPDetectionModeEnabled	KEYWORD2
-availableDetectedMiPEvents	KEYWORD2
-readDetectedMiP	KEYWORD2
-enableRemoteControl	KEYWORD2
-disableRemoteControl	KEYWORD2
-isRemoteControlEnabled	KEYWORD2
-sendDongleCode	KEYWORD2
-readDongleCode	KEYWORD2
+available	KEYWORD2
 availableCodeEvents	KEYWORD2
-
-# Mode (mip.mode.*)
+availableDetectedMiPEvents	KEYWORD2
+availableEvents	KEYWORD2
+availableForWrite	KEYWORD2
+begin	KEYWORD2
+beginList	KEYWORD2
+capacity	KEYWORD2
+check	KEYWORD2
+clear	KEYWORD2
+continuousDrive	KEYWORD2
+copyHexTextToBinary	KEYWORD2
+didLastCallFail	KEYWORD2
+disable	KEYWORD2
+disableEvents	KEYWORD2
+disableMiPDetectionMode	KEYWORD2
+disableRemoteControl	KEYWORD2
+discardUnexpectedSerialData	KEYWORD2
+dispatchEvent	KEYWORD2
+distanceDrive	KEYWORD2
+driveBackward	KEYWORD2
+driveForward	KEYWORD2
+enable	KEYWORD2
 enableApp	KEYWORD2
 enableCage	KEYWORD2
 enableDance	KEYWORD2
+enableEvents	KEYWORD2
+enableMiPDetectionMode	KEYWORD2
+enableRemoteControl	KEYWORD2
+enableRoam	KEYWORD2
 enableStack	KEYWORD2
 enableTrick	KEYWORD2
-enableRoam	KEYWORD2
+end	KEYWORD2
+fallBackward	KEYWORD2
+fallDown	KEYWORD2
+fallForward	KEYWORD2
+flush	KEYWORD2
+getBaudRate	KEYWORD2
+getUp	KEYWORD2
 isAppEnabled	KEYWORD2
 isCageEnabled	KEYWORD2
 isDanceEnabled	KEYWORD2
+isFaceDown	KEYWORD2
+isFaceDownOnTray	KEYWORD2
+isEnabled	KEYWORD2
+isEmpty	KEYWORD2
+isFull	KEYWORD2
+isHandStanding	KEYWORD2
+isInitialized	KEYWORD2
+isOnBack	KEYWORD2
+isOnBackWithKickstand	KEYWORD2
+isPickedUp	KEYWORD2
+isRemoteControlEnabled	KEYWORD2
+isRoamEnabled	KEYWORD2
+isSerialGoingToMiP	KEYWORD2
 isStackEnabled	KEYWORD2
 isTrickEnabled	KEYWORD2
-isRoamEnabled	KEYWORD2
-
-# Motion (mip.motion.*)
-continuousDrive	KEYWORD2
-distanceDrive	KEYWORD2
-driveForward	KEYWORD2
-driveBackward	KEYWORD2
+isUpright	KEYWORD2
+isValid	KEYWORD2
+isValidSingleLED	KEYWORD2
+lastCallResult	KEYWORD2
+mipAssert	KEYWORD2
+parse	KEYWORD2
+parseHexDigit	KEYWORD2
+peek	KEYWORD2
+play	KEYWORD2
+playList	KEYWORD2
+pop	KEYWORD2
+printLastCallResult	KEYWORD2
+processAllResponseData	KEYWORD2
+processEvent	KEYWORD2
+processOobResponseData	KEYWORD2
+push	KEYWORD2
+rawFlash	KEYWORD2
+rawGet	KEYWORD2
+rawGetHardware	KEYWORD2
+rawGetRemoteControl	KEYWORD2
+rawGetSettings	KEYWORD2
+rawGetSoftware	KEYWORD2
+rawGetVolume	KEYWORD2
+rawRead	KEYWORD2
+rawReceive	KEYWORD2
+rawSend	KEYWORD2
+rawSet	KEYWORD2
+rawSetDelay	KEYWORD2
+rawSetMiPDetectionMode	KEYWORD2
+rawSetRemoteControl	KEYWORD2
+rawSetVolume	KEYWORD2
+rawWrite	KEYWORD2
+read	KEYWORD2
+readDelay	KEYWORD2
+readDetectedMiP	KEYWORD2
+readDongleCode	KEYWORD2
+readEvent	KEYWORD2
+readHardware	KEYWORD2
+readIrLength	KEYWORD2
+readMPUNumber	KEYWORD2
+readMPUString	KEYWORD2
+readSettings	KEYWORD2
+readSoftware	KEYWORD2
+readVoltage	KEYWORD2
+readVolume	KEYWORD2
+reset	KEYWORD2
+sleep	KEYWORD2
+stop	KEYWORD2
+switchSerialToMiP	KEYWORD2
+switchSerialToPC	KEYWORD2
 turnLeft	KEYWORD2
 turnRight	KEYWORD2
-stop	KEYWORD2
-fallForward	KEYWORD2
-fallBackward	KEYWORD2
-getUp	KEYWORD2
-
-# Odometer (mip.odometer.*)
-reset	KEYWORD2
-
-# Position (mip.position.*)
-isOnBack	KEYWORD2
-isFaceDown	KEYWORD2
-isUpright	KEYWORD2
-isPickedUp	KEYWORD2
-isHandStanding	KEYWORD2
-isFaceDownOnTray	KEYWORD2
-isOnBackWithKickstand	KEYWORD2
-
-# Radar (mip.radar.*)
-# enable / disable / isEnabled / read / clear already listed
-
-# Serial (mip.serial.*)
-rawSend	KEYWORD2
-rawReceive	KEYWORD2
-processAllResponseData	KEYWORD2
-
-# Shake (mip.shake.*)
-# read already listed
-
-# Sound (mip.sound.*)
-play	KEYWORD2
-beginList	KEYWORD2
-addEntryToList	KEYWORD2
-playList	KEYWORD2
+unverifiedWrite	KEYWORD2
+write	KEYWORD2
+writeDelay	KEYWORD2
 writeVolume	KEYWORD2
-readVolume	KEYWORD2
 
-# Version (mip.version.*)
-readSoftware	KEYWORD2
-readHardware	KEYWORD2
-readMPUString	KEYWORD2
-readMPUNumber	KEYWORD2
-
-# Weight (mip.weight.*)
-# read already listed
-
-#######################################
-# Constants / Enum values (LITERAL1)
-#######################################
-
-# Library version
-MPU_PRO_MINI_VERSION	LITERAL1
-MPU_PRO_MINI_VERSION_MAJOR	LITERAL1
-MPU_PRO_MINI_VERSION_MINOR	LITERAL1
-MPU_PRO_MINI_VERSION_PATCH	LITERAL1
-MPU_PRO_MINI_VERSION_NUMBER	LITERAL1
-
-# Error codes
+################################-------################################
+# Constants and Literals (LITERAL1)
+################################-------################################
+BASE_EEPROM_ADDRESS	LITERAL1
+LAST_EEPROM_ADDRESS	LITERAL1
+MIP_EXPECT_NO_RESPONSE	LITERAL1
+MIP_EXPECT_RESPONSE	LITERAL1
+MIP_MAX_RETRIES	LITERAL1
+MIP_REQUEST_DELAY	LITERAL1
+MIP_REQUEST_MAX_LEN	LITERAL1
+MIP_RESPONSE_MAX_LEN	LITERAL1
+MIP_RESPONSE_TIMEOUT	LITERAL1
+MIP_RETRY_WAIT	LITERAL1
 MIP_ERROR_NONE	LITERAL1
 MIP_ERROR_TIMEOUT	LITERAL1
 MIP_ERROR_NO_EVENT	LITERAL1
 MIP_ERROR_BAD_RESPONSE	LITERAL1
 MIP_ERROR_MAX_RETRIES	LITERAL1
 
-# EEPROM address range
-BASE_EEPROM_ADDRESS	LITERAL1
-LAST_EEPROM_ADDRESS	LITERAL1
+MIP_CLAP_DISABLED	LITERAL1
+MIP_CLAP_ENABLED	LITERAL1
 
-# Debug levels
-MIP_DEBUG_NONE	LITERAL1
-MIP_DEBUG_ERROR	LITERAL1
-MIP_DEBUG_WARN	LITERAL1
-MIP_DEBUG_INFO	LITERAL1
-MIP_DEBUG_LEVEL	LITERAL1
+MIP_DRIVE_FORWARD	LITERAL1
+MIP_DRIVE_BACKWARD	LITERAL1
 
-# Gesture / radar modes
+MIP_TURN_LEFT	LITERAL1
+MIP_TURN_RIGHT	LITERAL1
+
+MIP_FALL_ON_BACK	LITERAL1
+MIP_FALL_FACE_DOWN	LITERAL1
+
+MIP_GETUP_FROM_FRONT	LITERAL1
+MIP_GETUP_FROM_BACK	LITERAL1
+MIP_GETUP_FROM_EITHER	LITERAL1
+
+MIP_APP_MODE	LITERAL1
+MIP_CAGE_MODE	LITERAL1
+MIP_TRACKING_MODE	LITERAL1
+MIP_DANCE_MODE	LITERAL1
+MIP_DEFAULT_MODE	LITERAL1
+MIP_STACK_MODE	LITERAL1
+MIP_TRICK_MODE	LITERAL1
+MIP_ROAM_MODE	LITERAL1
+
 MIP_GESTURE_RADAR_DISABLED	LITERAL1
 MIP_GESTURE	LITERAL1
-MIP_RADAR	LITERAL1
-MIP_RADAR_DISABLED	LITERAL1
-
-# Radar distances
-MIP_RADAR_NONE	LITERAL1
-MIP_RADAR_10CM_30CM	LITERAL1
-MIP_RADAR_0CM_10CM	LITERAL1
-MIP_RADAR_INVALID	LITERAL1
-
-# Gestures
 MIP_GESTURE_LEFT	LITERAL1
 MIP_GESTURE_RIGHT	LITERAL1
 MIP_GESTURE_CENTER_SWEEP_LEFT	LITERAL1
@@ -256,24 +226,11 @@ MIP_GESTURE_FORWARD	LITERAL1
 MIP_GESTURE_BACKWARD	LITERAL1
 MIP_GESTURE_INVALID	LITERAL1
 
-# Head LEDs
 MIP_HEAD_LED_OFF	LITERAL1
 MIP_HEAD_LED_ON	LITERAL1
 MIP_HEAD_LED_BLINK_SLOW	LITERAL1
 MIP_HEAD_LED_BLINK_FAST	LITERAL1
 
-# Drive / turn / fall / get-up
-MIP_DRIVE_FORWARD	LITERAL1
-MIP_DRIVE_BACKWARD	LITERAL1
-MIP_TURN_LEFT	LITERAL1
-MIP_TURN_RIGHT	LITERAL1
-MIP_FALL_ON_BACK	LITERAL1
-MIP_FALL_FACE_DOWN	LITERAL1
-MIP_GETUP_FROM_FRONT	LITERAL1
-MIP_GETUP_FROM_BACK	LITERAL1
-MIP_GETUP_FROM_EITHER	LITERAL1
-
-# Position
 MIP_POSITION_ON_BACK	LITERAL1
 MIP_POSITION_FACE_DOWN	LITERAL1
 MIP_POSITION_UPRIGHT	LITERAL1
@@ -282,11 +239,13 @@ MIP_POSITION_HAND_STAND	LITERAL1
 MIP_POSITION_FACE_DOWN_ON_TRAY	LITERAL1
 MIP_POSITION_ON_BACK_WITH_KICKSTAND	LITERAL1
 
-# Clap
-MIP_CLAP_DISABLED	LITERAL1
-MIP_CLAP_ENABLED	LITERAL1
+MIP_RADAR_NONE	LITERAL1
+MIP_RADAR_10CM_30CM	LITERAL1
+MIP_RADAR_0CM_10CM	LITERAL1
+MIP_RADAR_INVALID	LITERAL1
+MIP_RADAR_DISABLED	LITERAL1
+MIP_RADAR	LITERAL1
 
-# Volume
 MIP_VOLUME_OFF	LITERAL1
 MIP_VOLUME_1	LITERAL1
 MIP_VOLUME_2	LITERAL1
@@ -297,17 +256,6 @@ MIP_VOLUME_6	LITERAL1
 MIP_VOLUME_7	LITERAL1
 MIP_VOLUME_DEFAULT	LITERAL1
 
-# Game modes
-MIP_APP_MODE	LITERAL1
-MIP_CAGE_MODE	LITERAL1
-MIP_TRACKING_MODE	LITERAL1
-MIP_DANCE_MODE	LITERAL1
-MIP_DEFAULT_MODE	LITERAL1
-MIP_STACK_MODE	LITERAL1
-MIP_TRICK_MODE	LITERAL1
-MIP_ROAM_MODE	LITERAL1
-
-# Sound indexes (complete MiPSoundIndex enum)
 MIP_SOUND_ONEKHZ_500MS_8K16BIT	LITERAL1
 MIP_SOUND_ACTION_BURPING	LITERAL1
 MIP_SOUND_ACTION_DRINKING	LITERAL1
@@ -318,7 +266,6 @@ MIP_SOUND_BOXING_PUNCHCONNECT_1	LITERAL1
 MIP_SOUND_BOXING_PUNCHCONNECT_2	LITERAL1
 MIP_SOUND_BOXING_PUNCHCONNECT_3	LITERAL1
 MIP_SOUND_FREESTYLE_TRACKING_1	LITERAL1
-MIP_SOUND_FREESTYLE_TRACKING_2	LITERAL1
 MIP_SOUND_MIP_1	LITERAL1
 MIP_SOUND_MIP_2	LITERAL1
 MIP_SOUND_MIP_3	LITERAL1
@@ -414,6 +361,7 @@ MIP_SOUND_SOUND_CAGE	LITERAL1
 MIP_SOUND_SOUND_GUNS	LITERAL1
 MIP_SOUND_SOUND_ZINGS	LITERAL1
 MIP_SOUND_SHORT_MUTE_FOR_STOP	LITERAL1
+MIP_SOUND_FREESTYLE_TRACKING_2	LITERAL1
 MIP_SOUND_VOLUME_OFF	LITERAL1
 MIP_SOUND_VOLUME_1	LITERAL1
 MIP_SOUND_VOLUME_2	LITERAL1
