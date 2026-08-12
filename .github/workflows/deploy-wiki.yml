@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - minor-edits
+      - preflight-checks
 
 jobs:
   deploy-wiki:
