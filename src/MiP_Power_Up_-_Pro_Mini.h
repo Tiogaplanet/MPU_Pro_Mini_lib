@@ -312,10 +312,23 @@ protected:
                                                           ///< link rate.
   static constexpr uint32_t MIP_SLOW_BAUD_RATE = 9600;  ///< Low-speed UART link
                                                         ///< rate.
-
   void clear();
 
   int8_t attemptMiPConnection(uint32_t baudRate);
+
+  /**
+   * @brief Queries whether the hardware UART multiplexer is currently routed to
+   * the MiP.
+   */
+  bool isSerialGoingToMiP() const {
+    return m_serialGoingToMiP;
+  }
+
+  // --- Hardware UART Multiplexer Methods ---
+  void switchSerialToMiP();
+  void switchSerialToPC();
+
+  bool m_serialGoingToMiP;  ///< Current state of the multiplexer switch
 
   /**
    * @brief Central dispatcher for all Out-of-Band events from the transport
