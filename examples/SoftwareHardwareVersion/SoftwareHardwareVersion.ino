@@ -84,7 +84,7 @@ void setup() {
 
   // Display the active UART baud rate negotiated during begin()
   mip.console.print(F(" Active UART link speed: "));
-  mip.console.print(mip.getBaudRate());
+  // TODO: mip.console.print(mip.getBaudRate());
   mip.console.println(F(" baud"));
 
   /* Read and display software version information. */
