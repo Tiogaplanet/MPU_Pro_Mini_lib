@@ -4,9 +4,9 @@
  *
  * @details This sketch shows how to use the MiP library to command MiP
  * to get up from resting on the kickstand and from face down on the tray.
- * As stated in WowWee's documentation, "Mip [sic] will attempt to get up from
- * front [or back] if angle is correct." Give MiP some room for this test 
- * drives forward a bit after getting up from the kickstand.
+ * As stated in WowWee's documentation, "MiP will attempt to get up from front
+ * [or back] if angle is correct." Give MiP some room for this test because
+ * MiP drives forward a bit after getting up from the kickstand.
  *
  * The sequence performed in setup() is:
  *   - Initialize communication with MiP.
@@ -15,9 +15,10 @@
  *   - Attempt to get up again.
  *
  * The sketch prints status messages to mip.console so the user can observe the
- * sequence. The example exercises the following API calls:
- *   - motion.fallForward()
- *   - motion.getUp()
+ * sequence. The example exercises these API calls:
+ *   - mip.begin()
+ *   - mip.motion.fallForward()
+ *   - mip.motion.getUp()
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -33,9 +34,14 @@
  * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
- * fallForward(), and getUp().
+ * motion.fallForward(), and motion.getUp().
  */
 MiP mip;
+
+/**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ */
+bool connectResult;
 
 /**
  * @brief Arduino setup function.
@@ -43,13 +49,12 @@ MiP mip;
  * @details Called once after the board powers up or resets. This function:
  *   - Initializes communication with MiP via mip.begin().
  *   - If the connection fails, prints an error to Serial and returns early.
- *   - Commands MiP to get up from the kickstand then fall forward, wait 
- *     briefly, then attempt to get up from the tray.
+ *   - Commands MiP to get up from the kickstand, wait for stabilization, then
+ * fall forward and attempt to get up again from the front position.
  *   - Prints progress and completion messages to mip.console.
  */
 void setup() {
-  bool connectResult = mip.begin();
-
+  connectResult = mip.begin();
   if (!connectResult) {
     Serial.println(F("GetUp.ino: Failed connecting to MiP!"));
     return;
@@ -59,15 +64,15 @@ void setup() {
 
   mip.console.println(F(" Getting up from kickstand."));
   mip.motion.getUp(MIP_GETUP_FROM_BACK);
-  delay(1000);
+  delay(3000);  // Allow MiP enough time to balance and stabilize
 
   mip.console.println(F(" Falling forward."));
   mip.motion.fallForward();
-  delay(1000);
+  delay(2000);  // Allow time for the fall to complete
 
   mip.console.println(F(" Getting up again."));
   mip.motion.getUp(MIP_GETUP_FROM_FRONT);
-  delay(3000);
+  delay(3000);  // Allow MiP enough time to stand up and balance
 
   mip.console.println(F("GetUp.ino: Done."));
 }
@@ -76,7 +81,9 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details This example performs all actions in setup() and does not require
- * repeated work in loop(). The function is intentionally left empty so the
- * demonstration runs only once during initialization.
+ * repeated work in loop().
  */
-void loop() {}
+void loop() {
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
+}
