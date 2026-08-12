@@ -39,7 +39,7 @@ MiP::MiP()
       gesture(*this),
       headLEDs(*this),
       infrared(*this),
-      mode(*this),
+      m_mip(*this),
       mode(*this),
       motion(*this),
       odometer(*this),
