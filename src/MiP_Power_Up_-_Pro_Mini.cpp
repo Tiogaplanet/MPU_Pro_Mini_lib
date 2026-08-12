@@ -139,15 +139,15 @@ void MiP::sleep() {
   serial.rawSend(command, sizeof(command));
 }
 
-bool MiP::isInitialized() {
+bool MiP::isInitialized() const {
   return (m_flags & MIP_FLAG_INITIALIZED);
 }
 
-int8_t MiP::lastCallResult() {
+int8_t MiP::lastCallResult() const {
   return m_lastError;
 }
 
-bool MiP::didLastCallFail() {
+bool MiP::didLastCallFail() const {
   return m_lastError != MIP_ERROR_NONE;
 }
 
