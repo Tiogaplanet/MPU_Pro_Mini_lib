@@ -24,23 +24,32 @@ MiP_Sound::MiP_Sound(MiP& mip) : m_mip(mip) {
 }
 
 void MiP_Sound::beginList() {
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Sound->beginList()"));
+
   m_soundIndex = 0;
   m_playVolume = MIP_VOLUME_DEFAULT;
   m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
-void MiP_Sound::addEntryToList(MiPSoundIndex sound,
-                               uint16_t delayTime,
-                               MiPVolume volume) {
+void MiP_Sound::addEntryToList(MiPSoundIndex sound, uint16_t delayTime /* = 0 */,
+                               MiPVolume volume /* = MIP_VOLUME_DEFAULT */) {
+  // Must call beginSoundList() before calling this function.
   m_mip.MIP_ASSERT(m_soundIndex != -1);
+
+  // Delay is in units of 30 msecs and can't exceed 255 * 30.
   m_mip.MIP_ASSERT(delayTime <= 255 * 30);
+
+  // Volume can only be set to values between 0 and 7 or 0xFF (which means keep
+  // volume as it was).
   m_mip.MIP_ASSERT(volume <= MIP_VOLUME_7 || volume == MIP_VOLUME_DEFAULT);
 
-  // If a custom volume is specified for this entry and differs from current
-  // list volume
+  // Need to issue volume command if volume is being changed and
+  // if we have to inject a volume instruction, verify we don't overflow the
+  // buffer.
   if (volume != MIP_VOLUME_DEFAULT && volume != m_playVolume) {
-    // CRITICAL FIX: Assert list bounds prior to injecting inline volume change
-    // instruction
+    // Safe check to prevent index 18 out-of-bounds write.
+    // The sound list can only hold 8 sound entries.
     m_mip.MIP_ASSERT(m_soundIndex < 8);
     m_playCommand[1 + m_soundIndex * 2] = MIP_SOUND_VOLUME_OFF + volume;
     m_playCommand[1 + m_soundIndex * 2 + 1] = 0;
@@ -48,18 +57,20 @@ void MiP_Sound::addEntryToList(MiPSoundIndex sound,
     m_soundIndex++;
   }
 
-  // Assert list bounds prior to adding sound entry
+  // The sound list can only hold 8 sound entries.
   m_mip.MIP_ASSERT(m_soundIndex < 8);
   m_playCommand[1 + m_soundIndex * 2] = sound;
-  m_playCommand[1 + m_soundIndex * 2 + 1] =
-      static_cast<uint8_t>(delayTime / 30);
+  m_playCommand[1 + m_soundIndex * 2 + 1] = static_cast<uint8_t>(delayTime / 30);
   m_soundIndex++;
 
   m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
 void MiP_Sound::playList(uint8_t repeatCount) {
-  // Must call beginSoundList() and addEntryToSoundList() before calling this
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Sound->playList()"));
+
+  // Must call beginList() and addEntryToList() before calling this
   // function.
   m_mip.MIP_ASSERT(m_soundIndex >= 1);
   m_playCommand[0] = MIP_CMD_PLAY_SOUND;
@@ -84,19 +95,25 @@ void MiP_Sound::playList(uint8_t repeatCount) {
   m_mip.m_lastError = MiP::MIP_ERROR_NONE;
 }
 
-void MiP_Sound::play(MiPSoundIndex sound,
-                     MiPVolume volume /* = MIP_VOLUME_DEFAULT */) {
+void MiP_Sound::play(
+  MiPSoundIndex sound, MiPVolume volume /* = MIP_VOLUME_DEFAULT */) {
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Sound->play()"));
+
   beginList();
   addEntryToList(sound, 0, volume);
   playList();
 }
 
 uint8_t MiP_Sound::readVolume() {
-  int8_t result;
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Sound->readVolume()"));
+
+  int8_t result = MiP::MIP_ERROR_NONE;
 
   // Retry the read if it should fail on the first attempt.
   for (uint8_t retry = 0; retry < MiP_Serial::MIP_MAX_RETRIES; retry++) {
-    uint8_t volume;
+    uint8_t volume = 0;
     result = rawGetVolume(volume);
     if (result == MiP::MIP_ERROR_NONE) {
       m_mip.m_lastError = MiP::MIP_ERROR_NONE;
@@ -113,7 +130,10 @@ uint8_t MiP_Sound::readVolume() {
 }
 
 void MiP_Sound::writeVolume(uint8_t volume) {
-  int8_t result;
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Sound->writeVolume()"));
+
+  int8_t result = MiP::MIP_ERROR_NONE;
 
   // Send the set command and then issue the corresponding get command. Retry if
   // the get fails or doesn't return the expected new setting.
@@ -121,7 +141,7 @@ void MiP_Sound::writeVolume(uint8_t volume) {
     rawSetVolume(volume);
 
     // Read back and make sure that it was set as expected.
-    uint8_t updatedVolume;
+    uint8_t updatedVolume = 0;
     result = rawGetVolume(updatedVolume);
     if (result == MiP::MIP_ERROR_NONE && updatedVolume == volume) {
       // The set was successful so return immediately.
@@ -145,30 +165,32 @@ void MiP_Sound::writeVolume(uint8_t volume) {
 }
 
 void MiP_Sound::end() {
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Sound->end()"));
+
   writeVolume(MIP_VOLUME_7);
 }
 
 // ==========================================================================
-// Protected functions.
+// Protected / Private functions.
 // ==========================================================================
 
 // This internal protected method sends the get volume command with minimal
 // error handling. The error recovery happens at a higher level of the driver.
 int8_t MiP_Sound::rawGetVolume(uint8_t& volume) {
-  const uint8_t getVolume[1] = {MIP_CMD_GET_VOLUME};
+  const uint8_t getVolume[1] = { MIP_CMD_GET_VOLUME };
   uint8_t response[1 + 1];
-  size_t responseLength;
+  size_t responseLength = 0;
   volume = 0;
   int8_t result = m_mip.serial.rawReceive(
-      getVolume, sizeof(getVolume), response, sizeof(response), responseLength);
-  if (result != MiP::MIP_ERROR_NONE)
-    return result;
-  if (responseLength != sizeof(response) || response[0] != MIP_CMD_GET_VOLUME ||
-      response[1] > 7) {
+    getVolume, sizeof(getVolume), response, sizeof(response), responseLength);
+  if (result != MiP::MIP_ERROR_NONE) return result;
+  if (responseLength != sizeof(response) || response[0] != MIP_CMD_GET_VOLUME
+      || response[1] > 7) {
     return MiP::MIP_ERROR_BAD_RESPONSE;
   }
   volume = response[1];
-  return result;
+  return MiP::MIP_ERROR_NONE;
 }
 
 // This internal protected method sends the set volume command with no error
@@ -176,6 +198,6 @@ int8_t MiP_Sound::rawGetVolume(uint8_t& volume) {
 // driver.
 void MiP_Sound::rawSetVolume(uint8_t volume) {
   m_mip.MIP_ASSERT(volume <= 7);
-  uint8_t command[1 + 1] = {MIP_CMD_SET_VOLUME, volume};
+  uint8_t command[1 + 1] = { MIP_CMD_SET_VOLUME, volume };
   m_mip.serial.rawSend(command, sizeof(command));
 }
