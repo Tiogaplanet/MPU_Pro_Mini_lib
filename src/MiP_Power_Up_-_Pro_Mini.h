@@ -99,7 +99,7 @@
 
 // Define an assert mechanism that can be used to log and halt when the user is
 // found to be calling the API incorrectly.
-#define MIP_ASSERT(EXPRESSION) mipAssert((EXPRESSION), __LINE__, __FILE__)
+#define MIP_ASSERT(EXPRESSION) m_mip.mipAssert((EXPRESSION), __LINE__, __FILE__)
 
 /**
  * @brief MiP's current stance position and battery voltage.
