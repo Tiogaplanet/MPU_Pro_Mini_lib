@@ -152,6 +152,20 @@ class MiP_Console : public Stream {
    */
   void initIfNeeded();
 
+  /**
+   * @brief Prepares multiplexer for writing to PC.
+   *
+   * @return true if communication was routed to MiP prior to switching.
+   */
+  bool prepareForPcWrite();
+
+  /**
+   * @brief Flushes TX buffer and restores multiplexer back to MiP if needed.
+   *
+   * @param needToRestore Whether communication was active with MiP prior to write.
+   */
+  void restoreAfterPcWrite(bool needToRestore);
+
   MiP& m_mip;     ///< Reference to the main MiP instance
   bool m_isInit;  ///< Flag tracking HardwareSerial initialization status
 
