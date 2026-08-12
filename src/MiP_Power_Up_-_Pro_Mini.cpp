@@ -40,6 +40,7 @@ MiP::MiP()
       headLEDs(*this),
       infrared(*this),
       mode(*this),
+      mode(*this),
       motion(*this),
       odometer(*this),
       position(*this),
@@ -88,11 +89,18 @@ bool MiP::begin() {
   m_flags |= MIP_FLAG_INITIALIZED;
 
   for (int8_t retry = 0; retry < MIP_MAX_BEGIN_RETRIES; ++retry) {
+    // Try to connect at 115200 baud, the rate used by some MiPs.
+    MIP_DEBUG_INFO_PREFIX();
+    MIP_DEBUG_INFO_PRINTLN(F("Attempting 115200"));
+      
     if (attemptMiPConnection(MIP_FAST_BAUD_RATE) == MIP_ERROR_NONE) {
       // Keep 115200 – this is what the console & monitor expect
       switchSerialToMiP();
       return true;
     }
+    // Try to connect at 9600 baud if the fast attempt failed.
+    MIP_DEBUG_INFO_PREFIX();
+    MIP_DEBUG_INFO_PRINTLN(F("Attempting 9600"));
 
     if (attemptMiPConnection(MIP_SLOW_BAUD_RATE) == MIP_ERROR_NONE) {
       // MiP only spoke at 9600.  Switch the UART back to 115200
@@ -145,30 +153,95 @@ bool MiP::didLastCallFail() {
 
 void MiP::printLastCallResult() {
   if (m_lastError != MIP_ERROR_NONE) {
-    MIP_DEBUG_ERROR_PRINT(*this, F("MiP: API returned "));
+    MIP_DEBUG_ERROR_PREFIX();
+    MIP_DEBUG_ERROR_PRINT(F("MiP: API returned "));
+    
     switch (m_lastError) {
       case MIP_ERROR_TIMEOUT:
-        MIP_DEBUG_ERROR_PRINTLN(
-            *this, F("MIP_ERROR_TIMEOUT (Timed out waiting for response)"));
+        MIP_DEBUG_ERROR_PREFIX();
+        MIP_DEBUG_ERROR_PRINTLN(F("MIP_ERROR_TIMEOUT (Timed out waiting for response)"));
+
         break;
       case MIP_ERROR_NO_EVENT:
-        MIP_DEBUG_ERROR_PRINTLN(
-            *this, F("MIP_ERROR_NO_EVENT (No event has arrived from MiP yet)"));
+        MIP_DEBUG_ERROR_PREFIX();
+        MIP_DEBUG_ERROR_PRINTLN(F("MIP_ERROR_NO_EVENT (No event has arrived from MiP yet)"));
+
         break;
       case MIP_ERROR_BAD_RESPONSE:
-        MIP_DEBUG_ERROR_PRINTLN(
-            *this, F("MIP_ERROR_BAD_RESPONSE (Unexpected response from MiP)"));
+        MIP_DEBUG_ERROR_PREFIX();
+        MIP_DEBUG_ERROR_PRINTLN(F("MIP_ERROR_BAD_RESPONSE (Unexpected response from MiP)"));
+
         break;
       case MIP_ERROR_MAX_RETRIES:
+        MIP_DEBUG_ERROR_PREFIX();
         MIP_DEBUG_ERROR_PRINTLN(
-            *this,
-            F("MIP_ERROR_MAX_RETRIES (Exceeded maximum number of retries)"));
+          F("MIP_ERROR_MAX_RETRIES (Exceeded maximum number of retries)"));
+        
         break;
-      default:
-        MIP_DEBUG_ERROR_PRINTLN(*this, F("unknown error"));
+      default: 
+        MIP_DEBUG_ERROR_PREFIX();
+        MIP_DEBUG_ERROR_PRINTLN(F("unknown error"));
         break;
     }
   }
+}
+
+uint32_t MiP::getBaudRate() const {
+  return m_baudRate;
+}
+
+// ==========================================================================
+// Protected functions.
+// ==========================================================================
+
+void MiP::clear() {
+  m_baudRate = 0;  // 0 = not connected
+  m_flags = 0;
+  m_lastError = MIP_ERROR_NONE;
+  m_lastStatus.clear();
+  clap.clear();
+  gesture.clear();
+  infrared.clear();
+  radar.clear();
+  serial.clear();
+  weight.clear();
+
+  // These functions and variable are exclusive to the Pro Mini board.
+  pinMode(UART_SELECT_PIN, OUTPUT);
+  digitalWrite(UART_SELECT_PIN, LOW);  // LOW = PC
+  m_serialGoingToMiP = false;          // matches the HIGH above
+}
+
+// This internal protected method provides the common code for connection
+// attempts at baud rates of 115200 or 9600.
+int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
+  // Make sure we are talking to the MiP for this attempt
+  switchSerialToMiP();
+
+  Serial.begin(baudRate);
+
+  // 0xFF tells the MiP to enable its UART
+  const uint8_t initMipCommand[] = {0xFF};
+  serial.rawSend(initMipCommand, sizeof(initMipCommand));
+  delay(30);  // required by the MiP docs
+
+  serial.discardUnexpectedSerialData();
+
+  int8_t result = rawGetStatus(m_lastStatus);
+
+  // ALWAYS put the mux back to the PC when we are done probing.
+  // The caller (begin) will switch it to MiP only on final success.
+  switchSerialToPC();
+
+  if (result == MIP_ERROR_NONE) {
+    MIP_DEBUG_INFO_PREFIX();
+    MIP_DEBUG_INFO_PRINT(F("MiP: Connected at "));
+    MIP_DEBUG_INFO_PRINT((unsigned long)baudRate);
+    MIP_DEBUG_INFO_PRINTLN(F(" baud"));
+  } else {
+    delay(MIP_BEGIN_RETRY_WAIT);
+  }
+  return result;
 }
 
 void MiP::dispatchEvent(uint8_t command,
@@ -183,9 +256,9 @@ void MiP::dispatchEvent(uint8_t command,
       break;
     case MiP_Weight::MIP_CMD_GET_WEIGHT:
       // A weight event was found. Dispatch it to the Weight component.
-      MIP_DEBUG_INFO_PRINT(
-          *this, F("MiP->Core->dispatchEvent(), in weight case. payload[1]: "));
-      MIP_DEBUG_INFO_PRINTLN(*this, payload[1]);
+      MIP_DEBUG_INFO_PREFIX();
+      MIP_DEBUG_INFO_PRINT("MiP->Core->dispatchEvent(), in weight case. payload[1]: ");
+      MIP_DEBUG_INFO_PRINTLN(payload[1]);
       if (length >= 2) {
         weight.processEvent(payload[1]);
       }
@@ -218,64 +291,12 @@ void MiP::dispatchEvent(uint8_t command,
       break;
     default:
       // An unknown OOB event was received.
-      char buf[48];
-      snprintf(buf, sizeof(buf), "MiP: Unknown OOB Event: 0x%02X\n", command);
-      MIP_DEBUG_WARN_PRINT(*this, buf);
+      MIP_DEBUG_WARN_PREFIX();
+      MIP_DEBUG_WARN_PRINT(F("MiP: Unknown OOB Event: 0x"));
+      MIP_DEBUG_WARN_PRINTLN(command, HEX);
+
       break;
   }
-}
-
-// ==========================================================================
-// Protected functions.
-// ==========================================================================
-
-void MiP::clear() {
-  m_flags = 0;
-  m_lastError = MIP_ERROR_NONE;
-  m_lastStatus.clear();
-
-  // Default: UART routed to the PC / FTDI
-  pinMode(UART_SELECT_PIN, OUTPUT);
-  digitalWrite(UART_SELECT_PIN, LOW);  // LOW = PC
-  m_serialGoingToMiP = false;          // matches the HIGH above
-
-  clap.clear();
-  gesture.clear();
-  infrared.clear();
-  radar.clear();
-  serial.clear();
-  weight.clear();
-}
-
-// This internal protected method provides the common code for connection
-// attempts at baud rates of 115200 or 9600.
-int8_t MiP::attemptMiPConnection(uint32_t baudRate) {
-  // Make sure we are talking to the MiP for this attempt
-  switchSerialToMiP();
-
-  Serial.begin(baudRate);
-
-  // 0xFF tells the MiP to enable its UART
-  const uint8_t initMipCommand[] = {0xFF};
-  serial.rawSend(initMipCommand, sizeof(initMipCommand));
-  delay(30);  // required by the MiP docs
-
-  serial.discardUnexpectedSerialData();
-
-  int8_t result = rawGetStatus(m_lastStatus);
-
-  // ALWAYS put the mux back to the PC when we are done probing.
-  // The caller (begin) will switch it to MiP only on final success.
-  switchSerialToPC();
-
-  if (result == MIP_ERROR_NONE) {
-    char buf[48];
-    snprintf(buf, sizeof(buf), "MiP: Connected at %lu baud\r\n", baudRate);
-    MIP_DEBUG_INFO_PRINT(*this, buf);
-  } else {
-    delay(MIP_BEGIN_RETRY_WAIT);
-  }
-  return result;
 }
 
 // This internal protected method sends the get status command with minimal
@@ -313,14 +334,12 @@ int8_t MiP::parseStatus(MiPStatus& status,
 
 void MiP::mipAssert(bool condition, uint32_t lineNumber, const char* fileName) {
   if (!condition) {
-    char buf[128];  // a bit larger is safer
-    snprintf(
-        buf,
-        sizeof(buf),
-        "MiP: Assert failed in file %s at line: %lu\r\n",
-        fileName,
-        static_cast<unsigned long>(lineNumber));  // or just %lu with the cast
-    MIP_DEBUG_ERROR_PRINT(*this, buf);
+    MIP_DEBUG_ERROR_PREFIX();
+    MIP_DEBUG_ERROR_PRINT(F("MiP: Assert failed in file "));
+    MIP_DEBUG_ERROR_PRINT(fileName);
+    MIP_DEBUG_ERROR_PRINT(F(" at line: "));
+    MIP_DEBUG_ERROR_PRINTLN(lineNumber);
+
     while (true) {
       delay(100);
     }
