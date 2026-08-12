@@ -1,20 +1,22 @@
 /**
  * @file ReadWriteEEPROM.ino
- * @brief Example sketch demonstrating reading from and writing to MiP's EEPROM.
+ * @brief Example sketch demonstrating reading and writing MiP's user EEPROM.
  *
- * @details
- * This sketch demonstrates how to store and retrieve a single byte of user
- * data in MiP's EEPROM using the eeprom.write() and eeprom.read() APIs.
- * It writes a test value (secretPassword) to an EEPROM offset, then reads it
- * back and prints the original, scrambled, and recovered values to mip.console.
+ * @details This sketch demonstrates how to read from and write to MiP's
+ * non-volatile user EEPROM memory. MiP provides 16 user-addressable EEPROM
+ * bytes at address offsets 0 through 15 (physical addresses 0x20 to 0x2F).
  *
- * The example shows how EEPROM data can be preserved across power cycles. To
- * verify persistence, power-cycle MiP (or comment out the write call and reload
- * the sketch) and observe the recovered value.
+ * The sketch performs the following sequence in setup():
+ *   - Initializes communication with MiP.
+ *   - Reads and displays the current contents of all 16 user EEPROM bytes.
+ *   - Increments a persistent boot/execution counter stored at offset 0.
+ *   - Writes the new counter value to offset 0 using eeprom.write().
+ *   - Reads back offset 0 using eeprom.read() to verify the write succeeded.
  *
  * The example exercises these API calls:
- *   - eeprom.read()
- *   - eeprom.write()
+ *   - mip.begin()
+ *   - mip.eeprom.read(addressOffset)
+ *   - mip.eeprom.write(addressOffset, userData)
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -30,85 +32,86 @@
  * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
- * eeprom.write(), and eeprom.read().
+ * eeprom.read(), and eeprom.write().
  */
 MiP mip;
 
 /**
- * @brief EEPROM address offset to use for storing user data.
- *
- * @details Valid offsets are typically in the range 0x00..0x0F.
- * Change this value to store multiple independent bytes.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  */
-const uint8_t eepromAddressOffset = 0x00;
-
-/**
- * @brief Example byte to write into EEPROM.
- *
- * @details Change this value to experiment with different stored bytes.
- */
-uint8_t secretPassword = 0x0D;
-
-/**
- * @brief Variable used to hold a recovered EEPROM value for display.
- */
-uint8_t recoveredPassword;
+bool connectResult;
 
 /**
  * @brief Arduino setup function.
  *
- * @details
- * - Initializes communication with MiP via mip.begin().
- * - If the connection fails, prints an error to Serial and returns early.
- * - Prints the original secretPassword, writes it to EEPROM using
- *   eeprom.write(eepromAddressOffset, secretPassword), then scrambles the
- *   in-memory secretPassword and reads the stored value back using
- *   eeprom.read(eepromAddressOffset). The recovered value is printed to
- *   mip.console so the user can verify the write/read operation.
- *
- * Note: To verify persistence across power cycles, comment out the call to
- * eeprom.write(), reflash or power-cycle the MiP, and observe that the
- * previously written value is still returned by eeprom.read().
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
+ * returns early. On success, the function:
+ *   - Iterates through offsets 0 to 15, reading and printing the current EEPROM
+ *     contents.
+ *   - Reads offset 0, increments its value by 1, and writes it back to EEPROM.
+ *   - Re-reads offset 0 to verify the updated value persisted.
  */
 void setup() {
-  bool connectResult = mip.begin();
+  connectResult = mip.begin();
 
   if (!connectResult) {
-    Serial.println(F("ReadWriteEEPROM.ino: Failed connecting to MiP!"));
+    Serial.println(F("ReadWriteEEPROM.ino: Failed connecting to MiP."));
     return;
   }
 
-  mip.console.println(
-    F("ReadWriteEEPROM.ino: Writes data to EEPROM and reads it back."));
+  mip.console.println(F("ReadWriteEEPROM.ino: Read and write MiP's 16-byte user EEPROM."));
 
-  mip.console.print(F(" Original password: "));
-  // Fix use of mip.console.printf later.  mip.console.printf("0x%02X\n\r", secretPassword);
+  // 1. Read and display the current contents of all 16 user EEPROM offsets
+  // (0-15)
+  mip.console.println(F("\n Current User EEPROM Contents (Offsets 0 to 15):"));
+  for (uint8_t offset = 0; offset < 16; offset++) {
+    uint8_t val = mip.eeprom.read(offset);
 
-  /* Write the secret password to MiP's user EEPROM at the configured
-   * offset. Comment out this line to test persistence across power cycles.
-   */
-  mip.eeprom.write(eepromAddressOffset, secretPassword);
+    mip.console.print(F("   Offset "));
+    if (offset < 10) mip.console.print(F(" "));  // Align single-digit offsets
+    mip.console.print(offset);
+    mip.console.print(F(": 0x"));
+    if (val < 0x10) mip.console.print(F("0"));  // Leading zero padding for hex
+    mip.console.print(val, HEX);
+    mip.console.print(F(" ("));
+    mip.console.print(val);
+    mip.console.println(F(")"));
+  }
 
-  /* "Scramble" the in-memory password to demonstrate that the recovered value
-   * comes from EEPROM rather than the local variable.
-   */
-  secretPassword = 0xFF;
-  mip.console.print(F(" Scrambled password: "));
-  // Fix use of mip.console.printf later.  mip.console.printf("0x%02X\n\r", secretPassword);
+  // 2. Read the current value at offset 0, increment it, and write it back
+  mip.console.println(F("\n Incrementing persistent counter at offset 0..."));
+  uint8_t currentCounter = mip.eeprom.read(0);
+  uint8_t newCounter = currentCounter + 1;
 
-  /* Read the stored value back from EEPROM and print it. */
-  recoveredPassword = mip.eeprom.read(eepromAddressOffset);
-  mip.console.print(F(" Recovered password: "));
-  // Fix use of mip.console.printf later.  mip.console.printf("0x%02X\n\r", recoveredPassword);
+  mip.console.print(F(" Writing value "));
+  mip.console.print(newCounter);
+  mip.console.println(F(" to EEPROM offset 0..."));
 
+  mip.eeprom.write(0, newCounter);
+
+  // 3. Read back offset 0 to verify the write succeeded
+  uint8_t readbackValue = mip.eeprom.read(0);
+  mip.console.print(F(" Readback value from offset 0: "));
+  mip.console.println(readbackValue);
+
+  if (readbackValue == newCounter) {
+    mip.console.println(F(" Verification PASS: EEPROM write succeeded!"));
+  } else {
+    mip.console.println(F(" Verification FAIL: EEPROM readback mismatch!"));
+  }
+
+  mip.console.println();
   mip.console.println(F("ReadWriteEEPROM.ino: Done."));
 }
 
 /**
  * @brief Arduino loop function.
  *
- * @details This example performs its demonstration in setup() and does not
- * require repeated work in loop(). The loop is intentionally left empty so
- * the sketch completes once and remains idle.
+ * @details This example performs all actions in setup() and does not require
+ * repeated work in loop().
  */
-void loop() {}
+void loop() {
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
+}
