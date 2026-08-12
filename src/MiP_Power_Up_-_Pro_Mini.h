@@ -312,6 +312,8 @@ protected:
                                                           ///< link rate.
   static constexpr uint32_t MIP_SLOW_BAUD_RATE = 9600;  ///< Low-speed UART link
                                                         ///< rate.
+  static constexpr uint8_t UART_SELECT_PIN = 2; ///<  Fixed hardware pin for the Pro Mini UART multiplexer.
+
   void clear();
 
   int8_t attemptMiPConnection(uint32_t baudRate);
