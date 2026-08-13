@@ -20,12 +20,14 @@
 
 /**
  * @brief Constructs the MiP_Console component.
- * @param mip Reference to the main MiP object for access to UART multiplexer controls.
+ * @param mip Reference to the main MiP object for access to UART multiplexer
+ * controls.
  */
 MiP_Console::MiP_Console(MiP& mip) : m_mip(mip), m_isInit(false) {}
 
 /**
- * @brief Internal helper to lazily initialize the HardwareSerial port if begin() wasn't called.
+ * @brief Internal helper to lazily initialize the HardwareSerial port if
+ * begin() wasn't called.
  */
 void MiP_Console::initIfNeeded() {
   if (!m_isInit) {
@@ -35,7 +37,8 @@ void MiP_Console::initIfNeeded() {
 }
 
 /**
- * @brief Switches the multiplexer to PC and returns whether MiP was active beforehand.
+ * @brief Switches the multiplexer to PC and returns whether MiP was active
+ * beforehand.
  * @return true if communication was active with MiP prior to switching.
  */
 bool MiP_Console::prepareForPcWrite() {
@@ -45,14 +48,14 @@ bool MiP_Console::prepareForPcWrite() {
 }
 
 /**
- * @brief Flushes the Serial output buffer and restores the multiplexer to MiP if required.
- * @param needToRestore Whether communication was active with MiP prior to writing.
+ * @brief Flushes the Serial output buffer and restores the multiplexer to MiP
+ * if required.
+ * @param needToRestore Whether communication was active with MiP prior to
+ * writing.
  */
 void MiP_Console::restoreAfterPcWrite(bool needToRestore) {
   Serial.flush();
-  if (needToRestore) {
-    m_mip.switchSerialToMiP();
-  }
+  if (needToRestore) { m_mip.switchSerialToMiP(); }
 }
 
 /**
@@ -64,14 +67,13 @@ void MiP_Console::begin(unsigned long baud) {
 }
 
 /**
- * @brief Initializes the HardwareSerial port with specified baud rate and config.
+ * @brief Initializes the HardwareSerial port with specified baud rate and
+ * config.
  * @param baud Baud rate parameter.
  * @param config Serial protocol mode (e.g., SERIAL_8N1).
  */
 void MiP_Console::begin(unsigned long baud, uint16_t config) {
-  if (m_isInit) {
-    return;
-  }
+  if (m_isInit) { return; }
   Serial.begin(baud, config);
   m_isInit = true;
 }
@@ -80,15 +82,14 @@ void MiP_Console::begin(unsigned long baud, uint16_t config) {
  * @brief Shuts down the HardwareSerial interface.
  */
 void MiP_Console::end() {
-  if (!m_isInit) {
-    return;
-  }
+  if (!m_isInit) { return; }
   Serial.end();
   m_isInit = false;
 }
 
 /**
- * @brief Returns the number of bytes available to read from the PC Serial Monitor.
+ * @brief Returns the number of bytes available to read from the PC Serial
+ * Monitor.
  */
 int MiP_Console::available() {
   initIfNeeded();
@@ -104,7 +105,8 @@ int MiP_Console::read() {
 }
 
 /**
- * @brief Peeks at the next incoming byte from the PC Serial Monitor without removing it.
+ * @brief Peeks at the next incoming byte from the PC Serial Monitor without
+ * removing it.
  */
 int MiP_Console::peek() {
   initIfNeeded();
@@ -147,9 +149,7 @@ size_t MiP_Console::write(uint8_t byte) {
  * @return size_t Number of bytes successfully written.
  */
 size_t MiP_Console::write(const uint8_t* pBuffer, size_t size) {
-  if (pBuffer == nullptr || size == 0) {
-    return 0;
-  }
+  if (pBuffer == nullptr || size == 0) { return 0; }
 
   initIfNeeded();
 

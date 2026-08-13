@@ -105,11 +105,11 @@
  * @brief MiP's current stance position and battery voltage.
  */
 class MiPStatus {
- public:
+public:
   MiPStatus() {
-  /**
-   * @brief Constructs a new MiPStatus object and resets values to default.
-   */
+    /**
+     * @brief Constructs a new MiPStatus object and resets values to default.
+     */
     clear();
   }
 
@@ -264,7 +264,8 @@ public:
                           ///< MPU_ChestLED.h).
   MiP_Clap clap;  ///< Interface for clap detection and delay configuration (see
                   ///< MPU_Clap.h).
-  MiP_Console console;    ///< Interface for console output to PC (see MPU_Console.h).
+  MiP_Console console;    ///< Interface for console output to PC (see
+                          ///< MPU_Console.h).
   MiP_EEPROM eeprom;      ///< Interface for reading/writing non-volatile EEPROM
                           ///< (see MPU_EEPROM.h).
   MiP_Gesture gesture;    ///< Interface for gesture detection mode and events
@@ -305,14 +306,13 @@ protected:
   static constexpr uint16_t MIP_BEGIN_RETRY_WAIT = 500;  ///< Delay between
                                                          ///< retries in begin()
                                                          ///< (ms).
-  static constexpr uint32_t ESP8266_DEBUG_BAUD_RATE = 74880;  ///< ESP8266
-                                                              ///< bootloader
-                                                              ///< debug rate.
   static constexpr uint32_t MIP_FAST_BAUD_RATE = 115200;  ///< High-speed UART
                                                           ///< link rate.
   static constexpr uint32_t MIP_SLOW_BAUD_RATE = 9600;  ///< Low-speed UART link
                                                         ///< rate.
-  static constexpr uint8_t UART_SELECT_PIN = 2; ///<  Fixed hardware pin for the Pro Mini UART multiplexer.
+  static constexpr uint8_t UART_SELECT_PIN = 2;  ///<  Fixed hardware pin for
+                                                 ///<  the Pro Mini UART
+                                                 ///<  multiplexer.
 
   void clear();
 
@@ -383,7 +383,9 @@ protected:
     MIP_FLAG_INITIALIZED = (1 << 3)
   };
 
-  MiP& m_mip;  ///< A self-reference to m_mip to enable the main MiP class to access itself in mip.console to streamline debug macro usage.
+  MiP& m_mip;  ///< A self-reference to m_mip to enable the main MiP class to
+               ///< access itself in mip.console to streamline debug macro
+               ///< usage.
   uint32_t m_baudRate;
   uint8_t m_flags;
   int8_t m_lastError;

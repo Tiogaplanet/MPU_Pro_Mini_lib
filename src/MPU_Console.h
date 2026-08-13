@@ -34,14 +34,15 @@ class MiP;
  *          communication to MiP.
  */
 class MiP_Console : public Stream {
- public:
+public:
   // --- Stream Interface Overrides ---
 
   /**
-   * @brief Queries the number of bytes available for reading from the PC Serial Monitor.
+   * @brief Queries the number of bytes available for reading from the PC Serial
+   * Monitor.
    *
-   * @details Lazy-initializes the hardware serial port if necessary before checking
-   *          the input buffer.
+   * @details Lazy-initializes the hardware serial port if necessary before
+   * checking the input buffer.
    *
    * @return int Number of bytes available to read, or 0 if no data is present.
    */
@@ -52,14 +53,17 @@ class MiP_Console : public Stream {
    *
    * @details Removes the byte from the incoming serial buffer.
    *
-   * @return int The next character read from the stream, or -1 if no data is available.
+   * @return int The next character read from the stream, or -1 if no data is
+   * available.
    */
   virtual int read() override;
 
   /**
-   * @brief Peeks at the next incoming character from the PC Serial Monitor without removing it.
+   * @brief Peeks at the next incoming character from the PC Serial Monitor
+   * without removing it.
    *
-   * @return int The next character in the buffer, or -1 if no data is available.
+   * @return int The next character in the buffer, or -1 if no data is
+   * available.
    */
   virtual int peek() override;
 
@@ -70,37 +74,44 @@ class MiP_Console : public Stream {
   /**
    * @brief Writes a single byte to the PC Serial Monitor.
    *
-   * @details Toggles the multiplexer to PC, writes the byte, flushes the transmit buffer,
-   *          and restores communication back to MiP if MiP was active beforehand.
+   * @details Toggles the multiplexer to PC, writes the byte, flushes the
+   * transmit buffer, and restores communication back to MiP if MiP was active
+   * beforehand.
    *
    * @param byte The single character or byte value to transmit.
-   * @return size_t The number of bytes written (returns 1 on success, 0 on failure).
+   * @return size_t The number of bytes written (returns 1 on success, 0 on
+   * failure).
    */
   virtual size_t write(uint8_t byte) override;
 
   /**
    * @brief Writes a buffer of bytes to the PC Serial Monitor.
    *
-   * @details Toggles the multiplexer to PC, writes the buffer, flushes the transmit buffer,
-   *          and restores communication back to MiP if MiP was active beforehand.
+   * @details Toggles the multiplexer to PC, writes the buffer, flushes the
+   * transmit buffer, and restores communication back to MiP if MiP was active
+   * beforehand.
    *
    * @param pBuffer Pointer to the array of bytes to transmit.
    * @param size    Number of bytes in the buffer to transmit.
-   * @return size_t The total number of bytes successfully written to the serial port.
+   * @return size_t The total number of bytes successfully written to the serial
+   * port.
    */
   virtual size_t write(const uint8_t* pBuffer, size_t size) override;
 
   /**
-   * @brief Returns the amount of buffer space available for writing without blocking.
+   * @brief Returns the amount of buffer space available for writing without
+   * blocking.
    *
-   * @return int Number of bytes that can be written to the serial buffer without blocking.
+   * @return int Number of bytes that can be written to the serial buffer
+   * without blocking.
    */
   virtual int availableForWrite() override;
 
   /**
    * @brief Waits for any outgoing serial transmission to complete.
    *
-   * @details Blocks execution until all buffered outgoing serial bytes have been sent.
+   * @details Blocks execution until all buffered outgoing serial bytes have
+   * been sent.
    */
   virtual void flush() override;
 
@@ -114,7 +125,8 @@ class MiP_Console : public Stream {
   void begin(unsigned long baud = kDefaultBaudRate);
 
   /**
-   * @brief Starts serial communication with specified baud rate and configuration mode.
+   * @brief Starts serial communication with specified baud rate and
+   * configuration mode.
    *
    * @param baud   Baud rate parameter in bits per second.
    * @param config Serial data configuration (e.g., SERIAL_8N1).
@@ -127,7 +139,8 @@ class MiP_Console : public Stream {
   void end();
 
   /**
-   * @brief Boolean evaluation operator for checking if the serial stream is ready.
+   * @brief Boolean evaluation operator for checking if the serial stream is
+   * ready.
    *
    * @return true Always returns true to indicate readiness.
    */
@@ -135,7 +148,7 @@ class MiP_Console : public Stream {
     return true;
   }
 
- private:
+private:
   // --- Constants ---
   static constexpr unsigned long kDefaultBaudRate = 115200;
   static constexpr uint16_t kDefaultConfig = SERIAL_8N1;
@@ -148,7 +161,8 @@ class MiP_Console : public Stream {
   explicit MiP_Console(MiP& mip);
 
   /**
-   * @brief Lazy-initialization helper to ensure HardwareSerial is started prior to I/O operations.
+   * @brief Lazy-initialization helper to ensure HardwareSerial is started prior
+   * to I/O operations.
    */
   void initIfNeeded();
 
@@ -162,7 +176,8 @@ class MiP_Console : public Stream {
   /**
    * @brief Flushes TX buffer and restores multiplexer back to MiP if needed.
    *
-   * @param needToRestore Whether communication was active with MiP prior to write.
+   * @param needToRestore Whether communication was active with MiP prior to
+   * write.
    */
   void restoreAfterPcWrite(bool needToRestore);
 
