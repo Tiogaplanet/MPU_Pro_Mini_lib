@@ -4,8 +4,8 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.0.2   | :white_check_mark: |
-| < 2.0.2 | :x:                |
+| 2.0.0   | :white_check_mark: |
+| < 2.0.0 | :x:                |
 | development branches | :x:       |
 
 Only version **2.0.0** receives security updates.
@@ -47,8 +47,8 @@ The following are considered in scope:
 The following are generally **out of scope**:
 
 - Issues that only exist on unreleased development branches and have never been part of a tagged release
-- Vulnerabilities in third-party dependencies (ESP8266 Arduino core, RemoteDebug, etc.) – please report those upstream
-- Physical safety of the MiP robot itself (balancing, tipping, etc.) when the library is used correctly
+- Vulnerabilities in third-party dependencies – please report those upstream
+- Physical safety of MiP itself (balancing, tipping, etc.) when the library is used correctly
 - Social-engineering or physical-access attacks
 
 ## Safe Harbor
