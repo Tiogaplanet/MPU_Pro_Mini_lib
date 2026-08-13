@@ -75,7 +75,6 @@ void setup() {
   mip.console.print(distanceCm);
   mip.console.println(F(" cm since the last reset."));
 
-  mip.console.println();
   mip.console.println(F("Odometer.ino: Done."));
 }
 
