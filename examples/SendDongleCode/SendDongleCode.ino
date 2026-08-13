@@ -1,21 +1,17 @@
 /**
  * @file SendDongleCode.ino
- * @brief Example sketch demonstrating sending infrared dongle codes from MiP.
+ * @brief Example sketch demonstrating sending 2-, 3-, and 4-byte IR dongle
+ * codes.
  *
  * @details
- * This sketch initializes communication with MiP and repeatedly transmits a
- * 16-bit IR dongle code using the sendDongleCode() API. The transmission
- * power can be adjusted via the MIP_IR_TX_POWER macro to experiment with
- * range and reliability. Each transmission is logged to mip.console in a
- * human-readable hexadecimal format.
+ * This sketch initializes communication with MiP and sequentially transmits
+ * 2-byte, 3-byte, and 4-byte IR dongle codes using the updated sendDongleCode()
+ * API. The transmission power is configured via the MIP_IR_TX_POWER constant.
  *
  * The example exercises these API calls:
- *   - infrared.sendDongleCode()
- *
- * Usage notes:
- *   - Load this sketch on a MiP configured to transmit IR dongle codes.
- *   - Use another MiP or compatible IR receiver to observe or react to the
- *     transmitted codes.
+ *   - mip.begin()
+ *   - mip.infrared.sendDongleCode(code, length, power)
+ *   - mip.infrared.sendDongleCode(irCodeStruct, power)
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -28,79 +24,102 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief IR transmit power used for dongle code transmissions.
- *
- * @details Valid values typically range from 0x01 (low) to 0x78 (maximum).
- * Adjust this macro to experiment with transmission range and reliability.
+ * @brief IR transmit power used for dongle code transmissions (1-120).
  */
-#define MIP_IR_TX_POWER 0x78
+static constexpr uint8_t MIP_IR_TX_POWER = 0x78;
 
 /**
- * @brief Global MiP instance used to control MiP and send IR codes.
+ * @brief Global MiP instance used to communicate with MiP.
  *
- * @details Use this object to call MiP API functions such as begin() and
- * infrared.sendDongleCode().
+ * @details Use this object to call MiP API functions throughout the sketch.
  */
 MiP mip;
 
 /**
  * @brief Tracks whether the initial connection to MiP succeeded.
- *
- * @details Stored so other parts of the sketch could check connection state
- * if extended.
  */
 bool connectResult;
 
 /**
+ * @brief Tracks the current test state in the loop transmission cycle.
+ */
+uint8_t cycleState = 0;
+
+/**
  * @brief Arduino setup function.
  *
- * @details
- * - Initializes communication with MiP via mip.begin().
- * - If the connection fails, prints an error to Serial and returns early.
- * - On success, prints a short description indicating the sketch is ready
- *   to send IR dongle codes.
+ * @details Initializes communication with MiP by calling mip.begin().
+ * If the connection fails, an error message is printed to Serial and setup
+ * returns early. On success, a description message is printed to mip.console.
  */
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("SendDongleCode.ino: Failed connecting to MiP!"));
+    Serial.println(F("SendDongleCode.ino: Failed connecting to MiP."));
     return;
   }
 
-  mip.console.println(
-    F("SendDongleCode.ino: Send code to another MiP using IR."));
+  mip.console.println(F("SendDongleCode.ino: Send 2-, 3-, and 4-byte IR codes to another MiP."));
 }
 
 /**
  * @brief Arduino loop function.
  *
- * @details
- * - Constructs a 16-bit dongle code (high byte followed by low byte).
- * - Prints the code to mip.console in hexadecimal format for debugging.
- * - Calls sendDongleCode(dongleCode, MIP_IR_TX_POWER) to transmit the code.
- * - Waits one second between transmissions.
- *
- * Modify the dongleCode assignment to test different transmitted values.
+ * @details Sequentially transmits 2-byte, 3-byte, and 4-byte IR dongle codes
+ * to another MiP every 2 seconds. Demonstrates both direct-value and
+ * struct-based overloads of the sendDongleCode() API:
+ *   - State 0: Transmits a 2-byte IR code (0x4567).
+ *   - State 1: Transmits a 3-byte IR code (0x123456).
+ *   - State 2: Transmits a 4-byte IR code (0xA1B2C3D4) via MiPIRDongleCode
+ * struct.
  */
 void loop() {
-  if (!connectResult)
-    return;  // If connecting to MiP failed in setup(), exit now.
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 
-  uint16_t dongleCode;
-  char formattedOutput[16];
+  switch (cycleState) {
+    case 0:
+      {
+        // --- Test 1: Send a 2-byte IR code (0x4567) ---
+        uint16_t code2Byte = 0x4567;
+        mip.console.print(F(" Sending 2-byte IR Code: 0x"));
+        mip.console.println(code2Byte, HEX);
 
-  // Compose a 16-bit dongle code from two bytes. Change these bytes to test.
-  dongleCode = 0x45;
-  dongleCode <<= 8;
-  dongleCode |= 0x67;
+        mip.infrared.sendDongleCode(code2Byte, 2, MIP_IR_TX_POWER);
+        delay(50);  // Allow UART TX to complete before console mux switch
+        break;
+      }
 
-  // Format and print the code being sent.
-  sprintf(formattedOutput, " Sending 0x%04X", dongleCode);
-  mip.console.println(formattedOutput);
+    case 1:
+      {
+        // --- Test 2: Send a 3-byte IR code (0x123456) ---
+        uint32_t code3Byte = 0x123456;
+        mip.console.print(F(" Sending 3-byte IR Code: 0x"));
+        mip.console.println(code3Byte, HEX);
 
-  // Transmit the 16-bit dongle code using the configured IR transmit power.
-  mip.infrared.sendDongleCode(dongleCode, MIP_IR_TX_POWER);
+        mip.infrared.sendDongleCode(code3Byte, 3, MIP_IR_TX_POWER);
+        delay(50);
+        break;
+      }
 
-  // Pause between transmissions to avoid flooding the receiver.
-  delay(1000);
+    case 2:
+      {
+        // --- Test 3: Send a 4-byte IR code using MiPIRDongleCode struct
+        // (0xA1B2C3D4) ---
+        MiPIRDongleCode code4Byte(0xA1B2C3D4, 4);
+        mip.console.print(F(" Sending 4-byte IR Code: 0x"));
+        mip.console.print(code4Byte.code, HEX);
+        mip.console.println(F(" (via struct)"));
+
+        mip.infrared.sendDongleCode(code4Byte, MIP_IR_TX_POWER);
+        delay(50);
+        break;
+      }
+  }
+
+  // Cycle to next test state
+  cycleState = (cycleState + 1) % 3;
+
+  // Pause between transmissions
+  delay(2000);
 }

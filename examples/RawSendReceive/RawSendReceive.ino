@@ -1,6 +1,6 @@
 /**
  * @file RawSendReceive.ino
- * @brief Example sketch demonstrating MiP's raw send/receive operations.
+ * @brief Example sketch demonstrating MiP's raw send and receive operations.
  *
  * @details This sketch shows how to use the MiP library's serial.rawSend() and
  * serial.rawReceive() APIs to transmit and receive low-level MiP command
@@ -10,8 +10,9 @@
  * software version string to mip.console.
  *
  * The example exercises these API calls:
- *   - serial.rawSend()
- *   - serial.rawReceive()
+ *   - mip.begin()
+ *   - mip.serial.rawSend()
+ *   - mip.serial.rawReceive()
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -32,6 +33,11 @@
 MiP mip;
 
 /**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ */
+bool connectResult;
+
+/**
  * @brief Arduino setup function.
  *
  * @details Initializes communication with MiP by calling mip.begin().
@@ -45,34 +51,33 @@ MiP mip;
  * examine the returned bytes for a known response format.
  */
 void setup() {
-  bool connectResult = mip.begin();
-
+  connectResult = mip.begin();
   if (!connectResult) {
     Serial.println(F("RawSendReceive.ino: Failed connecting to MiP!"));
     return;
   }
 
   mip.console.println(F("RawSendReceive.ino: Use raw*() functions. Should set "
-                        "chest LED to purple and display MiP firmware revision."));
+                    "chest LED to purple and display MiP firmware revision."));
 
   /* Send 4-byte MiP command to set Chest LED to Purple.
-   * The command bytes are device-specific; here we send the raw packet
-   * directly using rawSend(). sizeof(setChestPurple) - 1 excludes the
-   * terminating NUL from the string literal.
+   * Command structure: [0x84 (SET_CHEST_LED), Red (0xFF), Green (0x01), Blue
+   * (0xFF)]
    */
-  uint8_t setChestPurple[] = "\x84\xFF\x01\xFF";
-  mip.serial.rawSend(setChestPurple, sizeof(setChestPurple) - 1);
+  uint8_t setChestPurple[] = { 0x84, 0xFF, 0x01, 0xFF };
+  mip.serial.rawSend(setChestPurple, sizeof(setChestPurple));
 
   /* Request MiP's firmware revision information and display it.
+   * Command structure: [0x14 (GET_SOFTWARE_VERSION)]
    * Prepare a small receive buffer and call serial.rawReceive() with the
    * request packet. On success, validate the response length and expected
    * command byte before printing a formatted version string.
    */
-  uint8_t getMiPSoftwareVersion[] = "\x14";
+  uint8_t getMiPSoftwareVersion[] = { 0x14 };
   size_t responseLength = 0;
-  uint8_t response[5];
+  uint8_t response[5] = { 0 };
   int result = mip.serial.rawReceive(
-    getMiPSoftwareVersion, sizeof(getMiPSoftwareVersion) - 1, response,
+    getMiPSoftwareVersion, sizeof(getMiPSoftwareVersion), response,
     sizeof(response), responseLength);
 
   /* Check for a successful rawReceive and expected response format:
@@ -84,9 +89,11 @@ void setup() {
     mip.console.print(F(" MiP Software Version: "));
     mip.console.print(response[1] + 2000);  // Year offset stored as (year - 2000)
     mip.console.print('-');
-    mip.console.print(response[2]);  // Month
+    if (response[2] < 10) mip.console.print('0');  // Month zero-padding
+    mip.console.print(response[2]);                // Month
     mip.console.print('-');
-    mip.console.print(response[3]);  // Day
+    if (response[3] < 10) mip.console.print('0');  // Day zero-padding
+    mip.console.print(response[3]);                // Day
     mip.console.print(F(" (build #"));
     mip.console.print(response[4]);  // Build number
     mip.console.print(')');
@@ -100,7 +107,9 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details This example performs all actions in setup() and does not require
- * repeated work in loop(). The function is intentionally left empty so the
- * demonstration runs once during initialization and then remains idle.
+ * repeated work in loop().
  */
-void loop() {}
+void loop() {
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
+}

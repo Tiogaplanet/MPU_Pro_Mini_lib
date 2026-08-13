@@ -1,18 +1,17 @@
 /**
  * @file Shake.ino
- * @brief Example sketch demonstrating MiP's shake detection.
+ * @brief Example sketch demonstrating MiP shake detection.
  *
- * @details
- * This simple example initializes communication with MiP and continuously
- * polls for shake events. When MiP detects a shake, the sketch
+ * @details This simple example initializes communication with MiP and
+ * continuously polls for shake events. When MiP detects a shake, the sketch
  * prints a notification to mip.console. The sketch demonstrates basic use of the
  * MiP API for initialization and the shake-detection query:
  *   - begin()
  *   - shake.read()
  *
  * Typical usage:
- *   - Load this sketch onto the MPU - Pro Mini connected to MiP.
- *   - Open mip.console to observe "Shake detected!" messages when the robot is shaken.
+ *   - Load this sketch onto the MPU-D1 mini connected to MiP Power Up.
+ *   - Open mip.console to observe "Shake detected!" messages when MiP is shaken.
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -25,7 +24,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to communicate with the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin() and
  * shake.read(). Keeping the instance at file scope makes it available
@@ -34,9 +33,9 @@
 MiP mip;
 
 /**
- * @brief Tracks whether the initial connection to the MiP succeeded.
+ * @brief Tracks whether the initial connection to MiP succeeded.
  *
- * @details Stored so other parts of the sketch could check connection state
+ * @details Stored so other parts of the sketch can check connection state
  * if extended.
  */
 bool connectResult;
@@ -44,15 +43,15 @@ bool connectResult;
 /**
  * @brief Arduino setup function.
  *
- * @details initializes MiP's connection by calling mip.begin(). If the
- * connection fails, an error message is printed to mip.console and the sketch
+ * @details Initializes the MiP connection by calling mip.begin(). If the
+ * connection fails, an error message is printed to Serial and the sketch
  * returns early. On success, a short description is printed to mip.console to
  * indicate the sketch is ready to detect shakes.
  */
 void setup() {
   connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("Shake.ino: Failed connecting to MiP!"));
+    Serial.println(F("Shake.ino: Failed connecting to MiP."));
     return;
   }
 
@@ -62,15 +61,17 @@ void setup() {
 /**
  * @brief Arduino loop function.
  *
- * @details Continuously polls the MiP for shake events using hasBeenShaken().
+ * @details Continuously polls MiP for shake events using shake.read().
  * When a shake is detected, the sketch prints "Shake detected!" to mip.console.
  * This loop is intentionally minimal to keep the example focused on the
  * shake-detection API.
  */
 void loop() {
-  if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 
-  if (mip.shake.read()) {
-    mip.console.println(F(" Shake detected!"));
-  }
+  if (mip.shake.read()) { mip.console.println(F(" Shake detected!")); }
+
+  // Yield CPU control briefly to keep background tasks responsive
+  delay(10);
 }

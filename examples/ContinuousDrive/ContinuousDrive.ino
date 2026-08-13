@@ -1,16 +1,17 @@
 /**
  * @file ContinuousDrive.ino
- * @brief Example sketch demonstrating MiP's continuous drive control.
+ * @brief Example sketch demonstrating MiP continuous drive control.
  *
  * @details This sketch shows how to use the MiP library's continuousDrive()
- * function to drive MiP with specified forward and backward speed and 
- * turning rate. The example drives forward with a right turn for
- * a fixed interval, then drives backward with a left turn for a fixed
- * interval, and then stops. Timing is implemented using millis() so the
- * loop remains non-blocking.
+ * function to drive MiP continuously with specified forward/backward speed
+ * and turning rate. The example drives forward with a right turn for a fixed
+ * interval, drives backward with a left turn for a fixed interval, and then
+ * stops. Timing is implemented using millis() so the loop remains non-blocking.
  *
  * The example exercises these API calls:
- *   - motion.continuousDrive()
+ *   - mip.begin()
+ *   - mip.motion.continuousDrive()
+ *   - mip.motion.stop()
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -25,16 +26,13 @@
 /**
  * @brief Global MiP instance used to communicate with MiP.
  *
- * @details Use this object to call MiP API functions such as begin() and
- * continuousDrive().
+ * @details Use this object to call MiP API functions such as begin(),
+ * motion.continuousDrive(), and motion.stop().
  */
 MiP mip;
 
 /**
  * @brief Tracks whether the initial connection to MiP succeeded.
- *
- * @details Stored so other parts of the sketch could check connection state
- * if extended.
  */
 bool connectResult;
 
@@ -43,53 +41,44 @@ bool connectResult;
  *
  * @details Initializes communication with MiP by calling mip.begin().
  * If the connection fails, an error message is printed to Serial and setup
- * returns early. On success, a brief status message is printed describing the
+ * returns early. On success, a status message is printed describing the
  * continuous drive demonstration.
  */
 void setup() {
   connectResult = mip.begin();
-
   if (!connectResult) {
     Serial.println(F("ContinuousDrive.ino: Failed connecting to MiP!"));
     return;
   }
 
-  mip.console.println(F("ContinuousDrive.ino: Use continuousDrive() function. Drive forward with right turn and then backward with left turn."));
+  mip.console.println(F("ContinuousDrive.ino: Use continuousDrive() function. Drive forward "
+                    "with right turn and then backward with left turn."));
 }
 
 /**
  * @brief Arduino loop function.
  *
- * @details Implements a simple state machine that runs the continuous drive
- * demonstration. The state machine has three states:
- *   - RIGHT_TURN: drive forward with a right turn for 2000 ms.
- *   - LEFT_TURN: drive backward with a left turn for 2000 ms.
- *   - DONE: idle state after demonstration completes.
+ * @details Implements a non-blocking state machine that runs the continuous
+ * drive demonstration. The state machine has three states:
+ *   - RIGHT_TURN: Drive forward with a right turn for 2000 ms.
+ *   - LEFT_TURN: Drive backward with a left turn for 2000 ms.
+ *   - DONE: Stops motion and idles after the demonstration completes.
  *
  * Timing is computed using millis() to avoid blocking delays. While in the
  * RIGHT_TURN and LEFT_TURN states, continuousDrive() is called with signed
- * speed values to indicate direction and turning.
+ * speed values to indicate direction and turning rate.
  */
 void loop() {
-  if (!connectResult) return;  // If connecting to MiP failed in setup(), exit now.
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 
   /**
-   * @brief States for the continuous drive demonstration.
-   *
-   * @details RIGHT_TURN drives forward with a right turn, LEFT_TURN drives
-   * backward with a left turn, DONE indicates the sequence has completed.
+   * @brief States for the continuous drive demonstration state machine.
    */
-  static enum States {
-    RIGHT_TURN,
-    LEFT_TURN,
-    DONE
-  } state = RIGHT_TURN;
+  static enum States { RIGHT_TURN, LEFT_TURN, DONE } state = RIGHT_TURN;
 
   /**
-   * @brief Start time for the current state interval.
-   *
-   * @details Initialized once to the current millis() value and updated
-   * when transitioning between states to measure elapsed time per state.
+   * @brief Start time for the current state interval in milliseconds.
    */
   static uint32_t startTime = millis();
 
@@ -99,11 +88,10 @@ void loop() {
   switch (state) {
     case RIGHT_TURN:
       if (elapsedTime < 2000) {
-        /* Drive forward at half-speed and turn right at half rate.
-         * continuousDrive(forwardSpeed, turnRate)
-         * Positive values drive forward; negative values drive backward.
-         * Here both parameters are positive to indicate forward motion with
-         * a rightward turning component.
+        /* Drive forward at half-speed (+16) and turn right at half rate (+16).
+         * continuousDrive(velocity, turnRate)
+         * Positive velocity drives forward; negative velocity drives backward.
+         * Positive turnRate turns right; negative turnRate turns left.
          */
         mip.motion.continuousDrive(16, 16);
       } else {
@@ -111,20 +99,27 @@ void loop() {
         state = LEFT_TURN;
       }
       break;
+
     case LEFT_TURN:
       if (elapsedTime < 2000) {
-        /* Drive backward at half-speed and turn left at half rate.
-         * Negative forwardSpeed indicates backward motion; negative turnRate
-         * indicates leftward turning component in this usage.
+        /* Drive backward at half-speed (-16) and turn left at half rate (-16).
+         * Negative velocity drives backward; negative turnRate turns left.
          */
         mip.motion.continuousDrive(-16, -16);
       } else {
+        // Stop motion when the demonstration completes
+        mip.motion.stop();
+
         mip.console.println();
         mip.console.println(F("ContinuousDrive.ino: Done."));
         state = DONE;
       }
       break;
+
+    case DONE:
     default:
+      // Yield CPU time in idle state to prevent watchdog reset triggers
+      delay(100);
       break;
   }
 }

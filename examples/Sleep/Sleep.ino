@@ -1,18 +1,19 @@
 /**
  * @file Sleep.ino
- * @brief Demonstrates connecting, disconnecting, reconnecting, and sleeping a MiP.
+ * @brief Demonstrates connecting, disconnecting, reconnecting, and sleeping
+ * MiP.
  *
  * @details
- * This example shows how to manage MiP's connection from an MPU-Pro Mini using
+ * This example shows how to manage a MiP connection from an MPU: D1 mini using
  * the MiP library. It demonstrates:
  *   - Establishing a UART connection with mip.begin()
  *   - Releasing the connection with mip.end()
  *   - Re-establishing the connection with mip.begin()
- *   - Putting the MiP into a low-power sleep state with mip.sleep()
+ *   - Putting MiP into a low-power sleep state with mip.sleep()
  *
  * The sketch prints status messages to mip.console so you can observe the chest
  * LED behavior and the connection lifecycle. Note that after calling
- * mip.sleep(), MiP typically requires a power cycle before accepting new
+ * mip.sleep() MiP typically requires a power cycle before accepting new
  * connections.
  *
  * The example exercises these API calls:
@@ -31,13 +32,18 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to control MiP.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(), end(),
  * and sleep(). Keeping the instance at file scope makes it available in both
- * setup() and loop() if the sketch is extended.
+ * setup() and loop().
  */
 MiP mip;
+
+/**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ */
+bool connectResult;
 
 /**
  * @brief Arduino setup function.
@@ -46,18 +52,20 @@ MiP mip;
  * - Attempts to initialize communication with MiP using mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints explanatory messages and demonstrates:
- *     1. Leaving the connection open for a short period (chest LED should be green).
+ *     1. Leaving the connection open for a short period (chest LED should be
+ * green).
  *     2. Calling mip.end() to disconnect (chest LED should revert to blue).
  *     3. Reconnecting with mip.begin() to show chest LED returns to green.
- *     4. Calling mip.sleep() to put MiP into a low-power state (requires power cycle to reconnect).
+ *     4. Calling mip.sleep() to put MiP into a low-power state (requires power
+ * cycle to reconnect).
  *
- * The delays are included so the user can observe LED and connection state changes.
+ * The delays are included so the user can observe LED and connection state
+ * changes.
  */
 void setup() {
-  bool connectResult = mip.begin();
-
+  connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("Sleep.ino: Failed connecting to MiP!"));
+    Serial.println(F("Sleep.ino: Failed connecting to MiP."));
     return;
   }
 
@@ -73,10 +81,10 @@ void setup() {
   // Wait while disconnected so the LED change is visible.
   delay(5000);
 
-  // Attempt to reconnect to the MiP.
+  // Attempt to reconnect to MiP.
   connectResult = mip.begin();
   if (!connectResult) {
-    mip.console.println(F(" Sleep.ino: Failed reconnecting to MiP!"));
+    mip.console.println(F(" Sleep.ino: Failed reconnecting to MiP."));
     return;
   }
   mip.console.println(F(" Attempted to reconnect to MiP. Chest LED should be green again."));
@@ -95,8 +103,9 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details This example performs its demonstration in setup() and does not
- * require repeated work in loop(). The function is intentionally left empty
- * so the sketch completes once during initialization.
+ * require repeated work in loop().
  */
 void loop() {
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 }

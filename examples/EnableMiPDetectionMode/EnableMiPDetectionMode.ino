@@ -3,7 +3,7 @@
  * @brief Example sketch demonstrating MiP's IR-based detection mode.
  *
  * @details This sketch shows how to enable and disable MiP's detection mode
- * which allows one MiP to be discovered by another using infrared. It
+ * which allows one MiP to discover another using infrared. It
  * demonstrates the infrared.enableMiPDetectionMode(),
  * infrared.disableMiPDetectionMode(), infrared.isMiPDetectionModeEnabled(),
  * infrared.availableDetectedMiPEvents(), and infrared.readDetectedMiP() APIs.
@@ -13,6 +13,14 @@
  *   - Enables detection mode with a specified ID and IR transmit power and
  *     verifies it is enabled.
  *   - In loop(), polls for detected MiP events and prints detected MiP IDs.
+ *
+ * Example API methods demonstrated:
+ *   - mip.begin()
+ *   - mip.infrared.disableMiPDetectionMode()
+ *   - mip.infrared.isMiPDetectionModeEnabled()
+ *   - mip.infrared.enableMiPDetectionMode(MIP_ID_NO, MIP_IR_TX_POWER)
+ *   - mip.infrared.availableDetectedMiPEvents()
+ *   - mip.infrared.readDetectedMiP()
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -54,9 +62,6 @@ MiP mip;
 
 /**
  * @brief Tracks whether the initial connection to MiP succeeded.
- *
- * @details Stored so other parts of the sketch could check connection state
- * if extended.
  */
 bool connectResult;
 
@@ -83,7 +88,7 @@ void setup() {
   }
 
   mip.console.println(F("EnableMiPDetectionMode.ino: Enable MiP to be discovered "
-                        "by another MiP using IR."));
+                    "by another MiP using IR."));
 
   /* Ensure detection mode is off and verify. */
   mip.infrared.disableMiPDetectionMode();
@@ -104,8 +109,8 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details Polls for detected MiP events using
- * infrared.availableDetectedMiPEvents(). When an event is available,
- * infrared.readDetectedMiP() returns the detected MiP ID, which is printed to
+ * infrared.availableDetectedMiPEvents(). While events are available,
+ * infrared.readDetectedMiP() returns each detected MiP ID, which is printed to
  * mip.console in hexadecimal format.
  *
  * API usage in this function:
@@ -113,11 +118,19 @@ void setup() {
  *   - mip.infrared.readDetectedMiP()
  */
 void loop() {
-  if (!connectResult)
-    return;  // If connecting to MiP failed in setup(), exit now.
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 
-  if (mip.infrared.availableDetectedMiPEvents()) {
-    mip.console.print(F(" I detected MiP with ID number "));
-    mip.console.println(mip.infrared.readDetectedMiP(), HEX);
+  // Poll for available detected MiP events
+  while (mip.infrared.availableDetectedMiPEvents() > 0) {
+    uint8_t detectedId = mip.infrared.readDetectedMiP();
+    mip.console.print(F(" I detected MiP with ID number 0x"));
+    if (detectedId < 0x10) {
+      mip.console.print(F("0"));  // Leading zero padding
+    }
+    mip.console.println(detectedId, HEX);
   }
+
+  // Yield control briefly to prevent watchdog reset triggers
+  delay(10);
 }

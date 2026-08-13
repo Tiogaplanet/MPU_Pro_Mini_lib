@@ -21,24 +21,39 @@
 class MiP;
 
 /**
- * @brief Manages MiP's battery monitoring.
+ * @brief MiP_Battery provides one function only, to report MiP's cached battery
+ * voltage.
  */
 class MiP_Battery {
- public:
+public:
   /**
-   * @brief Constructs the battery manager.
+   * @brief Reads MiP's cached battery voltage.
+   *
+   * @details Processes any pending Out-Of-Band status events to update internal
+   * cached voltage data without transmitting a new request to MiP. The cached
+   * value is updated from periodic status updates.
+   *
+   * @return float Battery voltage in Volts, typically 4.0V (low) to 6.4V (fully
+   * charged). Returns 0.0f if MiP is uninitialized.
+   */
+  float readVoltage();
+
+private:
+  /**
+   * @brief Private constructor; instantiated strictly by MiP orchestrator.
    * @param mip A reference to the main MiP object to access core services.
    */
   explicit MiP_Battery(MiP& mip);
 
   /**
-   * @brief Reads MiP's cached battery voltage.
-   * @return Battery voltage, typically 4.0V (low) to 6.4V (full).
+   * @brief A private variable that stores a reference to the main MiP class.
    */
-  float readVoltage();
+  MiP& m_mip;
 
- private:
-  MiP& m_mip;  // Stores a reference to the main MiP class.
+  /**
+   * @brief Allows MiP to call private constructor.
+   */
+  friend class MiP;
 };
 
 #endif  // MPU_BATTERY_H

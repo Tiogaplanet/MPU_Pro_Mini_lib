@@ -1,16 +1,17 @@
 /**
  * @file Weight.ino
- * @brief Example sketch that reads and reports MiP's weight sensor.
+ * @brief Example sketch that reads and reports MiP's payload weight sensor.
  *
  * @details
  * This sketch demonstrates how to query MiP's weight sensor and print
- * changes to mip.console. It repeatedly reads the weight sensor using
- * weight.read() and prints the value only when it changes, to avoid spamming
- * the mip.console output. This is useful for monitoring payload changes on
- * MiP's tray or detecting when MiP is picked up or placed down.
+ * changes to mip.console. It repeatedly reads weight using weight.read() and
+ * prints the value only when it changes to avoid spamming the serial output.
+ * This is useful for monitoring payload changes on MiP's tray or detecting
+ * when MiP is picked up or placed down.
  *
  * Demonstrated API:
- *   - weight.read()
+ *   - mip.begin()
+ *   - mip.weight.read()
  *
  * Usage notes:
  *   - Ensure MiP is powered and connected before running this sketch.
@@ -37,20 +38,17 @@
 MiP mip;
 
 /**
- * @brief Last reported weight value.
+ * @brief Last reported weight value in grams.
  *
- * @details Initialized to an out-of-range sentinel so the first reading is
- * always treated as a change and printed. The MiP weight API returns an
- * int8_t value; this variable stores the last printed value to suppress
- * duplicate prints.
+ * @details Initialized to an out-of-range sentinel (-128) so the first reading
+ * is always treated as a change and printed. The weight API returns an int8_t
+ * value; this variable stores the last printed value to suppress duplicate
+ * prints.
  */
 static int8_t lastWeight = -128;
 
 /**
  * @brief Tracks whether the initial connection to MiP succeeded.
- *
- * @details Stored so other parts of the sketch could check connection state
- * if extended.
  */
 bool connectResult;
 
@@ -58,21 +56,19 @@ bool connectResult;
  * @brief Arduino setup function.
  *
  * @details
- * - Initializes MiP's connection via mip.begin().
+ * - Initializes the MiP connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
  * - On success, prints a short banner indicating the sketch will display
  *   weight updates.
  */
 void setup() {
   connectResult = mip.begin();
-
   if (!connectResult) {
-    Serial.println(F("Weight.ino: Failed connecting to MiP!"));
+    Serial.println(F("Weight.ino: Failed connecting to MiP."));
     return;
   }
 
-  mip.console.println(
-    F("Weight.ino: Read MiP's weight with different objects on the tray."));
+  mip.console.println(F("Weight.ino: Read MiP's weight with different objects on the tray."));
 }
 
 /**
@@ -81,20 +77,25 @@ void setup() {
  * @details
  * - Polls MiP's weight sensor using weight.read().
  * - If the current weight differs from the last reported value, prints the
- *   new weight to mip.console and updates lastWeight.
+ *   new weight in grams to mip.console and updates lastWeight.
  *
- * The loop is intentionally lightweight and prints only on changes to avoid
- * flooding the mip.console output with repeated identical values.
+ * The loop is lightweight and prints only on changes to avoid flooding the
+ * serial output with repeated identical values. Yields briefly to keep
+ * background CPU tasks responsive.
  */
 void loop() {
-  if (!connectResult)
-    return;  // If connecting to MiP failed in setup(), exit now.
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 
   int8_t currentWeight = mip.weight.read();
 
   if (currentWeight != lastWeight) {
     mip.console.print(F(" Weight = "));
-    mip.console.println(currentWeight);
+    mip.console.print(currentWeight);
+    mip.console.println(F(" g"));
     lastWeight = currentWeight;
   }
+
+  // Yield control briefly to prevent watchdog reset triggers
+  delay(50);
 }

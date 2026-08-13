@@ -12,13 +12,16 @@
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  */
+#include "MPU_Shake.h"
 #include "MiP_Power_Up_-_Pro_Mini.h"
 
 // Implement the constructor to store the MiP reference.
 MiP_Shake::MiP_Shake(MiP& mip) : m_mip(mip) {}
 
 bool MiP_Shake::read() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Shake->read()"));
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Shake->read()"));
+
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();

@@ -3,19 +3,21 @@
  * @brief Example sketch demonstrating reading and writing MiP's audio volume.
  *
  * @details
- * This sketch connects to MiP and demonstrates how to set its 
- * volume using sound.writeVolume() and then read the current volume back using
- * sound.readVolume(). The example sets the volume to the predefined constant
- * MIP_VOLUME_OFF (mute) and prints the resulting volume level to mip.console.
+ * This sketch connects to MiP and demonstrates how to set speaker volume using
+ * sound.writeVolume() and read the active volume level back using
+ * sound.readVolume(). The example first sets the volume to the predefined
+ * constant MIP_VOLUME_OFF (mute), prints the resulting volume level to mip.console,
+ * and then restores the volume back to MIP_VOLUME_7 (maximum).
  *
  * The example exercises these API calls:
- *   - sound.writeVolume()
- *   - sound.readVolume()
+ *   - mip.begin()
+ *   - mip.sound.writeVolume()
+ *   - mip.sound.readVolume()
  *
  * Usage notes:
  *   - Ensure MiP is powered and able to accept UART commands.
- *   - Adjust the volume value passed to sound.writeVolume() to experiment with
- *     different audio levels supported by MiP.
+ *   - Adjust the volume value passed to writeVolume() to experiment with
+ *     different audio levels supported by MiP (0 to 7).
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -28,7 +30,7 @@
 #include <MiP_Power_Up_-_Pro_Mini.h>
 
 /**
- * @brief Global MiP instance used to control the robot.
+ * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
  * sound.writeVolume(), and sound.readVolume(). Keeping the instance at file
@@ -37,33 +39,49 @@
 MiP mip;
 
 /**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ */
+bool connectResult;
+
+/**
  * @brief Arduino setup function.
  *
  * @details
- * - initializes MiP's connection via mip.begin().
+ * - Initializes the MiP connection via mip.begin().
  * - If the connection fails, prints an error to Serial and returns early.
- * - On success, sets MiP's volume to MIP_VOLUME_OFF using sound.writeVolume(),
+ * - On success, sets MiP's volume to MIP_VOLUME_OFF using writeVolume(),
  *   reads the current volume back with readVolume(), and prints the value to
  *   mip.console for verification.
+ * - Restores volume back to MIP_VOLUME_7 and reads back again to verify.
  */
 void setup() {
-  bool connectResult = mip.begin();
+  connectResult = mip.begin();
   if (!connectResult) {
-    Serial.println(F("Volume.ino: Failed connecting to MiP!"));
+    Serial.println(F("Volume.ino: Failed connecting to MiP."));
     return;
   }
 
-  mip.console.println(
-    F("Volume.ino: Use sound.readVolume() and sound.writeVolume(). Set "
-      "volume level to off (0) and read out afterwards."));
+  mip.console.println(F("Volume.ino: Use sound.readVolume() and sound.writeVolume(). Set "
+                    "volume level to off (0) and read out afterwards."));
 
-  // Set the device volume to the predefined "off" constant.
+  // 1. Set speaker volume to the predefined "off" constant (mute)
+  mip.console.println(F(" Setting volume to MIP_VOLUME_OFF (0)..."));
   mip.sound.writeVolume(MIP_VOLUME_OFF);
 
-  // Read the current volume level from the device.
+  // Read the current volume level back from MiP
   uint8_t volume = mip.sound.readVolume();
+  mip.console.print(F(" Readback Volume = "));
+  mip.console.println(volume);
 
-  mip.console.print(F(" Volume = "));
+  delay(1000);
+
+  // 2. Restore speaker volume back to maximum (7)
+  mip.console.println(F(" Restoring volume to MIP_VOLUME_7 (7)..."));
+  mip.sound.writeVolume(MIP_VOLUME_7);
+
+  // Read back restored volume level
+  volume = mip.sound.readVolume();
+  mip.console.print(F(" Readback Volume = "));
   mip.console.println(volume);
 
   mip.console.println();
@@ -74,7 +92,9 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details This example performs its demonstration in setup() and does not
- * require repeated work in loop(). The function is intentionally left empty
- * so the sketch completes once during initialization.
+ * require repeated work in loop().
  */
-void loop() {}
+void loop() {
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
+}

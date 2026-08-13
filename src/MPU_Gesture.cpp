@@ -27,27 +27,31 @@ void MiP_Gesture::clear() {
 
 void MiP_Gesture::processEvent(uint8_t gestureCode) {
   if (gestureCode >= MIP_GESTURE_LEFT && gestureCode <= MIP_GESTURE_BACKWARD) {
-    m_gestureEvents.push((MiPGesture)gestureCode);
+    m_gestureEvents.push(static_cast<MiPGesture>(gestureCode));
   }
 }
 
 void MiP_Gesture::enable() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->enable()"));
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Gesture->enable()"));
   verifiedSet(MIP_GESTURE);
 }
 
 void MiP_Gesture::disable() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->disable()"));
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Gesture->disable()"));
   verifiedSet(MIP_GESTURE_RADAR_DISABLED);
 }
 
 bool MiP_Gesture::isEnabled() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->isEnabled()"));
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Gesture->isEnabled()"));
   return check(MIP_GESTURE);
 }
 
 uint8_t MiP_Gesture::availableEvents() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->availableEvents()"));
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Gesture->availableEvents()"));
   // Fetch bytes from the Serial receive buffer and process any event data found
   // within.
   m_mip.serial.processAllResponseData();
@@ -56,7 +60,8 @@ uint8_t MiP_Gesture::availableEvents() {
 }
 
 MiPGesture MiP_Gesture::readEvent() {
-  MIP_DEBUG_INFO_PRINTLN(m_mip, F("MiP->Gesture->readEvent()"));
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Gesture->readEvent()"));
   m_mip.serial.processAllResponseData();
   MiPGesture gestureEvent = MIP_GESTURE_INVALID;
   if (!m_gestureEvents.pop(gestureEvent)) {
@@ -68,6 +73,8 @@ MiPGesture MiP_Gesture::readEvent() {
 }
 
 bool MiP_Gesture::areGestureAndRadarModesDisabled() {
+  MIP_DEBUG_INFO_PREFIX();
+  MIP_DEBUG_INFO_PRINTLN(F("MiP->Gesture->areGestureAndRadarModesDisabled()"));
   return check(MIP_GESTURE_RADAR_DISABLED);
 }
 
@@ -111,12 +118,11 @@ void MiP_Gesture::verifiedSet(MiPGestureMode desiredMode) {
 // then returns whether it matches the passed in value or not. It includes retry
 // code incase the request should fail.
 bool MiP_Gesture::check(MiPGestureMode expectedMode) {
-  int8_t result;
+  int8_t result = MiP::MIP_ERROR_NONE;
   for (uint8_t retry = 0; retry < MiP_Serial::MIP_MAX_RETRIES; retry++) {
     MiPGestureMode currentMode;
     result = rawGet(currentMode);
-    if (result == MiP::MIP_ERROR_NONE)
-      return currentMode == expectedMode;
+    if (result == MiP::MIP_ERROR_NONE) return currentMode == expectedMode;
 
     // An error was encountered so we will loop around and try again.
     // Wait for a bit before the next retry.
@@ -130,22 +136,18 @@ bool MiP_Gesture::check(MiPGestureMode expectedMode) {
 // minimal error handling. The error recovery happens at a higher level of the
 // driver.
 int8_t MiP_Gesture::rawGet(MiPGestureMode& mode) {
-  const uint8_t getGestureRadarMode[1] = {MIP_CMD_GET_GESTURE_RADAR_MODE};
+  const uint8_t getGestureRadarMode[1] = { MIP_CMD_GET_GESTURE_RADAR_MODE };
   uint8_t response[1 + 1];
-  size_t responseLength;
-  int8_t result = m_mip.serial.rawReceive(getGestureRadarMode,
-                                          sizeof(getGestureRadarMode),
-                                          response,
-                                          sizeof(response),
-                                          responseLength);
-  if (result)
-    return result;
-  if (responseLength != 2 || response[0] != MIP_CMD_GET_GESTURE_RADAR_MODE ||
-      (response[1] != MIP_GESTURE_RADAR_DISABLED &&
-       response[1] != MIP_GESTURE && response[1] != MIP_RADAR)) {
+  size_t responseLength = 0;
+  int8_t result = m_mip.serial.rawReceive(
+    getGestureRadarMode, sizeof(getGestureRadarMode), response, sizeof(response), responseLength);
+  if (result) return result;
+  if (responseLength != 2 || response[0] != MIP_CMD_GET_GESTURE_RADAR_MODE
+      || (response[1] != MIP_GESTURE_RADAR_DISABLED
+          && response[1] != MIP_GESTURE && response[1] != MIP_RADAR)) {
     return MiP::MIP_ERROR_BAD_RESPONSE;
   }
-  mode = (MiPGestureMode)response[1];
+  mode = static_cast<MiPGestureMode>(response[1]);
   return MiP::MIP_ERROR_NONE;
 }
 
@@ -153,6 +155,6 @@ int8_t MiP_Gesture::rawGet(MiPGestureMode& mode) {
 // no error checking. The error handling / recovery happens at a higher level of
 // the driver.
 void MiP_Gesture::rawSet(MiPGestureMode mode) {
-  uint8_t command[1 + 1] = {MIP_CMD_SET_GESTURE_RADAR_MODE, mode};
+  uint8_t command[1 + 1] = { MIP_CMD_SET_GESTURE_RADAR_MODE, mode };
   m_mip.serial.rawSend(command, sizeof(command));
 }

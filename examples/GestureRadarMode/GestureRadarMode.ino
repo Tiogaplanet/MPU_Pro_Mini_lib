@@ -1,6 +1,7 @@
 /**
  * @file GestureRadarMode.ino
- * @brief Example sketch demonstrating switching between gesture and radar modes.
+ * @brief Example sketch demonstrating switching between gesture and radar
+ * modes.
  *
  * @details This sketch shows how to enable and disable MiP's radar
  * and gesture sensing modes and how to query their states. It performs a
@@ -12,13 +13,14 @@
  *   - gesture.disable() and verify both gesture and radar modes are disabled
  *
  * The example exercises these API calls:
- *   - radar.enable()
- *   - radar.disable()
- *   - gesture.enable()
- *   - gesture.disable()
- *   - radar.isEnabled()
- *   - gesture.isEnabled()
- *   - areGestureAndRadarModesDisabled()
+ *   - mip.begin()
+ *   - mip.radar.enable()
+ *   - mip.radar.disable()
+ *   - mip.radar.isEnabled()
+ *   - mip.gesture.enable()
+ *   - mip.gesture.disable()
+ *   - mip.gesture.isEnabled()
+ *   - mip.gesture.areGestureAndRadarModesDisabled()
  *
  * @author Adam Green (Original Author)
  * @author Samuel Trassare (Maintainer)
@@ -34,10 +36,15 @@
  * @brief Global MiP instance used to communicate with MiP.
  *
  * @details Use this object to call MiP API functions such as begin(),
- * radar.enable(), radar.disable(), gesture.enable(), gesture.disable(), and 
- * the corresponding query functions.
+ * radar.enable(), radar.disable(), gesture.enable(),
+ * gesture.disable(), and the corresponding query functions.
  */
 MiP mip;
+
+/**
+ * @brief Tracks whether the initial connection to MiP succeeded.
+ */
+bool connectResult;
 
 /**
  * @brief Arduino setup function.
@@ -46,14 +53,15 @@ MiP mip;
  *   - Initializes communication with MiP via mip.begin().
  *   - If connection fails, prints an error to Serial and returns early.
  *   - Demonstrates enabling/disabling radar and gesture modes and prints
- *     pass/fail verification messages using the x.isEnabled() and
- *     areGestureAndRadarModesDisabled() query functions.
+ *     pass/fail verification messages using the radar.isEnabled(),
+ *     gesture.isEnabled(), and gesture.areGestureAndRadarModesDisabled() query
+ * functions.
  *
  * The function intentionally performs the checks in sequence so the user can
  * observe MiP's responses on mip.console.
  */
 void setup() {
-  bool connectResult = mip.begin();
+  connectResult = mip.begin();
   if (!connectResult) {
     Serial.println(F("GestureRadarMode.ino: Failed connecting to MiP!"));
     return;
@@ -61,6 +69,7 @@ void setup() {
 
   mip.console.println(F("GestureRadarMode.ino: Switches between gesture, radar, and default modes."));
 
+  // 1. Enable radar mode and verify
   mip.console.println(F(" Calling mip.radar.enable()"));
   mip.radar.enable();
   mip.console.print(F(" mip.radar.isEnabled() = "));
@@ -70,6 +79,7 @@ void setup() {
     mip.console.println(F("false - Failed"));
   }
 
+  // 2. Disable radar mode and verify
   mip.console.println(F(" Calling mip.radar.disable()"));
   mip.radar.disable();
   mip.console.print(F(" mip.radar.isEnabled() = "));
@@ -79,6 +89,7 @@ void setup() {
     mip.console.println(F("false - Pass"));
   }
 
+  // 3. Enable gesture mode and verify
   mip.console.println(F(" Calling mip.gesture.enable()"));
   mip.gesture.enable();
   mip.console.print(F(" mip.gesture.isEnabled() = "));
@@ -88,6 +99,7 @@ void setup() {
     mip.console.println(F("false - Failed"));
   }
 
+  // 4. Disable gesture mode and verify both modes disabled
   mip.console.println(F(" Calling mip.gesture.disable()"));
   mip.gesture.disable();
   mip.console.print(F(" mip.gesture.isEnabled() = "));
@@ -96,6 +108,7 @@ void setup() {
   } else {
     mip.console.println(F("false - Pass"));
   }
+
   mip.console.print(F(" mip.gesture.areGestureAndRadarModesDisabled() = "));
   if (mip.gesture.areGestureAndRadarModesDisabled()) {
     mip.console.println(F("true - Pass"));
@@ -111,8 +124,9 @@ void setup() {
  * @brief Arduino loop function.
  *
  * @details This example performs all actions in setup() and does not require
- * repeated work in loop(). The function is intentionally left empty so the
- * sketch completes its verification sequence and remains idle.
+ * repeated work in loop().
  */
 void loop() {
+  // Exit immediately if connecting to MiP failed during setup()
+  if (!connectResult) { return; }
 }
