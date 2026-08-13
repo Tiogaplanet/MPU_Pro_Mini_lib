@@ -1,28 +1,98 @@
-# MiP Power Up - Pro Mini
+# MiP Power Up - Pro Mini Library
+**Transform your WowWee MiP into an autonomous, programmable robotics platform with Arduino.**
+
 ![The MiP Power Up - Pro Mini mounted on MiP](https://github.com/Tiogaplanet/Experimenting-with-the-MiP/blob/48a70aedf950a8fad7d521446181a175cac245fa/images/MPU_Pro_Mini.jpg)
 
-This project provides a library for the Arduino IDE and allows users to take control of [WowWee Labs'](https://github.com/WowWeeLabs/)  [MiP](https://wowwee.com/mip) robot.
+This Arduino library provides total control over [WowWee Labs’ MiP](https://wowwee.com/mip) — the self-balancing, hacker-friendly robot. Paired with an ATmega328p board (such as the [Arduino Pro Mini](https://docs.arduino.cc/retired/boards/arduino-pro-mini/)), this library unlocks full access to MiP’s motion, lighting, sound, sensors, and telemetry through a clean, object-oriented C++ API.
 
-MiP is a hacker-friendly self-balancing robot. WowWee not only provides the [MiP Protocol Specification on GitHub](https://github.com/WowWeeLabs/MiP-BLE-Protocol), but they also provide a [4-pin serial port](https://cdn.sparkfun.com/assets/learn_tutorials/2/8/5/HackingPortAnnotated.png), complete with a JST connector, right on the mainboard. This connector makes it easy to connect an external controller such as the [Arduino Pro Mini](https://docs.arduino.cc/retired/boards/arduino-pro-mini/) or compatible boards and take control of your MiP. Once connected, you can:
-*   Command the speed and direction of motion for the gravity-defying MiP.
-*   Command the individual control (on, off, blink) of the 4 LED eye segments on the head.
-*   Take full control of the RGB LED in MiP's chest.
-*   Command the playback of sound lists using the >100 built-in sounds.
-*   Use the head-mounted IR sensors to read 'radar' distance measurements or detected user hand gestures.
-*   Detect user claps with the built-in microphone.
-*   Detect MiP's current pose via its inertial sensors, the same sensors that make its balancing magic possible.
-*   And more!
-  
-Be sure to check out the [MiP Power Up - Pro Mini](https://github.com/Tiogaplanet/MPU_Pro_Mini), which conveniently allows you to mount an Arduino Pro Mini to MiP's battery compartment.
+MiP natively provides a 4-pin expansion port and a published [BLE protocol specification](https://github.com/WowWeeLabs/MiP-BLE-Protocol). The **MiP Power Up — Pro Mini** library abstracts that low-level hardware protocol into intuitive subsystems, making MiP completely programmable for custom behavior, obstacle navigation, interactive games, and sensor tracking.
 
-## Acknowledgement
-* This project is a fork of adamgreen's [MiP ProMini-Pack](https://github.com/adamgreen/MiP_ProMini-Pack), which is in turn based on the now-retired Sparkfun MiP ProMini Pack. 
+---
+
+## What's New in Version 2.0
+The latest release brings substantial architectural cleanups, improved execution efficiency, and robust hardware transport reliability:
+
+- **Auto-Switching UART Console:** Transparent redirection of `Print`/`Stream` messages to the PC Serial Monitor over the Pro Mini's shared hardware UART using automatic multiplexer toggling.
+- **Hardware Multiplexer Safety:** Protected hardware multiplexer transitions maintain state integrity across I/O operations and eliminate cross-talk between debug prints and MiP commands.
+- **Zero-Copy & Modern C++ Cleanups:** Full C++11 standard compliance, `explicit` conversions, `static constexpr` constants replacing legacy `#define`s, and `constexpr` hex parsing.
+- **Enhanced Verification & Retries:** Automatic command retry loops with verified read-back checks for mode changes, chest/head LED colors, and settings updates.
+- **Human-Centric Terminology:** Refactored documentation and inline Doxygen comments treating MiP as an active agent.
+
+---
+
+## Why This Library?
+- **Modular Subsystem API:** Dedicated, encapsulated classes for `motion`, `headLEDs`, `chestLED`, `sound`, `radar`, `gesture`, `clap`, `shake`, `odometer`, `position`, `battery`, and `eeprom`.
+- **Transparent Console Output:** Built-in console routing allows seamless sharing of the Pro Mini's single UART between MiP and PC.
+- **Hardware Integration:** Tailored to work seamlessly with the [MiP Power Up - Pro Mini](https://github.com/Tiogaplanet/MPU_Pro_Mini) adapter board mounted directly to MiP's battery compartment.
+
+---
+
+## What You Can Do
+- **Motion & Drive Control:** Execute continuous velocity/turn commands, drive fixed distances (cm), execute timed moves, turn by precise angles, or command self-righting stand-ups.
+- **Custom Lighting:** Independently control the four head/eye LEDs (on, off, slow/fast blink) and configure the full RGB chest LED with flash timing.
+- **Audio Sequences:** Play any of over 100 built-in sound clips and voice lines, adjust volume dynamically, or assemble multi-sound audio queues.
+- **Sensor Tracking:** Read front IR radar distances, detect swipe/hold hand gestures, listen for claps, detect physical shakes, and track posture pose (upright, face down, on back, picked up).
+- **Telemetry & Storage:** Measure wheel encoder distances with the wheel odometer, monitor battery voltage in Volts, and read/write non-volatile user EEPROM memory.
+
+---
+
+## Hardware
+This library is designed for ATmega328p boards running at 5V / 16MHz or 3.3V / 8MHz connected to MiP’s 4-pin expansion port:
+- **[Arduino Pro Mini](https://docs.arduino.cc/retired/boards/arduino-pro-mini/)** (or ATmega328p compatibles)
+- **[MiP Power Up — Pro Mini Board](https://github.com/Tiogaplanet/MPU_Pro_Mini):** Dedicated expansion shield with a hardware UART multiplexer that mounts cleanly on MiP’s rear battery compartment.
+
+---
 
 ## Installation
-*  The MiP Power Up - Pro Mini library is intended for use with the Arduino IDE.  Installation is the same as for other libraries.  Download the zip and select `Sketch->Include Library->Add .ZIP Library...`.  Browse to the downloaded zip file and the Arduino IDE will do the rest.
+1. In the Arduino IDE, go to **Sketch → Include Library → Add .ZIP Library…**
+2. Browse to and select the downloaded `.zip` release of this library.
+3. Alternatively, extract the library folder directly into your `Arduino/libraries/` directory.
 
-## Usage
-A very thorough guide to using the MiP Power Up - Pro Mini library is provided in the [wiki](https://github.com/Tiogaplanet/MiP_Power_Up_Pro_Mini_lib/wiki).
+---
+
+## Quick Start
+
+```cpp
+#include <MiP_Power_Up_-_Pro_Mini.h>
+
+MiP mip;
+
+void setup() {
+  // Initialize console and hardware UART connection to MiP
+  mip.begin();
+  
+  // Set chest LED to green and turn on eyes
+  mip.chestLED.write(0, 255, 0);
+  mip.headLEDs.write(MIP_HEAD_LED_ON, MIP_HEAD_LED_ON, MIP_HEAD_LED_ON, MIP_HEAD_LED_ON);
+
+  // Greet user
+  mip.sound.play(MIP_SOUND_MIP_HI_CONFIDENT);
+}
+
+void loop() {
+  // Drive forward 20 cm
+  mip.motion.distanceDrive(MIP_DRIVE_FORWARD, 20, MIP_TURN_LEFT, 0);
+  delay(3000);
+
+  // Print debug info to PC Serial Monitor (multiplexer handles state automatically)
+  mip.console.print(F("Battery Voltage: "));
+  mip.console.println(mip.battery.readVoltage());
+
+  delay(2000);
+}
+```
+
+Full example sketches are included under File → Examples → MiP Power Up - Pro Mini and detailed guides are available on the [wiki](https://github.com/Tiogaplanet/MPU_Pro_Mini_lib)
+## Acknowledgements
+Forked from Adam Green's MiP_ProMini-Pack, which originated from the SparkFun MiP ProMini Pack.
+
+Official protocol documentation provided by WowWee Labs.
 
 ## Contributing
-This project is intended to make programming MiP easy and fun.  To that end, contributions are highly encouraged!  Please see [CONTRIBUTING.md](https://github.com/Tiogaplanet/MPU_Pro_Mini_lib/blob/master/CONTRIBUTING.md) for more information.
+Contributions are welcome! Whether fixing bugs, adding examples, or enhancing documentation, please review CONTRIBUTING.md before opening pull requests.
+
+---
+
+
+**Ready to start hacking with MiP?**
+Grab the library, flash your Arduino Pro Mini, and bring your robot to life!
